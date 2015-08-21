@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OsuReaderWPF.Helpers;
+using osuElements;
 
-namespace OsuReaderWPF.Models
+namespace osuElements
 {
     public class Spinner:HitObject
     {
-        public Timing EndTime { get; set; }
         public Spinner(HitObject hObject) : base(hObject) { }
         public Spinner(int x, int y, Timing time, Timing endTime, bool isNewCombo = false, HitsoundTypes hitsound = HitsoundTypes.Normal, SampleSets sampleSet = SampleSets.None, SampleSets additionSet = SampleSets.None)
             : base(time, x, y, isNewCombo,HOTypes.HitCircle,hitsound)
@@ -20,7 +19,7 @@ namespace OsuReaderWPF.Models
         }
         public override string ToString()
         {
-            return base.ToString() + ',' + EndTime.TimeMS +','+ string.Join(":", Additions) + ":";
+            return base.ToString() + ',' + (int)EndTime +','+ string.Join(":", Additions) + ":";
         }
     }
 }

@@ -5,14 +5,15 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D54712AD-A7C5-4F69-80D5-7765CC563479}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OsuReaderWPF</RootNamespace>
+    <RootNamespace>osuElements</RootNamespace>
     <AssemblyName>OsuReaderWPF</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -49,36 +53,30 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Helpers\CompareFunctions.cs" />
+    <Compile Include="Helpers\BitFunctions.cs" />
     <Compile Include="Helpers\Statics.cs" />
-    <Compile Include="Helpers\Types.cs" />
+    <Compile Include="Helpers\Enums.cs" />
     <Compile Include="Helpers\Splitter.cs" />
+    <Compile Include="Models\Events\AnimationEvent.cs" />
+    <Compile Include="Models\Events\Event.cs" />
+    <Compile Include="Models\Events\EventEnums.cs" />
+    <Compile Include="Models\Events\LoopEvent.cs" />
+    <Compile Include="Models\Events\ParameterEvent.cs" />
+    <Compile Include="Models\Events\SpriteEvent.cs" />
+    <Compile Include="Models\Events\TransformationEvent.cs" />
+    <Compile Include="Models\Events\TransformationModel.cs" />
+    <Compile Include="Models\Events\TriggerEvent.cs" />
+    <Compile Include="Models\Events\UndefinedEvent.cs" />
     <Compile Include="Models\Hitobject\HitCircle.cs" />
     <Compile Include="Models\Hitobject\HitObject.cs" />
     <Compile Include="Models\Beatmap.cs" />
+    <Compile Include="Models\ComboColor.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\Hitobject\Slider.cs" />
     <Compile Include="Models\Hitobject\Spinner.cs" />
     <Compile Include="Models\Timing.cs" />
     <Compile Include="Models\TimingPoint.cs" />
-    <Compile Include="Repositories\OsuRep.cs" />
-    <Compile Include="Helpers\Paths.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Repositories\BeatmapReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -103,9 +101,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

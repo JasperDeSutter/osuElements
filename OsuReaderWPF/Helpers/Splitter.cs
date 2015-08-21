@@ -4,31 +4,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OsuReaderWPF.Helpers
+namespace osuElements
 {
     public class Splitter
     {
-        public static char Space()
+        public static char Space
         {
-            char[] c = new char[]{' '};
-            return c[0];
+            get
+            {
+                char[] c = new char[] { ' ' };
+                return c[0];
+            }
         }
-        public static char[] Comma()
+        public static char[] Comma
         {
-            return new char[] { ',' };
+            get
+            {
+                return new char[] { ',' };
+            }
         }
-        public static char[] Colon()
+        public static char[] Colon
         {
-            return new char[] { ':' };
+            get
+            {
+                return new char[] { ':' };
+            }
         }
-        public static char[] Pipe()
+        public static char[] Pipe
         {
-            return new char[] { '|' };
+            get
+            {
+                return new char[] { '|' };
+            }
         }
-        public static char[] Bracket()
+        public static char[] Bracket
         {
-            char[] c = new char[] { '[' };
-            return c;
+            get
+            {
+                return new char[] { '[' };
+            }
         }
     }
 }
