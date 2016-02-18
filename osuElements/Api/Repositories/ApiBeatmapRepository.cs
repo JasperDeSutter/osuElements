@@ -39,7 +39,7 @@ namespace UserInfoViewer.Data
         }
 
         public async Task<List<Score>> GetScores(int mapId, int? userid = null, string userName = null,
-            GameMode mode = 0, Mod? mods = null, int limit = 100) {
+            GameMode mode = 0, Mods? mods = null, int limit = 100) {
             var userstring = userid.HasValue
                 ? $"&u={userid.Value}&type=id"
                 : string.IsNullOrEmpty(userName) ? "" : $"&u={userName}&type=string";

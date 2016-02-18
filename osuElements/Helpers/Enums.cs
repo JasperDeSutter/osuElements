@@ -58,7 +58,7 @@ namespace osuElements.Helpers
         OmitFirstBarLine = 8
     }
     [Flags]
-    public enum Mod 
+    public enum Mods 
     {
         None = 0,
         NoFail = 1,

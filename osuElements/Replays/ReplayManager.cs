@@ -32,7 +32,7 @@ namespace osuElements.Replays
         public void SetBeatmap(Beatmap beatmap) {
             if (!beatmap.CompareMd5(Replay.BeatmapHash)) throw new Exception("The beatmap does not have the hash the replay requires.");
             _beatmap = beatmap;
-            beatmap.UpdateSetMod(Replay.Mods);
+            beatmap.UpdateSetMod(Replay.Enabled_Mods);
         }
         public Dictionary<HitObject, KeyPress> KeyPresses;
         private float _timing50;

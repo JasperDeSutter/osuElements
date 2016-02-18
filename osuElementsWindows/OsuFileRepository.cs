@@ -176,10 +176,10 @@ namespace osuElementsWindows
                                     result.Tags = parts[1];
                                     break;
                                 case ("BeatmapID"):
-                                    result.BeatmapId = int.Parse(parts[1]);
+                                    result.Beatmap_Id = int.Parse(parts[1]);
                                     break;
                                 case ("BeatmapSetID"):
-                                    result.BeatmapSetId = int.Parse(parts[1]);
+                                    result.BeatmapSet_Id = int.Parse(parts[1]);
                                     break;
                             }
                             break;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using osuElements.Api;
 using osuElements.Helpers;
 using osuElements.Storyboards;
 
@@ -7,7 +8,7 @@ namespace osuElements.Other_Models
     /// <summary>
     /// All the properties in a .osu file, for better readability of the Beatmap class.
     /// </summary>
-    public abstract class BeatmapBase
+    public abstract class BeatmapBase: ApiBeatmap
     {
         public int FormatVersion { get; set; }
 
@@ -21,7 +22,7 @@ namespace osuElements.Other_Models
         public SampleSet SampleSet { get; set; }
         public bool Countdown { get; set; }
         public float StackLeniency { get; set; }
-        public GameMode Mode { get; set; }
+        //public GameMode Mode { get; set; }
         public bool LetterboxInBreaks { get; set; }
         //situational
         public bool StoryFireInFront = false;
@@ -46,16 +47,16 @@ namespace osuElements.Other_Models
         #endregion
 
         #region MetaData
-        public string Title { get; set; }
+        //public string Title { get; set; }
         public string TitleUnicode { get; set; }
-        public string Artist { get; set; }
+        //public string Artist { get; set; }
         public string ArtistUnicode { get; set; }
-        public string Creator { get; set; }
-        public string Version { get; set; }
-        public string Source { get; set; }
-        public string Tags { get; set; }
-        public int BeatmapId { get; set; }
-        public int BeatmapSetId { get; set; }
+        //public string Creator { get; set; }
+        //public string Version { get; set; }
+        //public string Source { get; set; }
+        //public string Tags { get; set; }
+        //public int Beatmap_Id { get; set; }
+        //public int BeatmapSet_Id { get; set; }
         #endregion
 
         #region Editor
@@ -81,25 +82,25 @@ namespace osuElements.Other_Models
         #endregion
 
         #region Difficulty 
-        protected float Ar;
+        //protected float Diff_Approach;
         public virtual float ApproachRate {
-            get { return Ar; }
-            set { Ar = value; }
+            get { return Diff_Approach; }
+            set { Diff_Approach = value; }
         }
-        protected float Od;
+        //protected float Diff_Overall;
         public virtual float OverallDifficulty {
-            get { return Od; }
-            set { Od = value; }
+            get { return Diff_Overall; }
+            set { Diff_Overall = value; }
         }
-        protected float Hp;
+        //protected float Diff_Drain;
         public virtual float HPDrainRate {
-            get { return Hp; }
-            set { Hp = value; }
+            get { return Diff_Drain; }
+            set { Diff_Drain = value; }
         }
-        protected float Cs;
+        //protected float Diff_Size;
         public virtual float CircleSize {
-            get { return Cs; }
-            set { Cs = value; }
+            get { return Diff_Size; }
+            set { Diff_Size = value; }
         }
 
         public double SliderMultiplier { get; set; }

@@ -19,7 +19,7 @@ namespace osuElementsWindows
                 binaryReader.ReadByte();
                 result.BeatmapHash = binaryReader.ReadString();
                 binaryReader.ReadByte();
-                result.PlayerName = binaryReader.ReadString();
+                result.UserName = binaryReader.ReadString();
                 binaryReader.ReadByte();
                 result.ReplayHash = binaryReader.ReadString();
                 result.Count300 = binaryReader.ReadInt16();
@@ -29,9 +29,9 @@ namespace osuElementsWindows
                 result.CountKatu = binaryReader.ReadInt16();
                 result.CountMiss = binaryReader.ReadInt16();
                 result.TotalScore = binaryReader.ReadInt32();
-                result.GreatestCombo = binaryReader.ReadInt16();
-                result.IsPerfect = binaryReader.ReadBoolean();
-                result.Mods = (Mod)binaryReader.ReadInt32();
+                result.MaxCombo = binaryReader.ReadInt16();
+                result.Perfect = binaryReader.ReadInt16();
+                result.Enabled_Mods = (Mods)binaryReader.ReadInt32();
 
                 binaryReader.ReadByte();
                 string lifebarFrames = binaryReader.ReadString();
@@ -45,6 +45,7 @@ namespace osuElementsWindows
                 }
 
                 result.TimeStamp = binaryReader.ReadInt64();
+                result.Date = new DateTime(result.TimeStamp, DateTimeKind.Utc);
                 result.DataLength = binaryReader.ReadInt32();
                 if (result.DataLength <= 0) return;
                 var codedStream = LzmaCoder.Decompress(binaryReader.BaseStream as FileStream);

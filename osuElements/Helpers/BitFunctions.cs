@@ -6,7 +6,7 @@
         {
             return (a & b) > 0; //adding in binary results in 0 if both are equal
         }
-        public static bool Compare(this Mod a, Mod b)
+        public static bool Compare(this Mods a, Mods b)
         {
             return (a & b) > 0; //adding in binary results in 0 if both are equal
         }

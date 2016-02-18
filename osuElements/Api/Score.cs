@@ -17,7 +17,7 @@ namespace osuElements.Api
         public int CountGeki { get; set; }
         public int Perfect { get; set; }
         public bool IsPerfect => Perfect == 1;
-        public Mod Enabled_Mods { get; set; }
+        public Mods Enabled_Mods { get; set; }
         public int User_Id { get; set; }
         public DateTime Date { get; set; }
         public string Rank { get; set; }

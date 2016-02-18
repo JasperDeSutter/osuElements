@@ -22,7 +22,7 @@ namespace osuElements.Api.Repositories
         Task<List<ApiBeatmap>> GetCreator(int userId, GameMode? mode = null, int limit = 500);
         Task<ApiBeatmap> Get(int mapId, GameMode? mode = null);
         Task<ApiBeatmap> Get(string mapHash, GameMode? mode = null);
-        Task<List<Score>> GetScores(int mapId, int? userid = null, string userName = null, GameMode mode = 0, Mod? mods = null, int limit = 100);
+        Task<List<Score>> GetScores(int mapId, int? userid = null, string userName = null, GameMode mode = 0, Mods? mods = null, int limit = 100);
     }
     public interface IApiReplayRepository
     {
