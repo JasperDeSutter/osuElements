@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace osuElements
+namespace osuElements.Helpers
 {
-    public enum SliderTypes
+    public enum SliderType
     {
         Catmull,
         Bezier,
@@ -14,7 +10,7 @@ namespace osuElements
         PerfectCurve,
     }
     [Flags]
-    public enum HitsoundTypes  //Sounds are additive, so for multiple sounds just add the values (whistle + clap would be 10)
+    public enum HitsoundType  //Sounds are additive, so for multiple sounds just add the values (whistle + clap would be 10)
     {
         Normal = 0,
         Whistle = 2,
@@ -22,7 +18,7 @@ namespace osuElements
         Clap = 8
     }
     [Flags]
-    public enum HoTypes  //Newcombo is additive (hitcircle newcombo = 5)
+    public enum HitObjectType  //Newcombo is additive (hitcircle newcombo = 5)
     {
         None = 0,
         HitCircle = 1,
@@ -33,7 +29,7 @@ namespace osuElements
         HoldCircle = 128,
         ManiaLong=HoldCircle
     }
-    public enum SampleSets
+    public enum SampleSet
     {
         All = -1,
         None = 0,
@@ -47,7 +43,7 @@ namespace osuElements
         Custom1,
         Custom2,
     }
-    public enum GameModes
+    public enum GameMode
     {
         Standard,
         Taiko,
@@ -55,14 +51,14 @@ namespace osuElements
         Mania,
     }
     [Flags]
-    public enum TimingPointOptions
+    public enum TimingPointOption
     {
         None = 0,
         KiaiTime = 1,
         OmitFirstBarLine = 8
     }
     [Flags]
-    public enum Mods //copied from osu code
+    public enum Mod 
     {
         None = 0,
         NoFail = 1,
@@ -104,4 +100,37 @@ namespace osuElements
         Below,
         Above,
     }
+    [Flags]
+    public enum ReplayKey
+    {
+        None =0,
+        M1 = 1,
+        M2 = 2,
+        K1 = 4 | 1,
+        K2 = 8 | 2,
+    }
+    public enum BeatmapState
+    {
+        Graveyard = -2,
+        WorkInProgress,
+        Pending,
+        Ranked,
+        Approved,
+        Qualified,
+    }
+    public enum MatchTeamTypes
+    {
+        HeadToHead,
+        TagCoOp,
+        TeamVs,
+        TagTeamVs,
+    }
+    public enum MatchScoringTypes
+    {
+        Score,
+        Accuracy,
+        Combo,
+        ScoreV2,
+    }
+
 }

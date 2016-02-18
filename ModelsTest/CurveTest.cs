@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using osuElements;
-using osuElements.Curves;
 using osuElements.Helpers;
+using osuElements.Other_Models;
 
 namespace ModelsTest
 {
@@ -58,7 +58,7 @@ namespace ModelsTest
             {
                 new Position(10,10),
                 new Position(20,20),
-                new Position(30,10), 
+                new Position(30,10),
             };
             _curve = new PerfectCurve(_points);
         }
@@ -68,12 +68,55 @@ namespace ModelsTest
 
             Assert.AreEqual((float)Math.PI * 10, _curve.Length);
         }
-        
+
 
         [TestMethod]
         public void PerfectCurveCenter() {
             Assert.AreEqual(_points[1], _curve.GetPointOnCurve(0.5f).Item1);
         }
+    }
+    [TestClass]
+    public class BezierTest
+    {
+        private readonly Position[] _points;
+        private readonly CurveBase _curve;
+        private BezierCurve _curve2;
 
+        public BezierTest() {
+            _points = new[]
+            {
+                new Position(10,10),
+                new Position(20,20),
+                new Position(20,20),
+                new Position(30,10),
+            };
+            var _points2 = new[]
+            {
+                new Position(10,10),
+                new Position(20,20),
+                new Position(20,20),
+                new Position(27,17),
+                new Position(30,10),
+            };
+            _curve = new BezierCurve(_points);
+            _curve2 = new BezierCurve(_points2);
+        }
+
+        [TestMethod]
+        public void BezierLength() {
+
+            Assert.AreEqual(Position.Distance(_points[0], _points[1]) * 2, _curve.Length);
+        }
+        
+        [TestMethod]
+        public void BezierCenter() {
+            Assert.AreEqual(_points[1], _curve.GetPointOnCurve(0.5f).Item1);
+        }
+
+        [TestMethod]
+        public void BezierPoints() {
+            var points = _curve2.GetPointsBeforeTOnCurve(1f);
+            var point = _curve2.GetPointOnCurve(1);
+        }
     }
 }

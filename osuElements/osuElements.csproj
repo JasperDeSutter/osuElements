@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D54712AD-A7C5-4F69-80D5-7765CC563479}</ProjectGuid>
+    <ProjectGuid>{608D8EDF-26AB-4057-9CCB-5E882A20779D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>osuElements</RootNamespace>
     <AssemblyName>osuElements</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -26,7 +26,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,86 +33,88 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiBeatmap.cs" />
+    <Compile Include="Api\Match.cs" />
+    <Compile Include="Api\ApiReplay.cs" />
+    <Compile Include="Api\Repositories\ApiBeatmapRepository.cs" />
+    <Compile Include="Api\Repositories\ApiReplayRepository.cs" />
+    <Compile Include="Api\Repositories\MultiplayerRepository.cs" />
+    <Compile Include="Api\Repositories\RepositoryBase.cs" />
+    <Compile Include="Api\Repositories\UserRepository.cs" />
+    <Compile Include="Api\Score.cs" />
+    <Compile Include="Api\User.cs" />
+    <Compile Include="Beatmap.cs" />
+    <Compile Include="Collection.cs" />
+    <Compile Include="ComboColor.cs" />
     <Compile Include="Helpers\BitFunctions.cs" />
-    <Compile Include="Helpers\extensions.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\Enums.cs" />
+    <Compile Include="Helpers\extensions.cs" />
     <Compile Include="Helpers\Splitter.cs" />
-    <Compile Include="Models\BeatmapBase.cs" />
+    <Compile Include="HitCircle.cs" />
+    <Compile Include="HitObject.cs" />
+    <Compile Include="HoldCircle.cs" />
+    <Compile Include="osuElements.cs" />
+    <Compile Include="Other_Models\BeatmapBase.cs" />
+    <Compile Include="Other_Models\BezierCurve.cs" />
+    <Compile Include="Other_Models\CurveBase.cs" />
+    <Compile Include="Other_Models\LinearCurve.cs" />
+    <Compile Include="Other_Models\PerfectCurve.cs" />
+    <Compile Include="Other_Models\Timing.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Replays\LifebarFrame.cs" />
+    <Compile Include="Replays\Replay.cs" />
+    <Compile Include="Replays\ReplayFrame.cs" />
+    <Compile Include="Replays\ReplayManager.cs" />
     <Compile Include="Repositories\BeatmapManager.cs" />
-    <Compile Include="Models\Events\AnimationEvent.cs" />
-    <Compile Include="Models\Events\BeatmapEvents.cs" />
-    <Compile Include="Models\Events\Event.cs" />
-    <Compile Include="Models\Events\EventEnums.cs" />
-    <Compile Include="Models\Events\LoopEvent.cs" />
-    <Compile Include="Models\Events\ParameterEvent.cs" />
-    <Compile Include="Models\Events\SampleEvent.cs" />
-    <Compile Include="Models\Events\SpriteEvent.cs" />
-    <Compile Include="Models\Events\TransformationEvent.cs" />
-    <Compile Include="Models\Events\TriggerEvent.cs" />
-    <Compile Include="Models\Events\other.cs" />
-    <Compile Include="Models\Hitobject\Curves\BezierCurve.cs" />
-    <Compile Include="Models\Hitobject\Curves\CurveBase.cs" />
-    <Compile Include="Models\Hitobject\Curves\LinearCurve.cs" />
-    <Compile Include="Models\Hitobject\Curves\PerfectCurve.cs" />
-    <Compile Include="Models\Hitobject\HitCircle.cs" />
-    <Compile Include="Models\Hitobject\HitObject.cs" />
-    <Compile Include="Models\Beatmap.cs" />
-    <Compile Include="Models\ComboColor.cs" />
-    <Compile Include="Models\Hitobject\HoldCircle.cs" />
-    <Compile Include="Models\Position.cs" />
-    <Compile Include="Models\Hitobject\Slider.cs" />
-    <Compile Include="Models\Hitobject\Spinner.cs" />
-    <Compile Include="Models\Storyboard.cs" />
-    <Compile Include="Models\Timing.cs" />
-    <Compile Include="Models\TimingPoint.cs" />
-    <Compile Include="Repositories\BeatmapReader.cs" />
-    <Compile Include="Repositories\StoryboardReader.cs" />
+    <Compile Include="Api\Repositories\IApiRepository.cs" />
+    <Compile Include="Repositories\IFileRepository.cs" />
+    <Compile Include="Repositories\tpDifficulty.cs" />
+    <Compile Include="Repositories\tpHitObject.cs" />
+    <Compile Include="Skins\Skin.cs" />
+    <Compile Include="Slider.cs" />
+    <Compile Include="Spinner.cs" />
+    <Compile Include="Storyboards\AnimationEvent.cs" />
+    <Compile Include="Storyboards\BeatmapEvents.cs" />
+    <Compile Include="Storyboards\Event.cs" />
+    <Compile Include="Storyboards\EventEnums.cs" />
+    <Compile Include="Storyboards\LoopEvent.cs" />
+    <Compile Include="Storyboards\other.cs" />
+    <Compile Include="Storyboards\ParameterEvent.cs" />
+    <Compile Include="Storyboards\SampleEvent.cs" />
+    <Compile Include="Storyboards\SpriteEvent.cs" />
+    <Compile Include="Storyboards\Storyboard.cs" />
+    <Compile Include="Storyboards\TransformationEvent.cs" />
+    <Compile Include="Storyboards\TriggerEvent.cs" />
+    <Compile Include="TimingPoint.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="xBrainLab.Security.Cryptography, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\xBrainLab.Security.Cryptography.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
