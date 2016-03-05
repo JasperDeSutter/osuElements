@@ -2,7 +2,7 @@
 
 using System;
 
-namespace osuElementsWindows._7zip
+namespace osuElements.Net._7zip
 {
 	/// <summary>
 	/// The exception that is thrown when an error in input stream occurs during decoding.

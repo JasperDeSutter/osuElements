@@ -1,6 +1,6 @@
 using System;
 
-namespace osuElementsWindows._7zip.Compress.RangeCoder
+namespace osuElements.Net._7zip.Compress.RangeCoder
 {
 	struct BitEncoder
 	{

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using osuElements.Repositories;
 using osuElements.Storyboards;
 
-namespace osuElementsWindows
+namespace osuElements.Net
 {
     public class AsyncStoryboardFileRepository : IFileRepository<Storyboard>
     {

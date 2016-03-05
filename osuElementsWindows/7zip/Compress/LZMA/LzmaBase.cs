@@ -1,6 +1,6 @@
 // LzmaBase.cs
 
-namespace osuElementsWindows._7zip.Compress.LZMA
+namespace osuElements.Net._7zip.Compress.LZMA
 {
 	internal abstract class Base
 	{

@@ -1,6 +1,8 @@
-﻿namespace osuElements.Storyboards
+﻿using osuElements.Helpers;
+
+namespace osuElements.Storyboards
 {
-    public class SampleEvent:Event
+    public class SampleEvent:EventBase
     {
         public string FilePath;
         public int Volume;

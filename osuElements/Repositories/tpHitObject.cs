@@ -38,7 +38,7 @@ namespace osuElements.Repositories
                 }
                 var sliderFollowCircleRadius = (float)radius * 3;
 
-                var segmentLength = Math.Min(slider.Duration / slider.Repeat, 60000);
+                var segmentLength = Math.Min(slider.Duration / slider.SegmentCount, 60000);
                 var segmentEndTime = slider.StartTime + segmentLength;
 
                 var cursorPos = slider.StartPosition;
@@ -56,11 +56,11 @@ namespace osuElements.Repositories
                 }
 
                 _lazySliderLengthFirst *= scalingFactor;
-                if (slider.Repeat % 2 == 1) {
+                if (slider.SegmentCount % 2 == 1) {
                     _normalizedEndPosition = cursorPos * scalingFactor;
                 }
 
-                if (slider.Repeat <= 1) return;
+                if (slider.SegmentCount <= 1) return;
 
                 segmentEndTime += segmentLength;
                 for (var time = segmentEndTime - segmentLength + LAZY_SLIDER_STEP_LENGTH;
@@ -75,7 +75,7 @@ namespace osuElements.Repositories
                     _lazySliderLengthSubsequent += distance;
                 }
 
-                if (slider.Repeat % 2 != 0) return;
+                if (slider.SegmentCount % 2 != 0) return;
                 _normalizedEndPosition = cursorPos * scalingFactor;
 
             }
@@ -83,51 +83,39 @@ namespace osuElements.Repositories
                 _normalizedEndPosition = _normalizedStartPosition;
             }
         }
-
-
-
+        
         public void CalculateStrains(TpHitObject previousHitObject, double speedMultiplier) {
             CalculateSpecificStrain(previousHitObject, DifficultyType.Speed, speedMultiplier);
             CalculateSpecificStrain(previousHitObject, DifficultyType.Aim, speedMultiplier);
         }
 
-
         private static double SpacingWeight(double distance, DifficultyType type) {
+            if (type == DifficultyType.Speed) {
+                {
+                    double weight;
 
-            switch (type) {
-                case DifficultyType.Speed:
-
-                    {
-                        double weight;
-
-                        if (distance > SINGLE_SPACING_TRESHOLD) {
-                            weight = 2.5;
-                        }
-                        else if (distance > STREAM_SPACING_TRESHOLD) {
-                            weight = 1.6 + 0.9 * (distance - STREAM_SPACING_TRESHOLD) / (SINGLE_SPACING_TRESHOLD - STREAM_SPACING_TRESHOLD);
-                        }
-                        else if (distance > ALMOST_DIAMETER) {
-                            weight = 1.2 + 0.4 * (distance - ALMOST_DIAMETER) / (STREAM_SPACING_TRESHOLD - ALMOST_DIAMETER);
-                        }
-                        else if (distance > ALMOST_DIAMETER / 2) {
-                            weight = 0.95 + 0.25 * (distance - (ALMOST_DIAMETER / 2)) / (ALMOST_DIAMETER / 2);
-                        }
-                        else {
-                            weight = 0.95;
-                        }
-
-                        return weight;
+                    if (distance > SINGLE_SPACING_TRESHOLD) {
+                        weight = 2.5;
+                    }
+                    else if (distance > STREAM_SPACING_TRESHOLD) {
+                        weight = 1.6 +
+                                 0.9*(distance - STREAM_SPACING_TRESHOLD)/
+                                 (SINGLE_SPACING_TRESHOLD - STREAM_SPACING_TRESHOLD);
+                    }
+                    else if (distance > ALMOST_DIAMETER) {
+                        weight = 1.2 + 0.4*(distance - ALMOST_DIAMETER)/(STREAM_SPACING_TRESHOLD - ALMOST_DIAMETER);
+                    }
+                    else if (distance > ALMOST_DIAMETER/2) {
+                        weight = 0.95 + 0.25*(distance - (ALMOST_DIAMETER/2))/(ALMOST_DIAMETER/2);
+                    }
+                    else {
+                        weight = 0.95;
                     }
 
-
-                case DifficultyType.Aim:
-
-                    return Math.Pow(distance, 0.99);
-
-
-                default:
-                    return 0;
+                    return weight;
+                }
             }
+            return type == DifficultyType.Aim ? Math.Pow(distance, 0.99) : 0;
         }
 
 
@@ -143,7 +131,7 @@ namespace osuElements.Repositories
 
                             addition =
                                 SpacingWeight(previousHitObject._lazySliderLengthFirst +
-                                              previousHitObject._lazySliderLengthSubsequent * ((previousHitObject.BaseHitObject).Repeat - 1) +
+                                              previousHitObject._lazySliderLengthSubsequent * ((previousHitObject.BaseHitObject).SegmentCount - 1) +
                                               DistanceTo(previousHitObject), type) *
                                 SPACING_WEIGHT_SCALING[(int)type];
                             break;
@@ -154,7 +142,7 @@ namespace osuElements.Repositories
                             addition =
                                 (
                                     SpacingWeight(previousHitObject._lazySliderLengthFirst, type) +
-                                    SpacingWeight(previousHitObject._lazySliderLengthSubsequent, type) * ((previousHitObject.BaseHitObject).Repeat - 1) +
+                                    SpacingWeight(previousHitObject._lazySliderLengthSubsequent, type) * ((previousHitObject.BaseHitObject).SegmentCount - 1) +
                                     SpacingWeight(DistanceTo(previousHitObject), type)
                                     ) *
                                 SPACING_WEIGHT_SCALING[(int)type];

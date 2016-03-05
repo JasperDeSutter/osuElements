@@ -1,5 +1,4 @@
-﻿using System;
-using osuElements.Helpers;
+﻿using osuElements.Helpers;
 using static System.Math;
 namespace osuElements
 {
@@ -21,13 +20,16 @@ namespace osuElements
         public static Position UnitY { get; } = new Position(0, 1);
         #endregion
 
-        public Position(float x, float y) {
+        public Position(float xy) : this(xy, xy) { }
+
+        public Position(float x, float y)
+        {
             X = x;
             Y = y;
         }
-        public Position(Position copy) : this(copy.X, copy.Y) {
-        }
-        public static Position FromHitobject(float x, float y) {
+        public Position(Position copy) : this(copy.X, copy.Y) { }
+        public static Position FromHitobject(float x, float y)
+        {
             var result = new Position
             {
                 XForHitobject = x,
@@ -35,11 +37,13 @@ namespace osuElements
             };
             return result;
         }
-        public float XForHitobject {
+        public float XForHitobject
+        {
             get { return X - HITOBJECTS_LEFT_OFFSET; }
             set { X = value + HITOBJECTS_LEFT_OFFSET; }
         }
-        public float YForHitobject {
+        public float YForHitobject
+        {
             get { return Y - HITOBJECTS_TOP_OFFSET; }
             set { Y = value + HITOBJECTS_TOP_OFFSET; }
         }
@@ -73,7 +77,8 @@ namespace osuElements
         public static float Distance(Position a, Position b) =>
             (b - a).Length;
 
-        public float GetAngle(bool normalize = true) {
+        public float GetAngle(bool normalize = true)
+        {
             if (normalize) return ((float)Atan2(Y, X)).NormalizeAngle();
             return ((float)Atan2(Y, X));
         }
@@ -84,43 +89,51 @@ namespace osuElements
             from.SecondaryPoint(length, angle);
 
 
-        public Position SecondaryPoint(float length, float angle) {
+        public Position SecondaryPoint(float length, float angle)
+        {
             var result = new Position(this);
             result.X += (float)(length * Sin(angle));
             result.Y += (float)(length * Cos(angle));
             return result;
         }
-        public static Position operator -(Position p1) {
+        public static Position operator -(Position p1)
+        {
             p1.X = -p1.X;
             p1.Y = -p1.Y;
             return p1;
         }
-        public static Position operator -(Position p1, Position p2) {
+        public static Position operator -(Position p1, Position p2)
+        {
             p1.X -= p2.X;
             p1.Y -= p2.Y;
             return p1;
         }
-        public static Position operator +(Position p1, Position p2) {
+        public static Position operator +(Position p1, Position p2)
+        {
             p1.X += p2.X;
             p1.Y += p2.Y;
             return p1;
         }
-        public static Position operator *(Position p1, Position p2) {
+        public static Position operator *(Position p1, Position p2)
+        {
             p1.X *= p2.X;
             p1.Y *= p2.Y;
             return p1;
         }
-        public static Position operator *(Position p, float f) {
+        public static Position operator *(Position p, float f)
+        {
             p.X *= f;
             p.Y *= f;
             return p;
         }
-        public static Position operator /(Position p1, Position p2) {
+        public static Position operator /(Position p1, Position p2)
+        {
             p1.X /= p2.X;
             p1.Y /= p2.Y;
             return p1;
         }
-        public static Position operator /(Position p, float f) {
+        public static Position operator /(Position p, float f)
+        {
             p.X /= f;
             p.Y /= f;
             return p;
@@ -129,6 +142,10 @@ namespace osuElements
             new Position(this / Length);
 
         #endregion
+
+        public static Position Lerp(Position a, Position b, float t) {
+            return a + (b - a)*t;
+        }
 
     }
 }

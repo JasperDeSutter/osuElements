@@ -1,48 +1,54 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using osuElements.Helpers;
+using osuElements.Storyboards.Triggers;
 
 namespace osuElements.Storyboards
 {
-    public class TriggerEvent : TransformationEvent, ITransformable
+    public class TriggerEvent : LoopEvent
     {
-        public List<TransformationEvent> Transformations;
+        public TriggerTypes TriggerType => Trigger.TriggerType;
+        public TriggerBase Trigger;
+        public override TransformTypes TransformType { get; } = TransformTypes.T;
+        public int Group { get; set; } = 0;
+        public override int EndTime { get; set; }
 
-        public TriggerTypes TriggerType;
-        public TriggerEvent(TriggerTypes trigger, int starttime, int endtime) : base(TransformTypes.T, Easing.None, starttime, endtime, null)
-        {
-            Transformations = new List<TransformationEvent>();
-            TriggerType = trigger;
+        public TriggerEvent(TriggerBase trigger, int starttime, int endtime) : base(starttime) {
+            Trigger = trigger;
             StartTime = starttime;
             EndTime = endtime;
         }
 
-        public override bool CurrentValues(double time, ref TransformationModel transform)
-        {
-            if (!IsActive(time)) return false;
-            time -= StartTime;
+        public override string ToString() {
+            return $"{TransformType},{Trigger},{StartTime},{EndTime}" + (Group == 0 ? "" : "," + Group);
+        }
+        public static bool TryParse(string line, out TriggerEvent triggerEvent) {
+            var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            triggerEvent = null;
 
-            foreach (TransformationEvent te in Transformations)
-            {
-                te.CurrentValues(time, ref transform);
-            }
+            if (parts.Length < 4 || parts[0].Trim() != "T") return false;
+            TriggerBase trigger;
+            if (!TriggerBase.TryParse(parts[1].TrimStart(), out trigger)) return false;
+            int starttime, endtime;
+            if (!int.TryParse(parts[2], out starttime)) return false;
+            if (!int.TryParse(parts[3], out endtime)) return false;
+
+            triggerEvent = new TriggerEvent(trigger, starttime, endtime);
+
+            if (parts.Length <= 4) return true;
+            int group;
+            if (!int.TryParse(parts[4], out group)) return false;
+            triggerEvent.Group = group;
             return true;
         }
-
-        public void AddTransformation(TransformationEvent e)
-        {
-            if (e.EndTime > EndTime) EndTime = e.EndTime;
-            Transformations.Add(e);
-            Transformations.Sort();
-        }
-        public override string ToString()
-        {
-            var result = new StringBuilder();
-            result.Append(" " + Transformtype + ",");
-            result.Append(TriggerType + ",");
-            result.Append(StartTime + ",");
-            result.Append(EndTime);
-            foreach (var t in Transformations) result.Append("/r/n  " + t);
-            return result.ToString();
+        public new static TriggerEvent Parse(string line) {
+            var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            TriggerBase trigger;
+            TriggerBase.TryParse(line, out trigger);
+            var result = new TriggerEvent(trigger, int.Parse(parts[1]), int.Parse(parts[2]));
+            if (parts.Length > 3) result.Group = int.Parse(parts[3]);
+            return result;
         }
     }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using osuElements.Helpers;
+using osuElements.Repositories;
 
 namespace osuElements.Replays
 {
     public class ReplayManager
     {
         Beatmap _beatmap;
+        private BeatmapManager _bManager;
         public Replay Replay { get; }
 
         public ReplayManager(Replay replay) {
@@ -32,26 +34,28 @@ namespace osuElements.Replays
         public void SetBeatmap(Beatmap beatmap) {
             if (!beatmap.CompareMd5(Replay.BeatmapHash)) throw new Exception("The beatmap does not have the hash the replay requires.");
             _beatmap = beatmap;
-            beatmap.UpdateSetMod(Replay.Enabled_Mods);
+            _bManager = new BeatmapManager(beatmap);
+            _bManager.SetMods(Replay.Enabled_Mods);
+            _bManager.DifficultyCalculations();
         }
         public Dictionary<HitObject, KeyPress> KeyPresses;
         private float _timing50;
         private float _timing100;
         private float _timing300;
-        private float _approachMs;
+        private int _approachMs;
 
         public void Calculate() {
-            _timing50 = _beatmap.Timing50 * _beatmap.ModSpeed;
-            _timing100 = _beatmap.Timing100 * _beatmap.ModSpeed;
-            _timing300 = _beatmap.Timing300 * _beatmap.ModSpeed;
-            _approachMs = _beatmap.ApproachRateMS;
+            _timing50 = _bManager.HitWindow50 * _bManager.ModSpeedMultiplier;
+            _timing100 = _bManager.HitWindow100 * _bManager.ModSpeedMultiplier;
+            _timing300 = _bManager.HitWindow300 * _bManager.ModSpeedMultiplier;
+            _approachMs = _bManager.PreEmpt;
 
             var keyPresses = Calculate(Replay.ReplayFrames, ReplayKey.K1);
             keyPresses.AddRange(Calculate(Replay.ReplayFrames, ReplayKey.K2));
             keyPresses.Sort();
             KeyPresses = new Dictionary<HitObject, KeyPress>();
 
-            foreach (HitObject ho in _beatmap.HitObjects) {
+            foreach (var ho in _beatmap.HitObjects) {
                 float time = ho.StartTime;
                 KeyPress a;
                 try {
@@ -64,12 +68,11 @@ namespace osuElements.Replays
 
                 if ((ho.Type & HitObjectType.Slider) > 0) {
                     var s = ho as Slider;
-                    bool isBreak = false;
-                    foreach (ReplayFrame rf in a.Frames) {
-                        Position pos = s.PositionAtTime(rf.Time);
-                        float distance = rf.Position.Distance(pos);
-                        if (distance > _beatmap.CircleDiameter) isBreak = true;
-                    }
+
+                    var isBreak =
+                        a.Frames.Select(f => f.Position.Distance(s.PositionAtTime(f.Time)))
+                            .Any(f => f > _bManager.HitObjectRadius);
+                    
                     a.Timing = isBreak ? 100 : 300;
                 }
                 else
@@ -81,7 +84,6 @@ namespace osuElements.Replays
         }
 
         private int GetTiming(float actual, float desired) {
-
 
             if (actual < desired + _timing300 && actual > desired - _timing300) return 300;
             if (actual < desired + _timing100 && actual > desired - _timing100)

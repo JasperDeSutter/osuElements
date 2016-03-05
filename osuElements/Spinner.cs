@@ -1,18 +1,16 @@
 ﻿using System.Linq;
 using osuElements.Helpers;
-using osuElements.Other_Models;
 
 namespace osuElements
 {
     public class Spinner : HitObject
     {
-        public Spinner(HitObject hObject) : base(hObject) { }
-        public Spinner(int x, int y, Timing time, Timing endTime, bool isNewCombo = false, HitsoundType hitsound = HitsoundType.Normal, SampleSet sampleSet = SampleSet.None, SampleSet additionSet = SampleSet.None)
-            : base(time, x, y, isNewCombo, HitObjectType.Spinner, hitsound) {
+        public Spinner(int x, int y, Timing time, Timing endTime, bool isNewCombo = false, HitObjectSoundType soundType = HitObjectSoundType.Normal, SampleSet sampleSet = SampleSet.None, SampleSet additionSampleSet = SampleSet.None)
+            : base(time, x, y, isNewCombo, HitObjectType.Spinner | HitObjectType.NewCombo, soundType) {
             EndTime = endTime;
             SampleSet = sampleSet;
-            AdditionSet = additionSet;
+            AdditionSampleSet = additionSampleSet;
         }
-        public override string ToString() => $"{base.ToString()},{EndTime},{string.Join(":", Additions.Select(e => e.ToString()).ToArray())}:";
+        public override string ToString() => $"{base.ToString()},{EndTime},{AdditionsForString}:";
     }
 }

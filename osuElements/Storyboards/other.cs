@@ -1,11 +1,14 @@
-﻿namespace osuElements.Storyboards
+﻿using System.Collections.Generic;
+
+namespace osuElements.Storyboards
 {
     public interface ITransformable
     {
         //bool currentvalues(float time, ref TransformationModel transform);
         void AddTransformation(TransformationEvent transform);
+        List<TransformationEvent> Transformations { get; set; }
     }
-    public class UndefinedEvent:Event
+    public class UndefinedEvent:EventBase
     {
         public string[] Lineparts;
         public UndefinedEvent(string[] lineparts)
@@ -17,14 +20,14 @@
             return string.Join(",", Lineparts);
         }
     }
-    public class TransformationModel
+    /*public class TransformationModel
     {
         public double Opacity;
         public double PositionX;
         public double PositionY;
         public double ScaleX;
         public double ScaleY;
-        public ComboColor Color;
+        public ComboColour Colour;
         public double Angle;
         public bool FlipVertical;
         public bool FlipHorizontal;
@@ -38,7 +41,7 @@
             PositionX = x;
             PositionY = y;
             ScaleY = ScaleX = 1;
-            Color = new ComboColor(255, 255, 255);
+            Colour = new ComboColour(255, 255, 255);
             Opacity = 1;
             Angle = 0;
         }
@@ -48,5 +51,5 @@
             FlipHorizontal = false;
             AdditiveColor = false;
         }
-    }
+    }*/
 }

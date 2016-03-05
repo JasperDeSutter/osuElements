@@ -56,13 +56,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CurveTest.cs" />
     <Compile Include="PositionTest.cs" />
-    <Compile Include="TpDifficulty.cs" />
-    <Compile Include="TpHitObject.cs" />
+    <Compile Include="SkinTest.cs" />
+    <Compile Include="ReplayTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\osuElementsWindows\osuElementsWindows.csproj">
+    <ProjectReference Include="..\osuElementsWindows\osuElements.NET.csproj">
       <Project>{29a2568e-5ea2-4de8-bd85-363c636e7947}</Project>
-      <Name>osuElementsWindows</Name>
+      <Name>osuElements.NET</Name>
     </ProjectReference>
     <ProjectReference Include="..\osuElements\osuElements.csproj">
       <Project>{608d8edf-26ab-4057-9ccb-5e882a20779d}</Project>

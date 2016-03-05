@@ -1,11 +1,10 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace osuElements.Helpers
 {
     internal class Constants
     {
-        internal class Math
+        internal static class Math
         {
             public const float PI = 3.141592635897931f;
             /// <summary>
@@ -18,17 +17,27 @@ namespace osuElements.Helpers
             public const float TAU = PI * 2;
         }
 
-        internal class Io
+        internal static class IO
         {
             //public static readonly IFormatProvider FORMATPROVIDER = new CultureInfo("en-US");
             public static readonly CultureInfo CULTUREINFO = new CultureInfo("en-US");
             public const NumberStyles NUMBER_STYLE = NumberStyles.Any;
             public const string NEW_LINE = "/r/n";
-            public const StringSplitOptions removeEmptyEntries = StringSplitOptions.RemoveEmptyEntries;
         }
-            
-        
-        internal class Beatmap
+
+        internal static class Splitter
+        {
+            public static char Space => ' ';
+            public static char[] Comma => new[] { ',' };
+
+            public static char[] Colon => new[] { ':' };
+
+            public static char[] Pipe => new[] { '|' };
+
+            public static char[] Bracket => new[] { '[' };
+        }
+
+        internal static class Beatmap
         {
             public const float HARD_ROCK_MULTIPLIER = 1.4f;
             public const float EASY_MULTIPLIER = 0.5f;
@@ -39,5 +48,6 @@ namespace osuElements.Helpers
 
         //drawing
         public static readonly Position CENTER_OF_SCREEN = new Position(256, 192);
+        internal const int MaximumNewCombo = 7;
     }
 }
