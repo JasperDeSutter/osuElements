@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\osuElements.Net.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -142,7 +143,6 @@
     <Compile Include="Storyboards\IStoryboardEvents.cs" />
     <Compile Include="Storyboards\ITransformable.cs" />
     <Compile Include="Storyboards\LoopEvent.cs" />
-    <Compile Include="Storyboards\other.cs" />
     <Compile Include="Storyboards\ParameterEvent.cs" />
     <Compile Include="Storyboards\SampleEvent.cs" />
     <Compile Include="Storyboards\SpriteEvent.cs" />

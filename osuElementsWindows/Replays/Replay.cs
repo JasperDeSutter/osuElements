@@ -14,7 +14,7 @@ namespace osuElements.Replays
     public class Replay : ApiScore, IFileModel //most properties are shared, no need for common base class
     {
         public Replay() {
-            LifebarFames = new List<LifebarFrame>();
+            LifebarFrames = new List<LifebarFrame>();
             ReplayFrames = new List<ReplayFrame>();
             ReplayFileRepository = osuElements.ReplayFileRepository;
         }
@@ -23,7 +23,7 @@ namespace osuElements.Replays
             FullPath = filePath;
             ReadFile();
             if (readData) ReadData();
-            LifebarFames =
+            LifebarFrames =
                 LifebarFrameString.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries)
                     .Select(part => part.Split('|'.AsArray(), StringSplitOptions.RemoveEmptyEntries))
                     .Where(parts2 => parts2.Length >= 2)
@@ -75,7 +75,7 @@ namespace osuElements.Replays
         public string BeatmapHash { get; set; }
         public string ReplayHash { get; set; }
         public string LifebarFrameString { get; set; }
-        public List<LifebarFrame> LifebarFames { get; }
+        public List<LifebarFrame> LifebarFrames { get; }
         public byte[] ReplayData { get; set; }
         public List<ReplayFrame> ReplayFrames { get; private set; }
         public int Seed { get; set; }//?

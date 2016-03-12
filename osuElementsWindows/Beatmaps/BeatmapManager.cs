@@ -94,6 +94,7 @@ namespace osuElements.Beatmaps
         public void SetMods(Mods mods) {
             //TODO check for impossible combinations
             Mods = mods;
+            DifficultyCalculations();
         }
 
         public Task SetupSlider(Slider slider) {

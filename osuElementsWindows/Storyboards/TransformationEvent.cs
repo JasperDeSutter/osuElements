@@ -34,6 +34,7 @@ namespace osuElements.Storyboards
         }
 
         public int ValueCount => StartValues.Length;
+        public bool Tweening => StartValues.SequenceEqual(EndValues);
 
         public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, float[] startvalues)
             : this(type, easing, starttime, endtime, startvalues, startvalues) { }
