@@ -7,7 +7,7 @@
     <ProjectGuid>{29A2568E-5EA2-4DE8-BD85-363C636E7947}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>osuElements.Net</RootNamespace>
+    <RootNamespace>osuElements</RootNamespace>
     <AssemblyName>osuElements.Net</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -31,22 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ManagedLzma, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9d213bf823a71bb8, processorArchitecture=MSIL">
-      <HintPath>..\packages\ManagedLzma.0.2.0-alpha-5\lib\net45\ManagedLzma.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>D:\NugetPackages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="7zip\Common\CRC.cs" />
@@ -62,14 +53,107 @@
     <Compile Include="7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="7zip\ICoder.cs" />
     <Compile Include="7zip\LZMACoder.cs" />
-    <Compile Include="osuElementsDotNet.cs" />
+    <Compile Include="Api\ApiBeatmap.cs" />
+    <Compile Include="Api\ApiMulti.cs" />
+    <Compile Include="Api\ApiReplay.cs" />
+    <Compile Include="Api\ApiScore.cs" />
+    <Compile Include="Api\ApiUser.cs" />
+    <Compile Include="Api\Repositories\ApiBeatmapRepository.cs" />
+    <Compile Include="Api\Repositories\ApiMultiplayerRepository.cs" />
+    <Compile Include="Api\Repositories\ApiReplayRepository.cs" />
+    <Compile Include="Api\Repositories\ApiRepositoryBase.cs" />
+    <Compile Include="Api\Repositories\ApiUserRepository.cs" />
+    <Compile Include="Api\Repositories\IApiRepository.cs" />
+    <Compile Include="Beatmaps\Base\HitObjectBase.cs" />
+    <Compile Include="Beatmaps\Base\HitObjectManagerBase.cs" />
+    <Compile Include="Beatmaps\Base\tpDifficulty.cs" />
+    <Compile Include="Beatmaps\Base\tpHitObject.cs" />
+    <Compile Include="Beatmaps\Beatmap.cs" />
+    <Compile Include="Beatmaps\BeatmapFileReader.cs" />
+    <Compile Include="Beatmaps\BeatmapManager.cs" />
+    <Compile Include="Beatmaps\Events\BackgroundColorEvent.cs" />
+    <Compile Include="Beatmaps\Events\BackgroundEvent.cs" />
+    <Compile Include="Beatmaps\Events\BreakEvent.cs" />
+    <Compile Include="Beatmaps\Events\VideoEvent.cs" />
+    <Compile Include="Beatmaps\HitCircle.cs" />
+    <Compile Include="Beatmaps\HitObject.cs" />
+    <Compile Include="Beatmaps\HoldCircle.cs" />
+    <Compile Include="Beatmaps\Slider.cs" />
+    <Compile Include="Beatmaps\Spinner.cs" />
+    <Compile Include="Beatmaps\TimingPoint.cs" />
+    <Compile Include="Colour.cs" />
+    <Compile Include="Curves\BezierCurve.cs" />
+    <Compile Include="Curves\BezierSegment.cs" />
+    <Compile Include="Curves\CatmullCurve.cs" />
+    <Compile Include="Curves\CurveBase.cs" />
+    <Compile Include="Curves\LinearCurve.cs" />
+    <Compile Include="Curves\PerfectCurve.cs" />
+    <Compile Include="Db\Collection.cs" />
+    <Compile Include="Db\CollectionDb.cs" />
+    <Compile Include="Db\DbBeatmap.cs" />
+    <Compile Include="Db\OsuDb.cs" />
+    <Compile Include="Db\ScoresDb.cs" />
+    <Compile Include="Helpers\BitFunctions.cs" />
+    <Compile Include="Helpers\ByteStringConversion.cs" />
+    <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Helpers\Enums-Beatmap.cs" />
+    <Compile Include="Helpers\Enums-Event.cs" />
+    <Compile Include="Helpers\Enums-HitObject.cs" />
+    <Compile Include="Helpers\Enums-Mania.cs" />
+    <Compile Include="Helpers\Enums-Other.cs" />
+    <Compile Include="Helpers\extensions.cs" />
+    <Compile Include="Helpers\IHitsound.cs" />
+    <Compile Include="Helpers\MathHelper.cs" />
+    <Compile Include="IO\Binary\BinaryCollection.cs" />
+    <Compile Include="IO\Binary\BinaryExtensions.cs" />
+    <Compile Include="IO\Binary\BinaryFile.cs" />
+    <Compile Include="IO\Binary\BinaryFileLine.cs" />
+    <Compile Include="IO\Binary\BinaryFileList.cs" />
+    <Compile Include="IO\Binary\IBinaryFileLine.cs" />
+    <Compile Include="IO\File\CollectionFileSection.cs" />
+    <Compile Include="IO\File\FileLine.cs" />
+    <Compile Include="IO\File\FileReader.cs" />
+    <Compile Include="IO\File\FileSection.cs" />
+    <Compile Include="IO\File\IFileLine.cs" />
+    <Compile Include="IO\File\IFileSection.cs" />
+    <Compile Include="IO\File\ILogger.cs" />
+    <Compile Include="IO\File\ListFileLine.cs" />
+    <Compile Include="IO\File\MultiFileLine.cs" />
+    <Compile Include="IO\File\MultipleFileSection.cs" />
+    <Compile Include="IO\File\StoryboardSection.cs" />
+    <Compile Include="IO\File\WriteLine.cs" />
+    <Compile Include="IO\IFileModel.cs" />
+    <Compile Include="IO\IFileRepository.cs" />
+    <Compile Include="osuElements.cs" />
+    <Compile Include="osuURL.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\osuElements\osuElements.csproj">
-      <Project>{608d8edf-26ab-4057-9ccb-5e882a20779d}</Project>
-      <Name>osuElements</Name>
-    </ProjectReference>
+    <Compile Include="Replays\HitobjectTiming.cs" />
+    <Compile Include="Replays\KeyPress.cs" />
+    <Compile Include="Replays\LifebarFrame.cs" />
+    <Compile Include="Replays\Replay.cs" />
+    <Compile Include="Replays\ReplayFrame.cs" />
+    <Compile Include="Replays\ReplayManager.cs" />
+    <Compile Include="Skins\ManiaSkin.cs" />
+    <Compile Include="Skins\Skin.cs" />
+    <Compile Include="Skins\SkinFileReader.cs" />
+    <Compile Include="Storyboards\AnimationEvent.cs" />
+    <Compile Include="Storyboards\EventBase.cs" />
+    <Compile Include="Storyboards\IStoryboardEvents.cs" />
+    <Compile Include="Storyboards\ITransformable.cs" />
+    <Compile Include="Storyboards\LoopEvent.cs" />
+    <Compile Include="Storyboards\other.cs" />
+    <Compile Include="Storyboards\ParameterEvent.cs" />
+    <Compile Include="Storyboards\SampleEvent.cs" />
+    <Compile Include="Storyboards\SpriteEvent.cs" />
+    <Compile Include="Storyboards\Storyboard.cs" />
+    <Compile Include="Storyboards\TransformableExtensions.cs" />
+    <Compile Include="Storyboards\TransformationEvent.cs" />
+    <Compile Include="Storyboards\TriggerEvent.cs" />
+    <Compile Include="Storyboards\Triggers\FailingTrigger.cs" />
+    <Compile Include="Storyboards\Triggers\HitSoundTrigger.cs" />
+    <Compile Include="Storyboards\Triggers\PassingTrigger.cs" />
+    <Compile Include="Storyboards\Triggers\TriggerBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

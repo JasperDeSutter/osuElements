@@ -3,27 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using osuElements.Helpers;
+using osuElements.Storyboards.Triggers;
 
 namespace osuElements.Storyboards
 {
     public class SpriteEvent : EventBase, ITransformable
     {
-        public Origin Origin;
-
-        //public float StartX;
-        //public float StartY;
+        public Origin Origin { get; set; }
         public Position StartPosition { get; set; }
-        public List<LoopEvent> Loopevents;
-        public List<TriggerEvent> Triggerevents;
-        protected string filepath;
-        public string Filepath
-        {
-            get { return filepath; }
-            set { filepath = value; }
-        }
+        public List<LoopEvent> Loopevents { get; set; }
+        public List<TriggerEvent> Triggerevents { get; set; }
+        public string Filepath { get; set; }
 
-        public SpriteEvent(string filepath) : this(EventLayer.Foreground, Origin.Centre, filepath, 320, 240) { } //default constructor
-        public SpriteEvent(EventLayer layer, Origin origin, string filepath, float x, float y) {
+        public SpriteEvent(string filepath, EventLayer layer = EventLayer.Background, Origin origin = Origin.Centre, float x = 320, float y = 240) {
             Type = EventTypes.Sprite;
             Layer = layer;
             Origin = origin;
@@ -32,18 +24,41 @@ namespace osuElements.Storyboards
             Transformations = new List<TransformationEvent>();
             Loopevents = new List<LoopEvent>();
             Triggerevents = new List<TriggerEvent>();
+            StartTime = int.MaxValue;
+            EndTime = int.MinValue;
         }
 
-        public void AddTransformation(TransformationEvent t) {
-            Transformations.Add(t);
-            Transformations.Sort();
-            Starttime = Math.Min(StartTime, t.StartTime);
-            EndTime = Math.Min(EndTime, t.EndTime);
+        public void AddLoop(LoopEvent l) {
+            Loopevents.Add(l);
+            Loopevents.Sort();
         }
+
+        public void AddTrigger(TriggerEvent t) {
+            Triggerevents.Add(t);
+            Triggerevents.Sort();
+        }
+
+        public void AddTransformation(params TransformationEvent[] transforms) {
+            Transformations.AddRange(transforms);
+            Transformations.Sort();
+            StartTime = Math.Min(transforms.Min(t => t.StartTime), StartTime);
+            EndTime = Math.Max(transforms.Max(t => t.EndTime), EndTime);
+        }
+        public void RemoveTransformation(params TransformationEvent[] transforms) {
+            foreach (var transformationEvent in transforms) {
+                Transformations.Remove(transformationEvent);
+            }
+            StartTime = Transformations.Min(t => t.StartTime);
+            EndTime = Transformations.Max(t => t.StartTime);
+        }
+
 
         public List<TransformationEvent> Transformations { get; set; }
 
+        public static string DefaultFileExtension = "jpg";
+
         public override string ToString() {
+            if (!Filepath.Contains(".")) Filepath += "." + DefaultFileExtension;
             return $"{Type},{Layer},{Origin},\"{Filepath}\",{StartPosition.X.ToString(Constants.IO.CULTUREINFO)},{StartPosition.Y.ToString(Constants.IO.CULTUREINFO)}";
         }
     }

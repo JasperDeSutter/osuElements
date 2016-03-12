@@ -58,15 +58,13 @@
     <Compile Include="PositionTest.cs" />
     <Compile Include="SkinTest.cs" />
     <Compile Include="ReplayTest.cs" />
+    <Compile Include="DbTest.cs" />
+    <Compile Include="ApiTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\osuElementsWindows\osuElements.NET.csproj">
       <Project>{29a2568e-5ea2-4de8-bd85-363c636e7947}</Project>
       <Name>osuElements.NET</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\osuElements\osuElements.csproj">
-      <Project>{608d8edf-26ab-4057-9ccb-5e882a20779d}</Project>
-      <Name>osuElements</Name>
     </ProjectReference>
     <ProjectReference Include="..\TestContent\TestContent.csproj">
       <Project>{eb3704c4-32b2-4a2f-b1c6-67a74b8801f5}</Project>

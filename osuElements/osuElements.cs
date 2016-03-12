@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
+using osuElements.Api.Repositories;
+using osuElements.Beatmaps;
+using osuElements.IO;
 using osuElements.Replays;
-using osuElements.Repositories;
-using osuElements.Repositories.Api;
-using osuElements.Repositories.File;
 using osuElements.Skins;
 using osuElements.Storyboards;
 
@@ -15,37 +15,30 @@ namespace osuElements
 
         private static Func<string, Stream> _fileReaderFunc;
         private static Func<string, Stream> _fileWriterFunc;
-        private static Action<Stream, Stream> _decompressLzmaFunc;
         private static Func<byte[], byte[]> _decompressLzmaFunc1;
-
-        public static Func<byte[], byte[]> DecompressLzmaFunc
-        {
-            get
-            {
-                if (_decompressLzmaFunc1 == null)
-                    throw new NullReferenceException("Supply a osuElements.DecompressLzmaFunc function before tring to decompress a replay");
-                return _decompressLzmaFunc1;
-            }
-            set { _decompressLzmaFunc1 = value; }
-        }
+        private static Func<string, string> _md5Func;
 
         #endregion
 
         static osuElements() {
-            //BeatmapFileRepository = new BeatmapFileRepository();
-            //StoryboardFileRepository = new StoryboardFileRepository();
             StoryboardFileRepository = Storyboard.FileReader();
-            SkinFileRepository = Skin.FileReader();
-            BeatmapFileRepository = Beatmap.FileReader();
-            ReplayFileRepository = new ReplayFileRepository();
-            //SkinFileRepository = new SkinFileRepository();
-            //ApiBeatmapRepository = new ApiBeatmapRepository();
-            //ApiMultiplayerRepository = new ApiMultiplayerRepository();
-            //ApiReplayRepository = new ApiReplayRepository();
-            //ApiUserRepository = new ApiUserRepository();
+            SkinFileRepository = SkinFileReader.SkinReader();
+            BeatmapFileRepository = BeatmapFileReader.BeatmapReader();
+            ReplayFileRepository = Replay.FileReader();
+            //using (RegistryKey osureg = Registry.ClassesRoot.OpenSubKey("osu\\DefaultIcon")) {
+            //    if (osureg != null) {
+            //        string osukey = osureg.GetValue(null).ToString();
+            //        string osupath;
+            //        osupath = osukey.Remove(0, 1);
+            //        osuDirectory = osupath.Remove(osupath.Length - 11);
+            //    }
+            //}
+
         }
 
         #region Properties
+
+        public static string osuDirectory { get; set; }
 
         public static Func<string, Stream> FileReaderFunc
         {
@@ -68,17 +61,32 @@ namespace osuElements
             }
             set { _fileWriterFunc = value; }
         }
-
-        public static Action<Stream, Stream> DecompressLzmaAction
+        /// <summary>
+        /// IN: a compressed byte[], OUT: the decompressed byte[]
+        /// </summary>
+        public static Func<byte[], byte[]> DecompressLzmaFunc
         {
             get
             {
-                if (_decompressLzmaFunc == null)
+                if (_decompressLzmaFunc1 == null)
                     throw new NullReferenceException("Supply a osuElements.DecompressLzmaFunc function before tring to decompress a replay");
-                return _decompressLzmaFunc;
+                return _decompressLzmaFunc1;
             }
-            set { _decompressLzmaFunc = value; }
+            set { _decompressLzmaFunc1 = value; }
         }
+
+        /// <summary>
+        /// IN: a filepath, OUT: the hash for that file
+        /// </summary>
+        public static Func<string, string> Md5Func {
+            get
+            {
+                if (_md5Func == null)
+                    throw new NullReferenceException("Supply a osuElements.Md5Func function before tring to decompress a replay");
+                return _md5Func; }
+            set { _md5Func = value; }
+        }
+
 
         //Custom kind of dependency injection (DI)
         public static IFileRepository<Beatmap> BeatmapFileRepository { get; set; }

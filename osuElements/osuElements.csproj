@@ -34,34 +34,49 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Api\ApiBeatmap.cs" />
     <Compile Include="Api\ApiMulti.cs" />
     <Compile Include="Api\ApiReplay.cs" />
+    <Compile Include="Beatmaps\Base\HitObjectBase.cs" />
+    <Compile Include="Skins\SkinFileReader.cs" />
+    <Compile Include="Db\DbBeatmap.cs" />
+    <Compile Include="IO\IFileModel.cs" />
+    <Compile Include="Beatmaps\BeatmapFileReader.cs" />
     <Compile Include="Curves\BezierSegment.cs" />
     <Compile Include="Curves\CatmullCurve.cs" />
+    <Compile Include="Db\CollectionDb.cs" />
+    <Compile Include="Db\OsuDb.cs" />
+    <Compile Include="Db\ScoresDb.cs" />
     <Compile Include="Helpers\Enums-Event.cs" />
     <Compile Include="Helpers\IHitsound.cs" />
-    <Compile Include="Repositories\File\WriteLine.cs" />
-    <Compile Include="Repositories\HitObjectManagerBase.cs" />
+    <Compile Include="Replays\HitobjectTiming.cs" />
+    <Compile Include="Replays\KeyPress.cs" />
+    <Compile Include="IO\Binary\BinaryCollection.cs" />
+    <Compile Include="IO\Binary\BinaryExtensions.cs" />
+    <Compile Include="IO\Binary\BinaryFileLine.cs" />
+    <Compile Include="IO\Binary\BinaryFile.cs" />
+    <Compile Include="IO\Binary\BinaryFileList.cs" />
+    <Compile Include="IO\Binary\IBinaryFileLine.cs" />
+    <Compile Include="IO\File\WriteLine.cs" />
+    <Compile Include="Beatmaps\Base\HitObjectManagerBase.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
-    <Compile Include="Storyboards\Beatmaps\BackgroundColorEvent.cs" />
-    <Compile Include="Storyboards\Beatmaps\BreakEvent.cs" />
-    <Compile Include="Storyboards\Beatmaps\VideoEvent.cs" />
+    <Compile Include="Beatmaps\Events\BackgroundColorEvent.cs" />
+    <Compile Include="Beatmaps\Events\BreakEvent.cs" />
+    <Compile Include="Beatmaps\Events\VideoEvent.cs" />
+    <Compile Include="Storyboards\ITransformable.cs" />
+    <Compile Include="Storyboards\TransformableExtensions.cs" />
     <Compile Include="Storyboards\Triggers\FailingTrigger.cs" />
     <Compile Include="Storyboards\IStoryboardEvents.cs" />
-    <Compile Include="Repositories\Api\ApiBeatmapRepository.cs" />
-    <Compile Include="Repositories\Api\ApiReplayRepository.cs" />
-    <Compile Include="Repositories\Api\ApiMultiplayerRepository.cs" />
-    <Compile Include="Repositories\Api\ApiRepositoryBase.cs" />
-    <Compile Include="Repositories\Api\ApiUserRepository.cs" />
+    <Compile Include="Api\Repositories\ApiBeatmapRepository.cs" />
+    <Compile Include="Api\Repositories\ApiReplayRepository.cs" />
+    <Compile Include="Api\Repositories\ApiMultiplayerRepository.cs" />
+    <Compile Include="Api\Repositories\ApiRepositoryBase.cs" />
+    <Compile Include="Api\Repositories\ApiUserRepository.cs" />
     <Compile Include="Api\ApiScore.cs" />
     <Compile Include="Api\ApiUser.cs" />
-    <Compile Include="Beatmap.cs" />
-    <Compile Include="Collections\Collection.cs" />
-    <Compile Include="ComboColour.cs" />
+    <Compile Include="Beatmaps\Beatmap.cs" />
+    <Compile Include="Db\Collection.cs" />
+    <Compile Include="Colour.cs" />
     <Compile Include="Helpers\BitFunctions.cs" />
     <Compile Include="Helpers\ByteStringConversion.cs" />
     <Compile Include="Helpers\Constants.cs" />
@@ -70,49 +85,46 @@
     <Compile Include="Helpers\Enums-HitObject.cs" />
     <Compile Include="Helpers\Enums-Other.cs" />
     <Compile Include="Helpers\extensions.cs" />
-    <Compile Include="HitCircle.cs" />
-    <Compile Include="HitObject.cs" />
-    <Compile Include="HoldCircle.cs" />
+    <Compile Include="Beatmaps\HitCircle.cs" />
+    <Compile Include="Beatmaps\HitObject.cs" />
+    <Compile Include="Beatmaps\HoldCircle.cs" />
     <Compile Include="osuElements.cs" />
-    <Compile Include="BeatmapBase.cs" />
     <Compile Include="Curves\BezierCurve.cs" />
     <Compile Include="Curves\CurveBase.cs" />
     <Compile Include="Curves\LinearCurve.cs" />
     <Compile Include="Curves\PerfectCurve.cs" />
-    <Compile Include="Replays\ReplayFileRepository.cs" />
-    <Compile Include="Repositories\File\FileLine.cs" />
-    <Compile Include="Repositories\File\FileReader.cs" />
-    <Compile Include="Repositories\File\FileSection.cs" />
-    <Compile Include="Repositories\File\IFileLine.cs" />
-    <Compile Include="Repositories\File\IFileSection.cs" />
-    <Compile Include="Repositories\File\ILogger.cs" />
-    <Compile Include="Repositories\File\ListFileLine.cs" />
-    <Compile Include="Repositories\File\MultiFileLine.cs" />
-    <Compile Include="Repositories\File\MultipleFileSection.cs" />
-    <Compile Include="Repositories\File\ObjectListFileSection.cs" />
-    <Compile Include="Repositories\File\StoryboardSection.cs" />
+    <Compile Include="IO\File\FileLine.cs" />
+    <Compile Include="IO\File\FileReader.cs" />
+    <Compile Include="IO\File\FileSection.cs" />
+    <Compile Include="IO\File\IFileLine.cs" />
+    <Compile Include="IO\File\IFileSection.cs" />
+    <Compile Include="IO\File\ILogger.cs" />
+    <Compile Include="IO\File\ListFileLine.cs" />
+    <Compile Include="IO\File\MultiFileLine.cs" />
+    <Compile Include="IO\File\MultipleFileSection.cs" />
+    <Compile Include="IO\File\CollectionFileSection.cs" />
+    <Compile Include="IO\File\StoryboardSection.cs" />
     <Compile Include="osuURL.cs" />
     <Compile Include="Skins\ManiaSkin.cs" />
     <Compile Include="Storyboards\Triggers\TriggerBase.cs" />
     <Compile Include="Storyboards\Triggers\HitSoundTrigger.cs" />
     <Compile Include="Storyboards\Triggers\PassingTrigger.cs" />
-    <Compile Include="Timing.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replays\LifebarFrame.cs" />
     <Compile Include="Replays\Replay.cs" />
     <Compile Include="Replays\ReplayFrame.cs" />
     <Compile Include="Replays\ReplayManager.cs" />
-    <Compile Include="Repositories\BeatmapManager.cs" />
-    <Compile Include="Repositories\Api\IApiRepository.cs" />
-    <Compile Include="Repositories\IFileRepository.cs" />
-    <Compile Include="Repositories\tpDifficulty.cs" />
-    <Compile Include="Repositories\tpHitObject.cs" />
+    <Compile Include="Beatmaps\BeatmapManager.cs" />
+    <Compile Include="Api\Repositories\IApiRepository.cs" />
+    <Compile Include="IO\IFileRepository.cs" />
+    <Compile Include="Beatmaps\Base\tpDifficulty.cs" />
+    <Compile Include="Beatmaps\Base\tpHitObject.cs" />
     <Compile Include="Skins\Skin.cs" />
-    <Compile Include="Slider.cs" />
-    <Compile Include="Spinner.cs" />
+    <Compile Include="Beatmaps\Slider.cs" />
+    <Compile Include="Beatmaps\Spinner.cs" />
     <Compile Include="Storyboards\AnimationEvent.cs" />
-    <Compile Include="Storyboards\Beatmaps\BackgroundEvent.cs" />
+    <Compile Include="Beatmaps\Events\BackgroundEvent.cs" />
     <Compile Include="Storyboards\EventBase.cs" />
     <Compile Include="Storyboards\LoopEvent.cs" />
     <Compile Include="Storyboards\other.cs" />
@@ -122,23 +134,16 @@
     <Compile Include="Storyboards\Storyboard.cs" />
     <Compile Include="Storyboards\TransformationEvent.cs" />
     <Compile Include="Storyboards\TriggerEvent.cs" />
-    <Compile Include="TimingPoint.cs" />
+    <Compile Include="Beatmaps\TimingPoint.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>D:\NugetPackages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="xBrainLab.Security.Cryptography, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\xBrainLab.Security.Cryptography.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

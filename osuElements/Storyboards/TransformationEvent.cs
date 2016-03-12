@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using osuElements.Helpers;
 
@@ -10,8 +11,8 @@ namespace osuElements.Storyboards
         public virtual int EndTime { get; set; }
         public int Duration => EndTime - Starttime;
 
-        public double[] StartValues { get; set; }
-        public double[] EndValues { get; set; }
+        public float[] StartValues { get; set; }
+        public float[] EndValues { get; set; }
         public TransformTypes Transformtype { get; set; }
         public Easing Easing { get; set; }
 
@@ -23,10 +24,23 @@ namespace osuElements.Storyboards
             set { Starttime = value; }
         }
 
+        public float[] ValuesAt(float time) {
+            var t = MathHelper.Clamp(time/Duration);
+            var result = new float[ValueCount];
+            for (int i = 0; i < ValueCount; i++) {
+                var startValue = StartValues[i];
+                result[i] = MathHelper.Lerp(t, StartValues[i], EndValues[i]);
+            }
+            return result;
+        }
 
-        public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, double[] startvalues) : this(type, easing, starttime, endtime, startvalues, startvalues) { }
+        public int ValueCount => StartValues.Length;
 
-        public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, double[] startvalues, double[] endvalues) {
+        public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, float[] startvalues)
+            : this(type, easing, starttime, endtime, startvalues, startvalues) { }
+
+        public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, float[] startvalues,
+            float[] endvalues) {
             Transformtype = type;
             Easing = easing;
             StartTime = starttime;
@@ -35,10 +49,14 @@ namespace osuElements.Storyboards
             EndValues = endvalues;
         }
 
-        public virtual bool IsActive(double time) {
-            return (time >= StartTime && time <= EndTime);
+        public int CompareTo(TransformationEvent other) {
+            if (StartTime != other.StartTime)
+                return StartTime.CompareTo(other.StartTime);
+            if (EndTime != other.EndTime)
+                return EndTime.CompareTo(other.EndTime);
+            return Transformtype.CompareTo(other.Transformtype);
         }
-        
+
         public override string ToString() {
             var result = new StringBuilder();
             result.Append(Transformtype + ",");
@@ -49,9 +67,23 @@ namespace osuElements.Storyboards
 
             var issame = true;
 
-            for (var i = 0; i < StartValues.Length; i++) {
-                result.Append("," + StartValues[i].ToString(Constants.IO.CULTUREINFO));
-                if (StartValues[i] != EndValues[i]) issame = false;
+            var startValues = StartValues;
+            var endValues = EndValues;
+
+            for (var i = 0; i < ValueCount; i++) {
+                switch (Transformtype) {
+                    case TransformTypes.C:
+                        startValues[i] = Math.Max(0, Math.Min(255, (int)startValues[i]));
+                        endValues[i] = Math.Max(0, Math.Min(255, (int)endValues[i]));
+                        break;
+                    case TransformTypes.F:
+                        startValues[i] = Math.Max(0, Math.Min(1, startValues[i]));
+                        endValues[i] = Math.Max(0, Math.Min(1, endValues[i]));
+                        break;
+                }
+
+                result.Append("," + startValues[i].ToString(Constants.IO.CULTUREINFO));
+                if (startValues[i] != EndValues[i]) issame = false;
             }
             if (issame) return result.ToString();
 
@@ -61,64 +93,57 @@ namespace osuElements.Storyboards
             return result.ToString();
         }
 
-        public int CompareTo(TransformationEvent other) {
-            if (StartTime != other.StartTime)
-                return StartTime.CompareTo(other.StartTime);
-            if (EndTime != other.EndTime)
-                return EndTime.CompareTo(other.EndTime);
-            return Transformtype.CompareTo(other.Transformtype);
-        }
-        public static bool TryParse(string s, out TransformationEvent t) {
+        public static bool TryParse(string s, out TransformationEvent[] t) {
             t = null;
             var parts = s.Trim().Split(Constants.Splitter.Comma);
             var valuescount = parts.Length - 4; // type, easing, start and end not inculded
 
-            //if (valuescount < 0) return false;
+            if (valuescount < 0) return false;
             TransformTypes type;
             if (!Enum.TryParse(parts[0], out type)) return false;
             if (type == TransformTypes.T || type == TransformTypes.L) return false;
             t = Parse(s);
             return true;
-
         }
-        public static TransformationEvent Parse(string s) {
 
+        public static TransformationEvent[] Parse(string s) {
             var parts = s.Trim().Split(Constants.Splitter.Comma);
 
             var type = (TransformTypes)Enum.Parse(typeof(TransformTypes), parts[0]);
-            
             var easing = (Easing)int.Parse(parts[1]);
             var start = int.Parse(parts[2]);
             int end;
             if (!int.TryParse(parts[3], out end)) end = start;
 
-            if (type == TransformTypes.P)
-                return new ParameterEvent(start, end, (ParamTypes)Enum.Parse(typeof(ParamTypes), parts[4]));
-
-            var actualcount = parts.Length - 4;
-            var valuecount = (type == TransformTypes.C ? 3 : (type == TransformTypes.M || type == TransformTypes.V) ? 2 : 1);
-            var sv = new List<double>();
-
-            for (var i = 0; i < valuecount; i++) {
-                sv.Add(double.Parse(parts[4 + i], Constants.IO.CULTUREINFO));
+            if (type == TransformTypes.P) {
+                return
+                    new ParameterEvent(start, end, (ParameterTypes)Enum.Parse(typeof(ParameterTypes), parts[4]))
+                        .AsArray<TransformationEvent>();
             }
 
-            if (valuecount == actualcount) {
-                return new TransformationEvent(type, easing, start, end, sv.ToArray());
+            var values = parts.Skip(4).ToArray();
+            //Magic number 4: the first four default elements of every transformation
+            var valuecount = type == TransformTypes.C ? 3 : type == TransformTypes.M || type == TransformTypes.V ? 2 : 1;
+            var sv =
+                Enumerable.Range(0, valuecount).Select(i => float.Parse(values[i], Constants.IO.CULTUREINFO)).ToArray();
+
+            var count = values.Length / valuecount;
+
+            if (count == 1) {
+                return new TransformationEvent(type, easing, start, end, sv).AsArray();
             }
 
-            var ev = new List<double>();
+            var result = new TransformationEvent[--count];
 
-            for (var i = 0; i < valuecount; i++) {
-                double temp;
-                ev.Add(double.TryParse(parts[4 + i + valuecount], Constants.IO.NUMBER_STYLE,
-                    Constants.IO.CULTUREINFO, out temp)
-                    ? temp
-                    : sv[i]);
+            for (int i = 0; i < count; i++) {
+                var ev =
+                    Enumerable.Range((i + 1) * valuecount, (i + 2) * valuecount)
+                        .Select(j => float.Parse(values[j], Constants.IO.CULTUREINFO))
+                        .ToArray();
+                result[i] = new TransformationEvent(type, easing, start, end, sv, ev);
+                sv = ev;
             }
-
-            return new TransformationEvent(type, easing, start, end, sv.ToArray(), ev.ToArray());
-
+            return result;
         }
     }
 }

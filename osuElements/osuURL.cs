@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using osuElements.Helpers;
 
 namespace osuElements
 {
@@ -11,8 +12,8 @@ namespace osuElements
             OsuAction?.Invoke(result);
             return result;
         }
-        public static string SelectEditorNotes(Timing time, params int[] notes) {
-            var result = $"osu://edit/{time}";
+        public static string SelectEditorNotes(TimeSpan time, params int[] notes) {
+            var result = $"osu://edit/{time.ToString("mm:ss:") + time.Milliseconds.ToString("D3")}";
             if (notes.Length > 0) {
                 result += " (" + notes.ToString(",") + ")";
             }

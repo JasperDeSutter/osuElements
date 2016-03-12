@@ -8,26 +8,31 @@ namespace osuElements.Storyboards
 {
     public class TriggerEvent : LoopEvent
     {
-        public TriggerTypes TriggerType => Trigger.TriggerType;
-        public TriggerBase Trigger;
-        public override TransformTypes TransformType { get; } = TransformTypes.T;
-        public int Group { get; set; } = 0;
-        public override int EndTime { get; set; }
-
-        public TriggerEvent(TriggerBase trigger, int starttime, int endtime) : base(starttime) {
+        public TriggerEvent(TriggerBase trigger, int starttime, int endtime, int group = 0) : base(starttime) {
             Trigger = trigger;
             StartTime = starttime;
             EndTime = endtime;
+            Group = group;
         }
+        public TriggerEvent(TriggerTypes trigger, int starttime, int endtime, int group = 0)
+            : this(TriggerBase.FromType(trigger), starttime, endtime, group) { }
+
+        public TriggerTypes TriggerType => Trigger.TriggerType;
+        public TriggerBase Trigger { get; set; }
+        public override TransformTypes TransformType { get; } = TransformTypes.T;
+        public int Group { get; set; }
+
+        public override void OptimizeLoop() { }
 
         public override string ToString() {
             return $"{TransformType},{Trigger},{StartTime},{EndTime}" + (Group == 0 ? "" : "," + Group);
         }
+
         public static bool TryParse(string line, out TriggerEvent triggerEvent) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             triggerEvent = null;
 
-            if (parts.Length < 4 || parts[0].Trim() != "T") return false;
+            if (parts.Length < 4 || parts[0].Trim() != TransformTypes.T.ToString()) return false;
             TriggerBase trigger;
             if (!TriggerBase.TryParse(parts[1].TrimStart(), out trigger)) return false;
             int starttime, endtime;
@@ -42,6 +47,7 @@ namespace osuElements.Storyboards
             triggerEvent.Group = group;
             return true;
         }
+
         public new static TriggerEvent Parse(string line) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             TriggerBase trigger;

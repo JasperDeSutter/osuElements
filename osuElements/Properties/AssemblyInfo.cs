@@ -4,11 +4,11 @@ using System.Reflection;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("osuElements1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("osuElements")]
+[assembly: AssemblyDescription("Open Source osu! Framework")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("osuElements1")]
+[assembly: AssemblyProduct("osuElements")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

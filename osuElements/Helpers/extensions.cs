@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace osuElements.Helpers
 {
@@ -28,15 +27,14 @@ namespace osuElements.Helpers
         }
     }
 
-}
-
-namespace System.Linq
-{
     public static class LinqExtensions
     {
         public static string ToString<T>(this IEnumerable<T> list, string separator) {
             return string.Join(separator, list);
         }
-    }
+        public static T[] AsArray<T>(this T t) {
+            return new[] { t };
+        }
 
+    }
 }

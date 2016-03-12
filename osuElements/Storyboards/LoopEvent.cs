@@ -7,30 +7,27 @@ namespace osuElements.Storyboards
 {
     public class LoopEvent : ITransformable
     {
+        #region Properties
+        public List<TransformationEvent> Transformations { get; set; }
+        public int LoopDuration
+        {
+            get
+            {
+                return Transformations.Count < 1 ? 0 : Transformations.Max(t => t.EndTime) - Transformations.Min(t => t.StartTime);
+            }
+        }
+        public virtual TransformTypes TransformType { get; } = TransformTypes.L;
+        public int StartTime { get; set; }
+        public int Loopcount { get; set; }
+
+        public int EndTime { get; set; }
+
+        #endregion
         public LoopEvent(int starttime, int loopcount = 1) {
             StartTime = starttime;
             Loopcount = loopcount;
             Transformations = new List<TransformationEvent>();
         }
-
-        #region Properties
-        public List<TransformationEvent> Transformations { get; set; }
-        public virtual TransformTypes TransformType { get; } = TransformTypes.L;
-        public int StartTime { get; set; }
-        public int Loopcount { get; set; }
-
-        public virtual int EndTime
-        {
-            get
-            {
-                return Transformations.Count < 1
-                    ? StartTime
-                    : StartTime + Transformations.Max(t => t.EndTime) * Loopcount;
-            }
-            set { throw new InvalidOperationException("Cannot set the endtime of a loopevent"); }
-        }
-
-        #endregion
 
         #region Methods
 
@@ -53,10 +50,22 @@ namespace osuElements.Storyboards
         public override string ToString() {
             return $"{TransformType},{StartTime},{Loopcount}";
         }
-        
-        public void AddTransformation(TransformationEvent e) {
-            Transformations.Add(e);
+
+        public void AddTransformation(params TransformationEvent[] transforms) {
+            Transformations.AddRange(transforms);
             Transformations.Sort();
+            EndTime = Transformations.Max(t => t.EndTime);
+        }
+
+        public virtual void OptimizeLoop() {
+            var first = Transformations.Min(t => t.StartTime);
+            if (StartTime == first) return;
+            var difference = first - StartTime;
+            StartTime += difference;
+            foreach (var transform in Transformations) {
+                transform.StartTime -= difference;
+                transform.EndTime -= difference;
+            }
         }
 
         #endregion

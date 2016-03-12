@@ -6,10 +6,10 @@ namespace osuElements.Storyboards
 {
     public class ParameterEvent : TransformationEvent
     {
-        public ParamTypes Parameter;
-        public ParameterEvent(int starttime, int endtime, ParamTypes param) : base(TransformTypes.P, Easing.None, starttime, endtime, null)
+        public ParameterTypes Parameter;
+        public ParameterEvent(int starttime, int endtime, ParameterTypes parameter) : base(TransformTypes.P, Easing.None, starttime, endtime, null)
         {
-            Parameter = param;
+            Parameter = parameter;
             StartTime = starttime;
             EndTime = endtime;
         }

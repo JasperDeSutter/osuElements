@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using osuElements.Beatmaps.Events;
 using osuElements.Helpers;
-using osuElements.Storyboards.Beatmaps;
 
 namespace osuElements.Storyboards
 {
@@ -9,16 +9,12 @@ namespace osuElements.Storyboards
     {
 
         public EventLayer Layer = EventLayer.Undefined;
-        protected int Starttime;
         public EventTypes Type;
         
 
-        public virtual int StartTime {
-            get { return Starttime; }
-            set { Starttime = value; }
-        }
+        public int StartTime { get; set; }
 
-        public virtual int EndTime { get; set; }
+        public int EndTime { get; set; }
         public int Duration => EndTime - StartTime;
         
 
@@ -45,22 +41,18 @@ namespace osuElements.Storyboards
                 if (parts.Length > 3) path = parts[3].Trim('\"');
                 switch (etype) {
                     case (EventTypes.Sprite):
-                        result = new SpriteEvent((EventLayer) Enum.Parse(typeof (EventLayer), parts[1]),
-                            (Origin) Enum.Parse(typeof (Origin), parts[2]), path,
-                            float.Parse(parts[4], Constants.IO.CULTUREINFO),
-                            float.Parse(parts[5], Constants.IO.CULTUREINFO));
+                        result = new SpriteEvent(path,
+                            (EventLayer) Enum.Parse(typeof (EventLayer), parts[1]),
+                            (Origin) Enum.Parse(typeof (Origin), parts[2]), float.Parse(parts[4], Constants.IO.CULTUREINFO), float.Parse(parts[5], Constants.IO.CULTUREINFO));
                         break;
                     case (EventTypes.Animation):
                         Looptypes lt;
-                        result = new AnimationEvent((EventLayer) Enum.Parse(typeof (EventLayer), parts[1]),
-                            (Origin) Enum.Parse(typeof (Origin), parts[2]), path,
-                            float.Parse(parts[4], Constants.IO.CULTUREINFO),
-                            float.Parse(parts[5], Constants.IO.CULTUREINFO), int.Parse(parts[6]), int.Parse(parts[7]),
-                            Enum.TryParse(parts[8], out lt) ? lt : Looptypes.LoopForever);
+                        result = new AnimationEvent(path,
+                            int.Parse(parts[6]), int.Parse(parts[7]), (EventLayer) Enum.Parse(typeof (EventLayer), parts[1]), (Origin) Enum.Parse(typeof (Origin), parts[2]), float.Parse(parts[4], Constants.IO.CULTUREINFO), float.Parse(parts[5], Constants.IO.CULTUREINFO), Enum.TryParse(parts[8], out lt) ? lt : Looptypes.LoopForever);
                         break;
                     case (EventTypes.Sample):
-                        result = new SampleEvent(int.Parse(parts[1]), parts[3], int.Parse(parts[4]),
-                            (EventLayer) int.Parse(parts[2]));
+                        result = new SampleEvent(parts[3], int.Parse(parts[1]),
+                            int.Parse(parts[4]), (EventLayer) int.Parse(parts[2]));
                         break;
                     case (EventTypes.Background): 
                         result = new BackgroundEvent(int.Parse(parts[1]), parts[2].Trim('"'),

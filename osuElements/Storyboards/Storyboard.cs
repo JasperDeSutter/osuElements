@@ -3,57 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using osuElements.Repositories;
-using osuElements.Repositories.File;
+using osuElements.Helpers;
+using osuElements.IO;
+using osuElements.IO.File;
 
 namespace osuElements.Storyboards
 {
-    public class Storyboard : IStoryboardEvents
+    public class Storyboard : IStoryboardEvents, IFileModel
     {
-        public static IFileRepository<Storyboard> StoryboardFileRepository { private get; set; }
-        public string FileName;
-        public string Directory;
-        public List<EventBase> Events;
         public Storyboard() {
+            StoryboardFileRepository = osuElements.StoryboardFileRepository;
             BackgroundEvents = new List<SpriteEvent>();
             ForegroundEvents = new List<SpriteEvent>();
             FailEvents = new List<SpriteEvent>();
             PassEvents = new List<SpriteEvent>();
             SampleEvents = new List<SampleEvent>();
-            Events = new List<EventBase>();
             VariablesDictionary = new Dictionary<string, string>();
         }
 
         public Storyboard(string filePath) : this() {
-            FilePath = filePath;
-            StoryboardFileRepository.ReadFile(osuElements.FileReaderFunc(filePath), this);
+            FullPath = filePath;
+            ReadFile();
         }
-
-        public void AddEvent(EventBase e) {
-            Events.Add(e);
-        }
-
-        public string FilePath
-        {
-            set
-            {
-                FileName = Path.GetFileName(value);
-                Directory = Path.GetDirectoryName(value);
-            }
-            get
-            {
-                return Path.Combine(Directory, FileName);
-            }
-        }
-
-        public List<EventBase> GetActiveEvents(float time) {
-            return Events.Where(e => e.StartTime < time && e.EndTime > time).ToList();
-        }
-
-        public void WriteFile(string file) {
-            StoryboardFileRepository.WriteFile(osuElements.FileWriterFunc(file), this);
-        }
-
 
         public List<SpriteEvent> BackgroundEvents { get; set; }
         public List<SpriteEvent> FailEvents { get; set; }
@@ -61,9 +32,48 @@ namespace osuElements.Storyboards
         public List<SpriteEvent> ForegroundEvents { get; set; }
         public List<SampleEvent> SampleEvents { get; set; }
         public Dictionary<string, string> VariablesDictionary { get; set; }
+        public void AddSpriteEvent(SpriteEvent sprite) {
+            switch (sprite.Layer) {
+                case EventLayer.Background:
+                    BackgroundEvents.Add(sprite);
+                    break;
+                case EventLayer.Fail:
+                    FailEvents.Add(sprite);
+                    break;
+                case EventLayer.Pass:
+                    PassEvents.Add(sprite);
+                    break;
+                case EventLayer.Foreground:
+                    ForegroundEvents.Add(sprite);
+                    break;
+                default:
+                    throw new ArgumentException("The sprite's (event)layer was not set to a known storyboard layer");
+            }
+        }
 
+        #region File
+        public static IFileRepository<Storyboard> StoryboardFileRepository { get; set; }
+        public bool IsRead { get; private set; }
+        public string FileName { get; set; }
+        public string Directory { get; set; }
+        public string FullPath
+        {
+            get { return Path.Combine(Directory, FileName); }
+            set
+            {
+                Directory = Path.GetDirectoryName(value);
+                FileName = Path.GetFileName(value);
+            }
+        }
+        public void ReadFile(ILogger logger = null) {
+            StoryboardFileRepository.ReadFile(osuElements.FileReaderFunc(FullPath), this, logger);
+            IsRead = true;
+        }
+        public void WriteFile() {
+            StoryboardFileRepository.WriteFile(osuElements.FileWriterFunc(FullPath), this);
+        }
         public static FileReader<Storyboard> FileReader() {
-            var variables = new ObjectListFileSection<KeyValuePair<string, string>, Storyboard>(nameof(VariablesDictionary), "Variables",
+            var variables = new CollectionFileSection<KeyValuePair<string, string>, Storyboard>(s => s.VariablesDictionary, "Variables",
                 s => {
                     var parts = s.Split('=');
                     return new KeyValuePair<string, string>(parts[0], parts[1]);
@@ -72,5 +82,6 @@ namespace osuElements.Storyboards
 
             return new FileReader<Storyboard>(variables, new StoryboardSection<Storyboard>("Events"));
         }
+        #endregion
     }
 }
