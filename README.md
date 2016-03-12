@@ -1,3 +1,7 @@
+Information about this:
+https://osu.ppy.sh/forum/t/430701
+
+
 license:
 --------
 Copyright (c) 2016 Jasper De Sutter (ExCellRaD)
