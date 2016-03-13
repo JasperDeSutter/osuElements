@@ -25,6 +25,8 @@ namespace ModelsTest
             var osuDb = new OsuDb();
             var logger = new BasicLogger();
             osuDb.ReadFile(logger);
+            var beatmap = osuDb.Beatmaps[1];
+            beatmap.ReadFile();
         }
 
         [TestMethod]
@@ -32,7 +34,7 @@ namespace ModelsTest
             var scoreDb = new ScoresDb();
             var logger = new BasicLogger();
             scoreDb.ReadFile(logger);
-            var scores = scoreDb.Scores.Sum(s => s.Replays.Count);
+            var scores = scoreDb.ScoreLists.Sum(s => s.Replays.Count);
         }
     }
 }

@@ -10,17 +10,17 @@ namespace osuElements.Db
     public class ScoresDb
     {
         public ScoresDb() {
-            Scores = new List<ScoreList>();
+            ScoreLists = new List<ScoreList>();
             ScoreDbRepository = osuElements.ScoresDbRepository;
         }
 
-        public List<ScoreList> Scores { get; set; }
+        public List<ScoreList> ScoreLists { get; set; }
         public int FileVersion { get; set; }
 
         public static BinaryFile<ScoresDb> FileReader() {
             var result = new BinaryFile<ScoresDb>(
                 new BinaryFileLine<ScoresDb, int>(s => s.FileVersion),
-                new BinaryCollection<ScoresDb, ScoreList>(s => s.Scores,
+                new BinaryCollection<ScoresDb, ScoreList>(s => s.ScoreLists,
                     new BinaryFileLine<ScoreList, string>(s => s.MapHash),
                     new BinaryCollection<ScoreList, Replay>(l => l.Replays,
                 Replay.HeaderFileLines())));

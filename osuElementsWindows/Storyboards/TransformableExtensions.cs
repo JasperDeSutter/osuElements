@@ -67,15 +67,15 @@ namespace osuElements.Storyboards
             transformable.AddTransformation(F, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
 
-        public static void FlipH(this ITransformable transformable, int startTime, int endTime = int.MinValue) {
+        public static void FlipH(this ITransformable transformable, int startTime, int endTime) {
             transformable.AddTransformation(new ParameterEvent(startTime, Math.Max(startTime, endTime), ParameterTypes.H));
         }
 
-        public static void FlipV(this ITransformable transformable, int startTime, int endTime = int.MinValue) {
+        public static void FlipV(this ITransformable transformable, int startTime, int endTime) {
             transformable.AddTransformation(new ParameterEvent(startTime, Math.Max(startTime, endTime), ParameterTypes.V));
         }
 
-        public static void Additive(this ITransformable transformable, int startTime, int endTime = int.MinValue) {
+        public static void Additive(this ITransformable transformable, int startTime, int endTime) {
             transformable.AddTransformation(new ParameterEvent(startTime, Math.Max(startTime, endTime), ParameterTypes.A));
         }
 

@@ -32,7 +32,10 @@ namespace osuElements.Db
             AddColection(name, beatmaps.Select(b => b.GetHash()));
         }
         public void AddColection(string name, IEnumerable<string> beatmapHashes) {
-            Collections.Add(new Collection(name) { Beatmaps = beatmapHashes.ToList() });
+            AddColection(new Collection(name) { Beatmaps = beatmapHashes.ToList() });
+        }
+        public void AddColection(Collection collection) {
+            Collections.Add(collection);
         }
         public void AddToCollection(string name, IEnumerable<Beatmap> beatmaps) {
             Collections.FirstOrDefault(c => c.Name == name)?.Beatmaps.AddRange(beatmaps.Select(b => b.GetHash()));

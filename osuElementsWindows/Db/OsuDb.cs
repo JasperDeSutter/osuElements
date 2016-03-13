@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using osuElements.Beatmaps;
 using osuElements.Helpers;
 using osuElements.IO;
@@ -121,5 +122,9 @@ namespace osuElements.Db
             OsuDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
+
+        public DbBeatmap FindHash(string hash) {
+            return Beatmaps.FirstOrDefault(b => b.Hash == hash);
+        }
     }
 }
