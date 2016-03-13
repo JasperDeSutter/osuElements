@@ -2,7 +2,7 @@
 
 using System;
 
-namespace osuElements.Net._7zip.Compress.LZ
+namespace osuElements._7zip.Compress.LZ
 {
 	interface IInWindowStream
 	{

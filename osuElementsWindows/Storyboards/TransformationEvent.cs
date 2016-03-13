@@ -7,34 +7,26 @@ namespace osuElements.Storyboards
 {
     public class TransformationEvent : IComparable<TransformationEvent>
     {
-        public virtual int EndTime { get; set; }
-        public int Duration => EndTime - Starttime;
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+        public int Duration => EndTime - StartTime;
 
         public float[] StartValues { get; set; }
         public float[] EndValues { get; set; }
+        public int ValueCount => StartValues.Length;
+        public bool Tweening => !StartValues.SequenceEqual(EndValues);
         public TransformTypes Transformtype { get; set; }
         public Easing Easing { get; set; }
 
-        protected int Starttime;
-
-        public virtual int StartTime
-        {
-            get { return Starttime; }
-            set { Starttime = value; }
-        }
 
         public float[] ValuesAt(float time) {
             var t = MathHelper.Clamp(time / Duration);
             var result = new float[ValueCount];
             for (int i = 0; i < ValueCount; i++) {
-                var startValue = StartValues[i];
                 result[i] = MathHelper.Lerp(t, StartValues[i], EndValues[i]);
             }
             return result;
         }
-
-        public int ValueCount => StartValues.Length;
-        public bool Tweening => StartValues.SequenceEqual(EndValues);
 
         public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, float[] startvalues)
             : this(type, easing, starttime, endtime, startvalues, startvalues) { }

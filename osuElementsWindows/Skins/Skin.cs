@@ -14,7 +14,11 @@ namespace osuElements.Skins
         public string Directory { get; set; }
         public string FullPath
         {
-            get { return Path.Combine(Directory, FileName); }
+            get
+            {
+                var result = Path.Combine(Directory, FileName);
+                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuSkinsDirectory, result);
+            }
             set
             {
                 Directory = Path.GetDirectoryName(value);
@@ -59,14 +63,14 @@ namespace osuElements.Skins
         public bool CursorCentre { get; set; } = true;
         public int SliderBallFrames { get; set; } = 10;
         public bool HitCircleOverlayAboveNumber { get; set; } = true;
-        public bool SpinnerFrequencyModulate { get; set; } = true; //
-        public bool LayeredHitsounds { get; set; } = true; //
+        public bool SpinnerFrequencyModulate { get; set; } = true; 
+        public bool LayeredHitsounds { get; set; } = true; 
         public bool SpinnerFadePlayField { get; set; } = true;
         public bool SpinnerNoBlink { get; set; } = false;
         public bool AllowSliderBallTint { get; set; } = false;
         public int AnimationFramerate { get; set; } = -1;
         public bool CursorTrailRotate { get; set; } = true;
-        public List<int> CustomComboBurstSounds { get; set; } = new List<int>(new[] { 50, 75, 100, 200, 300 });
+        public List<int> CustomComboBurstSounds { get; set; } = new List<int> { 50, 75, 100, 200, 300 };
         public bool ComboBurstRandom { get; set; } = true;
         public SliderStyle SliderStyle { get; set; } = SliderStyle.Transparent;
         public float Version { get; set; }

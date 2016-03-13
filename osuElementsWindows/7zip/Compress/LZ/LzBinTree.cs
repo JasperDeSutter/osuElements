@@ -1,9 +1,9 @@
 // LzBinTree.cs
 
 using System;
-using osuElements.Net._7zip.Common;
+using osuElements._7zip.Common;
 
-namespace osuElements.Net._7zip.Compress.LZ
+namespace osuElements._7zip.Compress.LZ
 {
 	public class BinTree : InWindow, IMatchFinder
 	{

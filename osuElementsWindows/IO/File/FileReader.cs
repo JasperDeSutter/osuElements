@@ -15,7 +15,7 @@ namespace osuElements.IO.File
 
         //Dont't use, very slow
         public async Task WriteFileAsync(Stream outStream, T instance) {
-            var tasks = GetInstances(instance).Select(fileSection => Task.Factory.StartNew<List<string>>(fileSection.AllLines)).ToList();
+            var tasks = GetInstances(instance).Select(fileSection => Task.Factory.StartNew(fileSection.AllLines)).ToList();
             using (var sw = new StreamWriter(outStream)) {
                 for (int i = 0; i < tasks.Count; i++) {
                     var task = tasks[i];

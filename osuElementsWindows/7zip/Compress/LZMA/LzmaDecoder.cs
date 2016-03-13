@@ -1,9 +1,9 @@
 // LzmaDecoder.cs
 
 using System;
-using osuElements.Net._7zip.Compress.RangeCoder;
+using osuElements._7zip.Compress.RangeCoder;
 
-namespace osuElements.Net._7zip.Compress.LZMA
+namespace osuElements._7zip.Compress.LZMA
 {
     public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
 	{

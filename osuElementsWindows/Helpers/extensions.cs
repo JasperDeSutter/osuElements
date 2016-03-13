@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using osuElements.Beatmaps;
 
 namespace osuElements.Helpers
 {
@@ -28,12 +31,11 @@ namespace osuElements.Helpers
 
     public static class LinqExtensions
     {
-        public static string ToString<T>(this IEnumerable<T> list, string separator) {
+        internal static string ToString<T>(this IEnumerable<T> list, string separator) {
             return string.Join(separator, list);
         }
-        public static T[] AsArray<T>(this T t) {
+        internal static T[] AsArray<T>(this T t) {
             return new[] { t };
         }
-
     }
 }

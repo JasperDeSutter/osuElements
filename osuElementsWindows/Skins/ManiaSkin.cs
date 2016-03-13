@@ -55,6 +55,7 @@ namespace osuElements.Skins
             get { return _keys; }
             set
             {
+                if (_keys == value) return;
                 _keys = value;
                 for (int i = 0; i < _keys; i++) {
                     if (i > 0) ColumnSpacing.Add(0);
@@ -81,7 +82,7 @@ namespace osuElements.Skins
         public int LightFramePerSecond { get; set; } = 60;
         public List<NoteBodyStyle> NoteBodyStyle { get; set; }
         public List<bool> KeyFlipWhenUpsideDown { get; set; }
-        public Dictionary<NoteType, List<bool>> NoteFlipWhenUpsideDown { get; }
+        public Dictionary<NoteType, List<bool>> NoteFlipWhenUpsideDown { get; } //not sure about this being a good solution
 
         public override string ToString() {
             return $"{Keys} Keys";

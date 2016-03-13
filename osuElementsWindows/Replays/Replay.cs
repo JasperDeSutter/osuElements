@@ -7,7 +7,7 @@ using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.Binary;
 using osuElements.IO.File;
-using osuElements.Net._7zip;
+using osuElements._7zip;
 
 namespace osuElements.Replays
 {
@@ -54,7 +54,11 @@ namespace osuElements.Replays
         public string FileName { get; set; }
         public string FullPath
         {
-            get { return Path.Combine(Directory, FileName); }
+            get
+            {
+                var result = Path.Combine(Directory, FileName);
+                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuReplaysDirectory, result);
+            }
             set
             {
                 Directory = Path.GetDirectoryName(value);

@@ -26,7 +26,7 @@ namespace osuElements.Beatmaps
             return result > 1 ? 1 : (result < 0 ? 0 : (float)result);
         }
 
-        public override int SegmentCount { get; set; }
+        public sealed override int SegmentCount { get; set; }
 
         public override Position EndPosition => _curve?.GetPointOnCurve(1).Item1 ?? ControlPoints.Last();
 

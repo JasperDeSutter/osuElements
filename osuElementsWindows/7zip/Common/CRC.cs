@@ -1,6 +1,6 @@
 // Common/CRC.cs
 
-namespace osuElements.Net._7zip.Common
+namespace osuElements._7zip.Common
 {
 	class CRC
 	{

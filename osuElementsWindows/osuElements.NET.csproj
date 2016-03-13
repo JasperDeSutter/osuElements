@@ -65,7 +65,6 @@
     <Compile Include="Api\Repositories\ApiRepositoryBase.cs" />
     <Compile Include="Api\Repositories\ApiUserRepository.cs" />
     <Compile Include="Api\Repositories\IApiRepository.cs" />
-    <Compile Include="Beatmaps\Base\HitObjectBase.cs" />
     <Compile Include="Beatmaps\Base\HitObjectManagerBase.cs" />
     <Compile Include="Beatmaps\Base\tpDifficulty.cs" />
     <Compile Include="Beatmaps\Base\tpHitObject.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="Beatmaps\TimingPoint.cs" />
     <Compile Include="Colour.cs" />
     <Compile Include="Curves\BezierCurve.cs" />
-    <Compile Include="Curves\BezierSegment.cs" />
     <Compile Include="Curves\CatmullCurve.cs" />
     <Compile Include="Curves\CurveBase.cs" />
     <Compile Include="Curves\LinearCurve.cs" />
@@ -95,7 +93,6 @@
     <Compile Include="Db\OsuDb.cs" />
     <Compile Include="Db\ScoresDb.cs" />
     <Compile Include="Helpers\BitFunctions.cs" />
-    <Compile Include="Helpers\ByteStringConversion.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\Enums-Beatmap.cs" />
     <Compile Include="Helpers\Enums-Event.cs" />

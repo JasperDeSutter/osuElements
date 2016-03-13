@@ -13,7 +13,6 @@ namespace osuElements.IO.File
         private readonly Func<TValue, string> _toStringFunc;
 
         private ICollection<TValue> _list;
-        private TModel _model;
 
 
         public CollectionFileSection(Expression<Func<TModel, ICollection<TValue>>> propertySelector, string section, Func<string, TValue> parseFunc,
@@ -32,7 +31,6 @@ namespace osuElements.IO.File
         }
 
         public void SetModel(TModel model) {
-            _model = model;
             var value = _listProperty.GetValue(model);
 
             _list = value as ICollection<TValue>;
