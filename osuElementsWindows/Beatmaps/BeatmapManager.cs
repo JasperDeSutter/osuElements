@@ -10,6 +10,7 @@ namespace osuElements.Beatmaps
 {
     /// <summary>
     /// Handles timingpoints, creates curves for sliders, handles combo colors and numbers. 
+    /// For standard osu! game mode.
     /// </summary>
     public class BeatmapManager : HitObjectManagerBase
     {
@@ -18,7 +19,9 @@ namespace osuElements.Beatmaps
         private int _currentcombocolor;
         private TpDifficulty _tpDifficulty;
         #endregion
-
+        /// <summary>
+        /// Sets the beatmap and calculates the Combo numbers and colors.
+        /// </summary>
         public BeatmapManager(Beatmap beatmap) {
             SetBeatmap(beatmap);
 
@@ -213,7 +216,7 @@ namespace osuElements.Beatmaps
             var currentcombo = 1;
             HitObject previous = null;
             foreach (var ho in GetHitObjects()) {
-                if (ho.IsNewCombo) {
+                if (ho.IsNewCombo || (previous != null && previous.IsHitObjectType(HitObjectType.Spinner))) {
                     if (previous != null) previous.LastInCombo = true;
                     currentcombo = 1;
                     ho.Colour = NextColor(ho.NewCombo);

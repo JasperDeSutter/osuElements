@@ -28,6 +28,9 @@ namespace osuElements.Db
         Fail,
         NoRank,
     }
+    /// <summary>
+    /// The database-driven approach to the beatmap object
+    /// </summary>
     public class DbBeatmap : Beatmap
     {
         public DbBeatmap() {

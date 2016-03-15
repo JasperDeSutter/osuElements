@@ -11,6 +11,9 @@ using osuElements._7zip;
 
 namespace osuElements.Replays
 {
+    /// <summary>
+    /// The file-driven approach of a user's score on a beatmap
+    /// </summary>
     public class Replay : ApiScore, IFileModel //most properties are shared, no need for common base class
     {
         public Replay() {

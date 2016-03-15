@@ -8,6 +8,6 @@ namespace osuElements.Beatmaps
             : base(startTime, position, isNewCombo, HitObjectType.Spinner | HitObjectType.NewCombo, soundType) {
             EndTime = endTime;
         }
-        public override string ToString() => $"{base.ToString()},{EndTime},{AdditionsForString}:";
+        public override string ToString() => $"{base.HitobjectToString()},{EndTime},{AdditionsForString}:";
     }
 }

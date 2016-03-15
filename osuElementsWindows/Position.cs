@@ -1,4 +1,5 @@
-﻿using osuElements.Helpers;
+﻿using System;
+using osuElements.Helpers;
 using static System.Math;
 namespace osuElements
 {
@@ -30,8 +31,8 @@ namespace osuElements
         public Position(Position copy) : this(copy.X, copy.Y) { }
         public static Position FromHitobject(float x, float y) {
             var result = new Position {
-                XForHitobject = x,
-                YForHitobject = y
+                XForHitobject = Math.Max(0, Math.Min(512, x)), //make sure the values are inside playfield
+                YForHitobject = Math.Max(0, Math.Min(384, y))
             };
             return result;
         }

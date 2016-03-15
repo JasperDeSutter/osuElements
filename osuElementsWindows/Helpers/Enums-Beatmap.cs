@@ -66,7 +66,7 @@ namespace osuElements.Helpers
         Expert
     }
 
-    public enum BeatmapState
+    public enum ApiBeatmapState
     {
         Graveyard = -2,
         WorkInProgress,

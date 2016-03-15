@@ -39,7 +39,7 @@ namespace osuElements.Beatmaps
         public int ComboNumber { get; set; }
         public bool IsNewCombo => NewCombo > 0;
         public bool LastInCombo { get; set; }
-        
+
         public int StartTime { get; set; }
         public int Duration { get; set; }
         public virtual int EndTime
@@ -62,10 +62,11 @@ namespace osuElements.Beatmaps
                 _newCombo = Math.Max(0, Math.Min(Constants.MAXIMUM_NEW_COMBO, value));
             }
         }
-        
+
 
         private int HitObjectTypeForString =>
-            (int)Type | (IsNewCombo ? (NewCombo - 1) << 4 : 0);
+            (int)Type | (IsNewCombo ?
+            (NewCombo - 1 << 4) + 4 : 0);
 
         protected string AdditionsForString =>
             $"{(int)SampleSet}:{(int)AdditionSampleSet}:{(int)Custom}:{CustomSet}:" + AdditionSound;
@@ -82,7 +83,6 @@ namespace osuElements.Beatmaps
             var isNewCombo = type.IsType(HitObjectType.NewCombo);
             var hitsound = (HitObjectSoundType)Convert.ToInt32(parts[4]);
 
-
             if (type.IsType(HitObjectType.HitCircle)) //Make HitCircle
             {
                 var h = new HitCircle(position, time, isNewCombo, type, hitsound);
@@ -97,9 +97,14 @@ namespace osuElements.Beatmaps
             }
             if (type.IsType(HitObjectType.HoldCircle)) {
                 //Make HoldCircle
-                //float endtime = parts[5]
-                var hc = new HoldCircle(position, time, int.Parse(parts[5]), isNewCombo, type, hitsound);
-                if (parts.Length > 6) GetAdditions(parts[6], hc);
+                var hc = new HoldCircle(position, time, time, isNewCombo, type, hitsound);
+                if (parts.Length < 6) return hc;
+
+                var endstring = parts[5];
+                var endstringparts = endstring.Split(':'.AsArray(), StringSplitOptions.RemoveEmptyEntries);
+                hc.EndTime = int.Parse(endstringparts[0]);
+                GetAdditions(endstring.Substring(endstring.IndexOf(':')), hc);
+
                 return hc;
             }
             if (!type.IsType(HitObjectType.Slider)) return null;
@@ -173,15 +178,16 @@ namespace osuElements.Beatmaps
             return Type.IsType(type);
         }
 
-        public override string ToString()
-            =>
-                $"{StartPosition.ToHitObjectString()},{StartTime},{HitObjectTypeForString},{(int)SoundType}";
+        public override string ToString() => HitobjectToString();
+
+        protected string HitobjectToString()
+            => $"{StartPosition.ToHitObjectString()},{StartTime},{(int)Type | (IsNewCombo ? (NewCombo - 1 << 4) + 4 : 0)},{(int)SoundType}";
 
         public bool Equals(HitObject other) => CompareTo(other) == 0;
 
         private static void GetAdditions(string part, HitObject ho) {
             if (string.IsNullOrEmpty(part)) return;
-            var parts = part.Split(':');
+            var parts = part.Split(':'.AsArray(), StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length < 2) return;
             ho.SampleSet = (SampleSet)int.Parse(parts[0]);
             ho.AdditionSampleSet = (SampleSet)int.Parse(parts[1]);

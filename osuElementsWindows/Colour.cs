@@ -96,7 +96,7 @@ namespace osuElements
             return (RedValue == other.RedValue && GreenValue == other.GreenValue && BlueValue == other.BlueValue && Alpha == other.Alpha);
         }
 
-        public override string ToString() => $"{Red},{GreenValue},{BlueValue}" + (Alpha == 255 ? "" : $",{Alpha}");
+        public override string ToString() => $"{RedValue},{GreenValue},{BlueValue}" + (Alpha == 255 ? "" : $",{Alpha}");
     }
 
 }

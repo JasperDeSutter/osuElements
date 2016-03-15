@@ -32,7 +32,7 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, string>(b => b.Creator),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Version),
                     new BinaryFileLine<DbBeatmap, string>(b => b.AudioFilename),
-                    new BinaryFileLine<DbBeatmap, string>(b => b.Hash),
+                    new BinaryFileLine<DbBeatmap, string>(b => b.File_MD5),
                     new BinaryFileLine<DbBeatmap, string>(b => b.FileName),
                     new BinaryFileLine<DbBeatmap, DbBeatmapState>(b => b.DbBeatmapState) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, ushort>(b => b.HitCircleAmount),
@@ -124,7 +124,7 @@ namespace osuElements.Db
         #endregion
 
         public DbBeatmap FindHash(string hash) {
-            return Beatmaps.FirstOrDefault(b => b.Hash == hash);
+            return Beatmaps.FirstOrDefault(b => b.File_MD5 == hash);
         }
     }
 }

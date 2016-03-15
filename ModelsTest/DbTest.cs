@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using osuElements;
 using osuElements.Db;
+using osuElements.Helpers;
 using osuElements.IO.File;
 
 namespace ModelsTest
@@ -26,9 +27,12 @@ namespace ModelsTest
             var osuDb = new OsuDb();
             var logger = new BasicLogger();
             osuDb.ReadFile(logger);
-            var beatmap = osuDb.Beatmaps[1];
-            //beatmap.ReadFile();
-            var groups = osuDb.Beatmaps.OrderBy(DICTIONARY["AR"]).GroupBy(DICTIONARY["AR"]).ToDictionary(b => b.Key, b => b.ToList());
+            var beatmap = osuDb.Beatmaps.FirstOrDefault(d => d.Mode == GameMode.Mania);
+            Assert.IsNotNull(beatmap);
+            beatmap.ReadFile(logger);
+            beatmap.FileName += "-copy";
+            beatmap.WriteFile();
+            Assert.IsTrue(logger.Errors.Count == 0);
         }
 
         private static readonly Dictionary<string, Func<DbBeatmap, object>> DICTIONARY =

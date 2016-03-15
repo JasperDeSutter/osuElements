@@ -45,7 +45,7 @@ namespace osuElements.Beatmaps
 
         public override string ToString() {
             var sb = new StringBuilder(); //stringbuilder for performance
-            sb.Append(base.ToString());
+            sb.Append(base.HitobjectToString());
             sb.Append(",");
             sb.Append(SliderType.ToString().Substring(0, 1));
             sb.Append("|");

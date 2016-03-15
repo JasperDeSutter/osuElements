@@ -6,6 +6,10 @@ using static osuElements.Helpers.ScoreRank;
 
 namespace osuElements.Api
 {
+    /// <summary>
+    /// The API-driven approach to a user's score on a beatmap
+    /// Not all API-functions return all properties, check at https://github.com/ppy/osu-api/wiki
+    /// </summary>
     public class ApiScore
     {
         public int Beatmap_Id { get; set; }

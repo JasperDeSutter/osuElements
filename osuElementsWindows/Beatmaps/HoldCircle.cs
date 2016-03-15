@@ -10,6 +10,7 @@ namespace osuElements.Beatmaps
             EndTime = endtime;
         }
 
-        public override string ToString() => $"{base.ToString()},{EndTime},{AdditionsForString}";
+        public override string ToString() => 
+            $"{HitobjectToString()},{EndTime}:{AdditionsForString}"; //theres a : between endtime and additions. Thanks peppy!
     }
 }
