@@ -26,6 +26,12 @@ namespace osuElements.Storyboards
             EndTime = int.MinValue;
         }
 
+        public LoopEvent CreateLoop(int start, int count = 1) {
+            var result = new LoopEvent(start, count);
+            AddLoop(result);
+            return result;
+        }
+
         public void AddLoop(LoopEvent l) {
             Loopevents.Add(l);
             Loopevents.Sort();
@@ -57,7 +63,7 @@ namespace osuElements.Storyboards
 
         public override string ToString() {
             if (!Filepath.Contains(".")) Filepath += "." + DefaultFileExtension;
-            return $"{Type},{Layer},{Origin},\"{Filepath}\",{StartPosition.X.ToString(Constants.CULTUREINFO)},{StartPosition.Y.ToString(Constants.CULTUREINFO)}";
+            return $"{Type},{Layer},{Origin},\"{Filepath.Replace('\\', '/')}\",{StartPosition.X.ToString(Constants.CULTUREINFO)},{StartPosition.Y.ToString(Constants.CULTUREINFO)}";
         }
     }
 }

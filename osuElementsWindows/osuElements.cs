@@ -12,6 +12,8 @@ namespace osuElements
 {
     public static class osuElements
     {
+        private static string _osuDirectory;
+
         public static Stream WriteStream(string path) {
             if (File.Exists(path)) File.Delete(path);
             return new FileStream(path, FileMode.Create);
@@ -30,16 +32,25 @@ namespace osuElements
                 var osukey = osureg.GetValue(null).ToString();
                 var osupath = osukey.Remove(0, 1);
                 OsuDirectory = osupath.Remove(osupath.Length - 11);
-                OsuSongDirectory = Path.Combine(OsuDirectory, "Songs");
-                OsuSkinsDirectory = Path.Combine(OsuDirectory, "Skins");
-                OsuReplaysDirectory = Path.Combine(OsuDirectory, "Replays");
             }
 
         }
 
         #region Properties
 
-        public static string OsuDirectory { get; set; }
+
+        public static string OsuDirectory
+        {
+            get { return _osuDirectory; }
+            set
+            {
+                _osuDirectory = value;
+                OsuSongDirectory = Path.Combine(value, "Songs");
+                OsuSkinsDirectory = Path.Combine(value, "Skins");
+                OsuReplaysDirectory = Path.Combine(value, "Replays");
+            }
+        }
+
         public static string OsuSongDirectory { get; set; }
         public static string OsuSkinsDirectory { get; set; }
         public static string OsuReplaysDirectory { get; set; }

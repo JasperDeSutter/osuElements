@@ -5,7 +5,7 @@ using osuElements.Helpers;
 
 namespace osuElements.Storyboards
 {
-    public class LoopEvent : ITransformable
+    public class LoopEvent : ITransformable, IComparable<LoopEvent>
     {
         #region Properties
 
@@ -54,6 +54,10 @@ namespace osuElements.Storyboards
         public static LoopEvent Parse(string line) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             return new LoopEvent(int.Parse(parts[1]), int.Parse(parts[2]));
+        }
+
+        public int CompareTo(LoopEvent other) {
+            return StartTime.CompareTo(other.StartTime);
         }
 
         public override string ToString() {

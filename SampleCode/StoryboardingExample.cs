@@ -32,7 +32,7 @@ namespace SampleCode
             sprite.FlipH(500, 700);
             //loops
             var loop = new LoopEvent(200, 5);
-            loop.Color(0, values: new Colour(255, 255, 255)); //also have these shortcut methods
+            loop.Color(0, new Colour(255, 255, 255)); //also have these shortcut methods
             sprite.AddLoop(loop); //you still need to add it to one or more sprites
             //triggers
             var trigger = new TriggerEvent(TriggerTypes.Failing, 0, 1000);//short way, only for failing and passing

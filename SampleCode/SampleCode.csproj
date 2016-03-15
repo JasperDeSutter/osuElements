@@ -46,6 +46,7 @@
     <Compile Include="ApiExamples.cs" />
     <Compile Include="BeatmapExamples.cs" />
     <Compile Include="DbExamples.cs" />
+    <Compile Include="FullSglFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoryboardingExample.cs" />
   </ItemGroup>

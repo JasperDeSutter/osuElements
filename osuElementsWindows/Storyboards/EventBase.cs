@@ -64,8 +64,8 @@ namespace osuElements.Storyboards
                         result = new BreakEvent(int.Parse(parts[1]), int.Parse(parts[2]));
                         break;
                     case (EventTypes.Backgroundcolor):
-                        result = new BackgroundColorEvent(int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]),
-                            int.Parse(parts[4]));
+                        result = new BackgroundColorEvent(int.Parse(parts[1]), byte.Parse(parts[2]), byte.Parse(parts[3]),
+                            byte.Parse(parts[4]));
                         break;
                     default:
                         result = new UndefinedEvent(parts);

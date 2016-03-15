@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using osuElements.Helpers;
+using static osuElements.Helpers.Easing;
 using static osuElements.Helpers.TransformTypes;
 
 namespace osuElements.Storyboards
@@ -26,46 +27,87 @@ namespace osuElements.Storyboards
             }
         }
 
-        public static void Color(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params Colour[] values) {
+        #region Multifloat
+
+        public static void Color(this ITransformable transformable, int startTime, int endTime,
+            Easing easing = None, params Colour[] values) {
             transformable.AddTransformation(C, startTime, endTime, easing,
-                values.Select(c => new float[] { c.Red, c.Green, c.Blue }).ToArray());
+                values.Select(c => new float[] { c.RedValue, c.GreenValue, c.BlueValue }).ToArray());
+        }
+        public static void Color(this ITransformable transformable, int startTime, Colour value) {
+            Color(transformable, startTime, startTime, None, value);
         }
 
-        public static void Move(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params Position[] values) {
+        public static void Move(this ITransformable transformable, int startTime, int endTime,
+            Easing easing = None, params Position[] values) {
             transformable.AddTransformation(M, startTime, endTime, easing, values.Select(p => new[] { p.X, p.Y }).ToArray());
         }
-
-        public static void ScaleVector(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params Position[] values) {
-            transformable.AddTransformation(V, startTime, endTime, easing, values.Select(p => new[] { p.X, p.Y }).ToArray());
+        public static void Move(this ITransformable transformable, int startTime, Position value) {
+            transformable.Move(startTime, startTime, None, value);
         }
 
-        public static void Scale(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params float[] values) {
+        public static void ScaleVector(this ITransformable transformable, int startTime, int endTime,
+            Easing easing = None, params Position[] values) {
+            transformable.AddTransformation(V, startTime, endTime, easing, values.Select(p => new[] { p.X, p.Y }).ToArray());
+        }
+        public static void ScaleVector(this ITransformable transformable, int startTime, Position value) {
+            transformable.ScaleVector(startTime, startTime, None, value);
+        }
+
+
+
+        #endregion
+
+        #region Singlefloat
+
+        public static void Scale(this ITransformable transformable, int startTime, int endTime,
+            Easing easing, params float[] values) {
             transformable.AddTransformation(S, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
 
-        public static void MoveX(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params float[] values) {
+        public static void Scale(this ITransformable transformable, int startTime, float value) {
+            transformable.Scale(startTime, startTime, None, value);
+        }
+
+        public static void MoveX(this ITransformable transformable, int startTime, int endTime,
+            Easing easing, params float[] values) {
             transformable.AddTransformation(MX, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
 
-        public static void MoveY(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params float[] values) {
+        public static void MoveX(this ITransformable transformable, int startTime, float value) {
+            transformable.MoveX(startTime, startTime, None, value);
+        }
+
+        public static void MoveY(this ITransformable transformable, int startTime, int endTime,
+            Easing easing, params float[] values) {
             transformable.AddTransformation(MY, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
 
-        public static void Rotate(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params float[] values) {
+        public static void MoveY(this ITransformable transformable, int startTime, float value) {
+            transformable.MoveY(startTime, startTime, None, value);
+        }
+
+        public static void Rotate(this ITransformable transformable, int startTime, int endTime,
+            Easing easing, params float[] values) {
             transformable.AddTransformation(R, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
 
-        public static void Fade(this ITransformable transformable, int startTime, int endTime = int.MinValue,
-            Easing easing = Easing.None, params float[] values) {
+        public static void Rotate(this ITransformable transformable, int startTime, float value) {
+            transformable.Rotate(startTime, startTime, None, value);
+        }
+
+        public static void Fade(this ITransformable transformable, int startTime, int endTime,
+            Easing easing, params float[] values) {
             transformable.AddTransformation(F, startTime, endTime, easing, values.Select(p => new[] { p }).ToArray());
         }
+
+        public static void Fade(this ITransformable transformable, int startTime, float value) {
+            transformable.Fade(startTime, startTime, None, value);
+        }
+
+        #endregion
+
+        #region Parameters
 
         public static void FlipH(this ITransformable transformable, int startTime, int endTime) {
             transformable.AddTransformation(new ParameterEvent(startTime, Math.Max(startTime, endTime), ParameterTypes.H));
@@ -78,16 +120,20 @@ namespace osuElements.Storyboards
         public static void Additive(this ITransformable transformable, int startTime, int endTime) {
             transformable.AddTransformation(new ParameterEvent(startTime, Math.Max(startTime, endTime), ParameterTypes.A));
         }
+        #endregion
+
 
         private static readonly TransformTypes[] _normalTransformations = { M, MX, MY, F, R, S, V, C, P };
 
 
         private static void Optimization2(List<TransformationEvent> passed, TransformationEvent transform) {
             foreach (var pass in passed) {
-                if (!MathHelper.Between(transform.StartTime, pass.StartTime, pass.EndTime)) continue; //event doesnt start when other is active
-                if (MathHelper.Between(transform.EndTime, pass.StartTime, pass.EndTime)) return; //event is completely useless
+                if (!MathHelper.Between(transform.StartTime, pass.StartTime, pass.EndTime))
+                    continue; //event doesnt start when other is active
+                if (MathHelper.Between(transform.EndTime, pass.StartTime, pass.EndTime))
+                    return; //event is completely useless
                 //we can only interpolate without easing, otherwise not desired effect (might look into this further)
-                if (transform.Tweening &&  transform.Easing != Easing.None) continue;
+                if (transform.Tweening && transform.Easing != None) continue;
                 transform.StartValues = transform.ValuesAt(pass.EndTime);
                 transform.StartTime = pass.EndTime; //move the starttime and interpolate values
             }
@@ -115,7 +161,8 @@ namespace osuElements.Storyboards
             }
             //strip off unneeded parts of transformations
             foreach (var transformList in transforms.Values) {
-                var passed = new List<TransformationEvent>(); //resulting collection after optimization, might contain less or modifed transforms
+                var passed = new List<TransformationEvent>();
+                //resulting collection after optimization, might contain less or modifed transforms
                 foreach (var transform in transformList) {
                     Optimization2(passed, transform);
                 }
@@ -142,7 +189,6 @@ namespace osuElements.Storyboards
             foreach (var transformType in _normalTransformations) {
                 var transformables = transformable.Transformations.Where(t => t.Transformtype == transformType);
                 if (!transformables.Any()) continue;
-
             }
         }
     }

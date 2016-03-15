@@ -37,8 +37,7 @@ namespace osuElements.Curves
             return true;
         }
 
-        public virtual Tuple<Position, float>[] GetPointsBeforeTOnCurve(float t)
-        {
+        public virtual Tuple<Position, float>[] GetPointsBeforeTOnCurve(float t) {
             Precalc();
             var result = Getprecalcbefore(t);
             if (Math.Abs(t - 1) > float.Epsilon)
@@ -58,9 +57,9 @@ namespace osuElements.Curves
                 case SliderType.PerfectCurve:
                     curve = new PerfectCurve(points);
                     break;
-                    //case SliderType.Catmull:
-                    //curve = new CatmullCurve(points);
-                    //break;
+                case SliderType.Catmull:
+                    curve = new CatmullCurve(points);
+                    break;
                 default:
                     curve = null;
                     break;
