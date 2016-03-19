@@ -41,7 +41,9 @@ namespace osuElements.Helpers
     }
     public enum SampleSet
     {
-        All = -1,
+        /// <summary>
+        /// none means it inherits
+        /// </summary>
         None = 0,
         Normal = 1,
         Soft = 2,

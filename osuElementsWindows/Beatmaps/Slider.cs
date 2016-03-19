@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using osuElements.Curves;
 using osuElements.Helpers;
 
@@ -9,7 +10,8 @@ namespace osuElements.Beatmaps
 {
     public class Slider : HitObject
     {
-        public Slider(Position position, int startTime, bool isNewCombo = false, HitObjectType type = HitObjectType.Slider,
+        public Slider(Position position, int startTime, bool isNewCombo = false,
+            HitObjectType type = HitObjectType.Slider,
             HitObjectSoundType soundType = HitObjectSoundType.Normal)
             : base(startTime, position, isNewCombo, type, soundType) {
             SliderType = SliderType.Linear;
@@ -17,24 +19,45 @@ namespace osuElements.Beatmaps
             ControlPoints = new[] { StartPosition };
             PointHitsounds = new List<PointHitsound>();
         }
-        internal CurveBase _curve;
-        public CurveBase Curve => _curve;
+
+        public CurveBase Curve { get; private set; }
 
         private float TimeToCurve(float t) {
             if (Curve == null) return t;
-            var result = t * (Length / _curve.Length);
+            var result = t * (Length / Curve.Length);
             return result > 1 ? 1 : (result < 0 ? 0 : (float)result);
+        }
+
+        public void CreateCurve(bool forceRefresh = false) {
+            if (!forceRefresh && Curve != null) return;
+            switch (ControlPoints.Length) {
+                case 1:
+                    throw new InvalidOperationException("Don't try to make a curve with just 1 controlpoint!");
+                case 2:
+                    SliderType = SliderType.Linear;
+                    break;
+                case 3:
+                    //length == 3 can be either be B P or C, just not L
+                    if (SliderType == SliderType.Linear) SliderType = SliderType.PerfectCurve;
+                    break;
+                default:
+                    //length > 3 can be either be B or C, not L or P
+                    if (SliderType == SliderType.PerfectCurve || SliderType == SliderType.Linear)
+                        SliderType = SliderType.Bezier; //let's default to bezier here
+                    break;
+            }
+            Curve = CurveBase.CreateCurve(ControlPoints, SliderType);
         }
 
         public sealed override int SegmentCount { get; set; }
 
-        public override Position EndPosition => _curve?.GetPointOnCurve(1).Item1 ?? ControlPoints.Last();
+        public override Position EndPosition => Curve?.GetPointOnCurve(1).Item1 ?? ControlPoints.Last();
 
         public Position PositionAtTime(float time) => PositionAt((time - StartTime) / Duration);
 
-        public Position PositionAt(float t) => _curve?.GetPointOnCurve(TimeToCurve(t)).Item1 ?? StartPosition;
+        public Position PositionAt(float t) => Curve?.GetPointOnCurve(TimeToCurve(t)).Item1 ?? StartPosition;
 
-        public Tuple<Position, float>[] GetAllCurvePoints(float t) => _curve?.GetPointsBeforeTOnCurve(TimeToCurve(t));
+        public Tuple<Position, float>[] GetAllCurvePoints(float t) => Curve?.GetPointsBeforeTOnCurve(TimeToCurve(t));
 
         public SliderType SliderType { get; set; }
 
@@ -65,21 +88,23 @@ namespace osuElements.Beatmaps
             sb.Append(AdditionsForString);
             return sb.ToString();
         }
+
         public class PointHitsound : IHitsound
         {
             public bool IsDefault() {
                 return SampleSet == SampleSet.None && AdditionSampleSet == SampleSet.None &&
                        SoundType == HitObjectSoundType.Normal && Custom == Custom.Default;
             }
+
             public SampleSet SampleSet { get; set; }
             public SampleSet AdditionSampleSet { get; set; }
             public HitObjectSoundType SoundType { get; set; }
+
             public Custom Custom
             {
                 get { return Custom.Default; }
                 set { }
             }
         }
-
     }
 }

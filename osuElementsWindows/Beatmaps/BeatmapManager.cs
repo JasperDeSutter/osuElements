@@ -101,8 +101,9 @@ namespace osuElements.Beatmaps
         }
 
         public Task SetupSlider(Slider slider) {
+            //Todo add slider scoring points here
             slider.Duration = (int)(slider.Length * slider.SegmentCount / SliderVelocityAt(slider.StartTime));
-            return Task.Run(() => slider._curve = CurveBase.CreateCurve(slider.ControlPoints, slider.SliderType));
+            return Task.Run(() => slider.CreateCurve());
         }
 
         public void CalculateStacking() {

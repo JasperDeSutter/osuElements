@@ -22,7 +22,6 @@ namespace osuElements.Beatmaps
         }
 
         #region Properties
-
         public HitObjectSoundType SoundType { get; set; }
         public SampleSet SampleSet { get; set; }
         public SampleSet AdditionSampleSet { get; set; }
@@ -42,6 +41,7 @@ namespace osuElements.Beatmaps
 
         public int StartTime { get; set; }
         public int Duration { get; set; }
+
         public virtual int EndTime
         {
             get { return StartTime + Duration; }
@@ -63,18 +63,49 @@ namespace osuElements.Beatmaps
             }
         }
 
+        //these come from the osu!framework
+        public bool Whistle
+        {
+            get { return SoundType.IsType(HitObjectSoundType.Whistle); }
+            set
+            {
+                if (value)
+                    SoundType |= HitObjectSoundType.Whistle;
+                else
+                    SoundType &= ~HitObjectSoundType.Whistle;
+            }
+        }
 
-        private int HitObjectTypeForString =>
-            (int)Type | (IsNewCombo ?
-            (NewCombo - 1 << 4) + 4 : 0);
+        public bool Finish
+        {
+            get { return SoundType.IsType(HitObjectSoundType.Finish); }
+            set
+            {
+                if (value)
+                    SoundType |= HitObjectSoundType.Finish;
+                else
+                    SoundType &= ~HitObjectSoundType.Finish;
+            }
+        }
 
+        public bool Clap
+        {
+            get { return SoundType.IsType(HitObjectSoundType.Clap); }
+            set
+            {
+                if (value)
+                    SoundType |= HitObjectSoundType.Clap;
+                else
+                    SoundType &= ~HitObjectSoundType.Clap;
+            }
+        }
+        
         protected string AdditionsForString =>
             $"{(int)SampleSet}:{(int)AdditionSampleSet}:{(int)Custom}:{CustomSet}:" + AdditionSound;
 
         #endregion
 
         #region Methods
-
         public static HitObject Parse(string line) {
             var parts = line.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries);
             var position = Position.FromHitobject(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]));
