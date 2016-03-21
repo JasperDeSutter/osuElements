@@ -31,7 +31,7 @@ namespace osuElements.Curves
             var pointa = CatmullRom(posA, posB, posC, posD, d %= 1);
             var pointb = CatmullRom(posA, posB, posC, posD, d + float.MinValue);
 
-            var angle = (Position.GetAngle(pointa - pointb) + MathHelper.PI).NormalizeAngle();
+            var angle = (float)(Position.GetAngle(pointa - pointb) + MathHelper.PI).NormalizeAngle();
             return new Tuple<Position, float>(pointa, angle);
 
         }

@@ -75,12 +75,15 @@ namespace osuElements
 
         public static float Distance(Position a, Position b) =>
             (b - a).Length;
-
-        public float GetAngle(bool normalize = true) {
-            if (normalize) return ((float)Atan2(Y, X)).NormalizeAngle();
-            return ((float)Atan2(Y, X));
+        public float LengthSquared() {
+            return X*X + Y*Y;
         }
-        public static float GetAngle(Position a, bool normalize = true) =>
+
+        public double GetAngle(bool normalize = true) {
+            return normalize ? Atan2(Y, X).NormalizeAngle() : Atan2(Y, X);
+        }
+
+        public static double GetAngle(Position a, bool normalize = true) =>
             a.GetAngle(normalize);
 
         public static Position SecondaryPoint(Position from, float length, float angle) =>

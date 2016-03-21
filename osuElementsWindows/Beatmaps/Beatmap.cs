@@ -70,12 +70,13 @@ namespace osuElements.Beatmaps
         public bool IsRead { get; private set; }
         public string FileName { get; set; }
         public string Directory { get; set; }
+        public string RootedDirectory => Path.IsPathRooted(Directory) ? Directory : Path.Combine(osuElements.OsuSongDirectory, Directory);
+
         public string FullPath
         {
             get
             {
-                var result = Path.Combine(Directory, FileName);
-                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuSongDirectory, result);
+                return Path.Combine(RootedDirectory, FileName);
             }
             set
             {

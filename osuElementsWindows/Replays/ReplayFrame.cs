@@ -5,6 +5,7 @@ namespace osuElements.Replays
 {
     public struct ReplayFrame : IComparable<ReplayFrame>
     {
+        public ManiaKeys ManiaKeys => (ManiaKeys) Position.XForHitobject;
         public int TimeOffset { get; set; }
         public int Time { get; set; }
         public float X => Position.X;

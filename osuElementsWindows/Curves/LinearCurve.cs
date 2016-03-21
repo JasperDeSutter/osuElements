@@ -8,8 +8,8 @@ namespace osuElements.Curves
         private float _positionangle;
         public LinearCurve(Position[] points) : base(points) { }
         protected override void Init() {
-            var angle = Position.GetAngle(Points[1] - Points[0]);
-            _positionangle = (angle - MathHelper.PI2).NormalizeAngle();
+            var angle = Position.GetAngle(Points[1] - Points[0], false);
+            _positionangle = (float)(angle - MathHelper.PI2).NormalizeAngle();
             _length = Position.Distance(Points[0], Points[1]);
             Resolution = 2;
         }

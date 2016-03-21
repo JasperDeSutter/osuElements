@@ -39,13 +39,14 @@ namespace osuElements.Helpers
         /// <param name="child">hitobject (or sliderendpoint)</param>
         /// <param name="parent">timingpoint (or slider)</param>
         /// <param name="includeSoundType">if hitobjectsoundtype should be set too</param>
-        public static void InheritFrom(this IHitsound child, IHitsound parent, bool includeSoundType = false) {
+        public static IHitsound InheritFrom(this IHitsound child, IHitsound parent, bool includeSoundType = false) {
             if (child.SampleSet == SampleSet.None) {
                 child.SampleSet = parent.SampleSet;
                 child.Custom = parent.Custom;
             }
             if (child.AdditionSampleSet == SampleSet.None) child.AdditionSampleSet = parent.AdditionSampleSet;
             if (includeSoundType && child.SoundType == Normal) child.SoundType = parent.SoundType;
+            return child;
         }
         /// <summary>
         /// get all hitsounds that play when this IHitsound plays

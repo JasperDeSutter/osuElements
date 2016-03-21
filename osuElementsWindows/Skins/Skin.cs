@@ -8,16 +8,34 @@ namespace osuElements.Skins
 {
     public class Skin : IFileModel
     {
+
+        public Skin(string directory) : this() {
+            Directory = directory;
+            ReadFile();
+        }
+
+        public Skin() {
+            Version = osuElements.LatestSkinVersion;
+            Combo = new List<Colour?>(8);
+            for (int i = 0; i < 8; i++) {
+                Combo.Add(null);
+            }
+            ManiaSkins = new List<ManiaSkin>();
+            SkinFileRepository = osuElements.SkinFileRepository;
+        }
         #region File
+        public static IFileRepository<Skin> SkinFileRepository { private get; set; }
         public bool IsRead { get; private set; }
         public string FileName { get; set; } = "skin.ini";
         public string Directory { get; set; }
+
+        public string RootedDirectory
+            => Path.IsPathRooted(Directory) ? Directory : Path.Combine(osuElements.OsuSkinsDirectory, Directory);
         public string FullPath
         {
             get
             {
-                var result = Path.Combine(Directory, FileName);
-                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuSkinsDirectory, result);
+                return Path.Combine(RootedDirectory, FileName);
             }
             set
             {
@@ -35,24 +53,6 @@ namespace osuElements.Skins
         #endregion
 
 
-
-        public Skin(string directory) : this() {
-            Directory = directory;
-            ReadFile();
-        }
-
-        public Skin() {
-            Version = osuElements.LatestSkinVersion;
-            Combo = new List<Colour?>(8);
-            for (int i = 0; i < 8; i++) {
-                Combo[i] = null;
-            }
-            ManiaSkins = new List<ManiaSkin>();
-            SkinFileRepository = osuElements.SkinFileRepository;
-        }
-
-        public static IFileRepository<Skin> SkinFileRepository { private get; set; }
-
         #region Properties
         //General
         public string Name { get; set; } = "";
@@ -63,8 +63,8 @@ namespace osuElements.Skins
         public bool CursorCentre { get; set; } = true;
         public int SliderBallFrames { get; set; } = 10;
         public bool HitCircleOverlayAboveNumber { get; set; } = true;
-        public bool SpinnerFrequencyModulate { get; set; } = true; 
-        public bool LayeredHitsounds { get; set; } = true; 
+        public bool SpinnerFrequencyModulate { get; set; } = true;
+        public bool LayeredHitsounds { get; set; } = true;
         public bool SpinnerFadePlayField { get; set; } = true;
         public bool SpinnerNoBlink { get; set; } = false;
         public bool AllowSliderBallTint { get; set; } = false;

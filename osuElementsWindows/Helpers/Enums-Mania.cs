@@ -1,5 +1,21 @@
-﻿namespace osuElements.Helpers
+﻿using System;
+
+namespace osuElements.Helpers
 {
+    [Flags]
+    public enum ManiaKeys
+    {
+        None,
+        K1 = 1,
+        K2 = 2,
+        K3 = 4,
+        K4 = 8,
+        K5 = 16,
+        K6 = 32,
+        K7 = 64,
+        K8 = 128,
+        K9 = 256,
+    }
     public enum ManiaSpecialStyle
     {
         /// <summary>

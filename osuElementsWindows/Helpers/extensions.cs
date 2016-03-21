@@ -6,11 +6,15 @@ using osuElements.Beatmaps;
 
 namespace osuElements.Helpers
 {
-    public static class FloatExtension
+    public static class AngleExtension
     {
         public static float NormalizeAngle(this float a) {
             while (a < 0) a += MathHelper.TAU;
-            return (a % MathHelper.TAU);
+            return a % MathHelper.TAU;
+        }
+        public static double NormalizeAngle(this double a) {
+            while (a < 0) a += Math.PI * 2;
+            return a % (Math.PI * 2);
         }
     }
 
