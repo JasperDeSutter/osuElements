@@ -59,7 +59,7 @@ namespace osuElements.Db
                         new BinaryFileLine<TimingPoint, bool>(t => t.IsTiming)),
                     new BinaryFileLine<DbBeatmap, int>(b => b.Beatmap_Id),
                     new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapSet_Id),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.GenreId),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.Genre_Id),
                     new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestStandardRank) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestCtbRank) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestTaikoRank) { Type = typeof(byte) },

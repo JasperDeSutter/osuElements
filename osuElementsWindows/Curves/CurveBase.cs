@@ -42,7 +42,7 @@ namespace osuElements.Curves
             var result = Getprecalcbefore(t);
             if (Math.Abs(t - 1) > float.Epsilon)
                 result.Add(GetPointOnCurve(t));
-            return result.ToArray();
+            return result.ToArray(); 
         }
 
         public static CurveBase CreateCurve(Position[] points, SliderType st) {

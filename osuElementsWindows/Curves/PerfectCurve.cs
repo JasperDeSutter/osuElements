@@ -17,7 +17,7 @@ namespace osuElements.Curves
             Center = GetCenterFrom3Vectors(Points[0], Points[1], Points[2]);
             CalculateAngles();
             Radius = Position.Distance(Center, Points[0]);
-            _length = Circumference / Math.Abs(_curveangle);
+            _length = Circumference * Math.Abs(_curveangle) / MathHelper.TAU;
         }
 
         public double Gradient(Position a, Position b) {

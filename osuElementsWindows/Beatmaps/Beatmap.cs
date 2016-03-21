@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using osuElements.Api;
+using osuElements.Api.Repositories;
 using osuElements.Beatmaps.Events;
 using osuElements.Helpers;
 using osuElements.IO;
@@ -112,6 +114,12 @@ namespace osuElements.Beatmaps
                 default:
                     throw new ArgumentException("The sprite's (event)layer was not set to a known storyboard layer");
             }
+        }
+
+        public async Task AddApiProperties() {
+            var rep = new ApiBeatmapRepository();
+            var apimap = await rep.Get(Beatmap_Id, Mode);
+            apimap.CopyTo(this, false);
         }
 
 
