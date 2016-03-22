@@ -85,6 +85,7 @@
     <Compile Include="Curves\BezierCurve.cs" />
     <Compile Include="Curves\CatmullCurve.cs" />
     <Compile Include="Curves\CurveBase.cs" />
+    <Compile Include="Curves\CurveSegment.cs" />
     <Compile Include="Curves\LinearCurve.cs" />
     <Compile Include="Curves\PerfectCurve.cs" />
     <Compile Include="Db\Collection.cs" />

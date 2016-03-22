@@ -6,7 +6,6 @@ namespace osuElements.Storyboards
 {
     public abstract class EventBase : IComparable<EventBase>
     {
-
         public EventLayer Layer = EventLayer.Undefined;
         public EventTypes Type;
 
@@ -39,32 +38,37 @@ namespace osuElements.Storyboards
                 var path = "";
                 if (parts.Length > 3) path = parts[3].Trim('\"');
                 switch (etype) {
-                    case (EventTypes.Sprite):
+                    case EventTypes.Sprite:
                         result = new SpriteEvent(path,
                             (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
-                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO), float.Parse(parts[5], Constants.CULTUREINFO));
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),
+                            float.Parse(parts[5], Constants.CULTUREINFO));
                         break;
-                    case (EventTypes.Animation):
-                        Looptypes lt;
+                    case EventTypes.Animation:
                         result = new AnimationEvent(path,
-                            int.Parse(parts[6]), int.Parse(parts[7]), (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]), (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO), float.Parse(parts[5], Constants.CULTUREINFO), Enum.TryParse(parts[8], out lt) ? lt : Looptypes.LoopForever);
+                            int.Parse(parts[6]), int.Parse(parts[7]),
+                            (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),
+                            float.Parse(parts[5], Constants.CULTUREINFO),
+                            parts.Length > 8 ? (Looptypes)Enum.Parse(typeof(Looptypes), parts[8]) : Looptypes.LoopForever);
                         break;
-                    case (EventTypes.Sample):
+                    case EventTypes.Sample:
                         result = new SampleEvent(parts[3], int.Parse(parts[1]),
                             int.Parse(parts[4]), (EventLayer)int.Parse(parts[2]));
                         break;
-                    case (EventTypes.Background):
+                    case EventTypes.Background:
                         result = new BackgroundEvent(int.Parse(parts[1]), parts[2].Trim('"'),
                             parts.Length > 3 ? int.Parse(parts[3]) : 0, parts.Length > 4 ? int.Parse(parts[4]) : 0);
                         break;
-                    case (EventTypes.Video):
+                    case EventTypes.Video:
                         result = new VideoEvent(int.Parse(parts[1]), parts[2].Trim('"'));
                         break;
-                    case (EventTypes.Break):
+                    case EventTypes.Break:
                         result = new BreakEvent(int.Parse(parts[1]), int.Parse(parts[2]));
                         break;
-                    case (EventTypes.Backgroundcolor):
-                        result = new BackgroundColorEvent(int.Parse(parts[1]), byte.Parse(parts[2]), byte.Parse(parts[3]),
+                    case EventTypes.Backgroundcolor:
+                        result = new BackgroundColorEvent(int.Parse(parts[1]), byte.Parse(parts[2]),
+                            byte.Parse(parts[3]),
                             byte.Parse(parts[4]));
                         break;
                     default:
@@ -85,6 +89,7 @@ namespace osuElements.Storyboards
         public int CompareTo(EventBase other) {
             return Type.CompareTo(other.Type);
         }
+
         public static bool TryParse<T>(string line, out T result) where T : EventBase {
             EventBase e;
             if (TryParse(line, out e)) {
@@ -94,17 +99,18 @@ namespace osuElements.Storyboards
             result = null;
             return false;
         }
+
         public class UndefinedEvent : EventBase
         {
             public string[] Lineparts;
+
             public UndefinedEvent(string[] lineparts) {
                 Lineparts = lineparts;
             }
+
             public override string ToString() {
                 return string.Join(",", Lineparts);
             }
         }
-
-
     }
 }

@@ -24,12 +24,6 @@ namespace osuElements.Beatmaps
         /// </summary>
         public BeatmapManager(Beatmap beatmap) {
             SetBeatmap(beatmap);
-
-            if (_beatmap.ComboColours != null && _beatmap.ComboColours.Count > 0) {
-                ComboColours = _beatmap.ComboColours;
-            }
-
-            CalculateComboColors();
         }
 
         #region Properties

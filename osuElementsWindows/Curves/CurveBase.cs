@@ -21,7 +21,7 @@ namespace osuElements.Curves
         protected abstract void Init();
 
         /// <summary>
-        /// Returns the corresponding point and angle
+        /// Returns the corresponding point and Angle
         /// </summary>
         /// <param name="t">value Between 0 and 1 representing percentage of the length of the curve</param>
         /// <returns></returns>

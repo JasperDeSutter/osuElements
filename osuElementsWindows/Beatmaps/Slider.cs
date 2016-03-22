@@ -13,7 +13,7 @@ namespace osuElements.Beatmaps
         public Slider(Position position, int startTime, bool isNewCombo = false,
             HitObjectType type = HitObjectType.Slider,
             HitObjectSoundType soundType = HitObjectSoundType.Normal)
-            : base(startTime, position, isNewCombo, type, soundType) {
+            : base(startTime, position, isNewCombo, type | HitObjectType.Slider, soundType) {
             SliderType = SliderType.Linear;
             SegmentCount = 1;
             ControlPoints = new[] { StartPosition };
@@ -64,11 +64,11 @@ namespace osuElements.Beatmaps
         public Position[] ControlPoints { get; set; }
         public double Length { get; set; }
 
-        public List<PointHitsound> PointHitsounds { get; set; }
+        public List<Slider.PointHitsound> PointHitsounds { get; set; }
 
         public override string ToString() {
             var sb = new StringBuilder(); //stringbuilder for performance
-            sb.Append(base.HitobjectToString());
+            sb.Append(base.HitobjectToString);
             sb.Append(",");
             sb.Append(SliderType.ToString().Substring(0, 1));
             sb.Append("|");

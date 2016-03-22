@@ -46,12 +46,11 @@ namespace osuElements.IO.File
             var indexpart = Regex.Match(parts[0]).Value.Trim();
             var index = int.Parse(indexpart);
 
-            lock (list) {
-                //list.Insert(index - 1, (TValue)GetValue(parts[1].Trim()));
-                while (list.Count < index) list.Add(default(TValue));
-                list[index - 1] = (TValue)GetValue(parts[1].Trim());
-                return true;
-            }
+            //list.Insert(index - 1, (TValue)GetValue(parts[1].Trim()));
+            while (list.Count < index) list.Add(default(TValue));
+            list[index - 1] = (TValue)GetValue(parts[1].Trim());
+            return true;
+
         }
     }
 }

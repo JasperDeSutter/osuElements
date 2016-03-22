@@ -64,9 +64,6 @@ namespace osuElements
             !(a == b);
 
         #region Methods
-        public float Distance() =>
-            (float)Sqrt(X * X + Y * Y);
-
         public float Length =>
             (float)Sqrt(X * X + Y * Y);
 

@@ -122,7 +122,7 @@ namespace osuElements.Beatmaps
             }
             if (type.IsType(HitObjectType.Spinner)) {
                 //Make Spinner
-                var sp = new Spinner(position, time, int.Parse(parts[5]), isNewCombo, hitsound);
+                var sp = new Spinner(position, time, int.Parse(parts[5]), type, hitsound);
                 if (parts.Length > 6) GetAdditions(parts[6], sp);
                 return sp;
             }
@@ -209,10 +209,9 @@ namespace osuElements.Beatmaps
             return Type.IsType(type);
         }
 
-        public override string ToString() => HitobjectToString();
+        public override string ToString() => HitobjectToString;
 
-        protected string HitobjectToString()
-            => $"{StartPosition.ToHitObjectString()},{StartTime},{(int)Type | (IsNewCombo ? (NewCombo - 1 << 4) + 4 : 0)},{(int)SoundType}";
+        protected string HitobjectToString => $"{StartPosition.ToHitObjectString()},{StartTime},{(int)Type | (IsNewCombo ? (NewCombo - 1 << 4) + 4 : 0)},{(int)SoundType}";
 
         public bool Equals(HitObject other) => CompareTo(other) == 0;
 
