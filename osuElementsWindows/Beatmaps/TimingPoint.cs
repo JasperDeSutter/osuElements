@@ -48,7 +48,7 @@ namespace osuElements.Beatmaps
             Option = option;
         }
         public override string ToString() {
-            return Offset + "," + (IsTiming ? MillisecondsPerBeat : SliderSpeed) + "," + TimeSignature + "," + (int)SampleSet + "," + CustomSampleSet + "," + VolumePercentage + "," + Convert.ToInt32(IsTiming) + "," + (int)Option;
+            return Offset + "," + (IsTiming ? MillisecondsPerBeat.ToString(Constants.CULTUREINFO) : SliderSpeed.ToString(Constants.CULTUREINFO)) + "," + TimeSignature + "," + (int)SampleSet + "," + CustomSampleSet + "," + VolumePercentage + "," + (IsTiming ? 1 : 0) + "," + (int)Option;
         }
         public bool Equals(TimingPoint other) {
             return CompareTo(other) == 0;
@@ -66,8 +66,8 @@ namespace osuElements.Beatmaps
                 var sampleSet = (SampleSet)Convert.ToInt32(parts[3]);
                 var customSet = Convert.ToInt32(parts[4]);
                 var volume = parts.Length > 6 ? Convert.ToInt32(parts[5]) : 100;
-                var isTiming = parts.Length <= 6 || Convert.ToBoolean(Convert.ToInt32(parts[6]));
-                var option = parts.Length > 7 ? (TimingPointOption)Convert.ToInt32(parts[7]) : TimingPointOption.None;
+                var isTiming = parts.Length <7 || Convert.ToBoolean(int.Parse(parts[6]));
+                var option = parts.Length > 7 ? (TimingPointOption)int.Parse(parts[7]) : TimingPointOption.None;
 
                 result = new TimingPoint(offset, bpm, signature, sampleSet, customSet, volume, isTiming, option);
             }

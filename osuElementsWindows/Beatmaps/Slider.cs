@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using osuElements.Curves;
@@ -64,10 +65,11 @@ namespace osuElements.Beatmaps
         public Position[] ControlPoints { get; set; }
         public double Length { get; set; }
 
-        public List<Slider.PointHitsound> PointHitsounds { get; set; }
+        public List<PointHitsound> PointHitsounds { get; set; }
 
         public override string ToString() {
             var sb = new StringBuilder(); //stringbuilder for performance
+
             sb.Append(base.HitobjectToString);
             sb.Append(",");
             sb.Append(SliderType.ToString().Substring(0, 1));
@@ -76,7 +78,7 @@ namespace osuElements.Beatmaps
             sb.Append(",");
             sb.Append(SegmentCount);
             sb.Append(",");
-            sb.Append(Length);
+            sb.Append(Length.ToString(Constants.CULTUREINFO));
 
             //TODO check if additions should be added
             if (PointHitsounds.All(p => p.IsDefault())) return sb.ToString();
@@ -104,6 +106,10 @@ namespace osuElements.Beatmaps
             {
                 get { return Custom.Default; }
                 set { }
+            }
+
+            public override string ToString() {
+                return $"{SampleSet},{AdditionSampleSet},{Custom}:{SoundType}";
             }
         }
     }

@@ -50,5 +50,20 @@ namespace ModelsTest
             scoreDb.ReadFile(logger);
             var scores = scoreDb.ScoreLists.Sum(s => s.Replays.Count);
         }
+
+        [TestMethod]
+        public void ReadAllMapsTest() {
+            var osuDb = new OsuDb();
+            var logger = new BasicLogger();
+            osuDb.ReadFile(logger);
+            foreach (var dbBeatmap in osuDb.Beatmaps) {
+                try {
+                    dbBeatmap.ReadFile(logger);
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
     }
 }

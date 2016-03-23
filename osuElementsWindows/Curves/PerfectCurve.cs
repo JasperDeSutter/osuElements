@@ -5,6 +5,8 @@ namespace osuElements.Curves
 {
     public class PerfectCurve : CurveBase
     {
+        public static double INCREMENT = 0.00001;
+
         public Position Center { get; set; }
         private double _startingangle; //Where the _curve starts on the circle
         private double _curveangle; //the _length of the _curve on the circle in radians
@@ -21,19 +23,19 @@ namespace osuElements.Curves
         }
 
         public double Gradient(Position a, Position b) {
-            var ax = a.X; //to not change the values in vector a
-            var ay = a.Y;
-            if (a.X == b.X) ax += float.Epsilon;
-            if (a.Y == b.Y) ay += float.Epsilon;
-            return ((double)b.Y - ay) / (b.X - ax);
+            double ax = a.X; //to not change the values in vector a
+            double ay = a.Y;
+            if (a.X == b.X) ax += INCREMENT;
+            if (a.Y == b.Y) ay += INCREMENT;
+            return (b.Y - ay) / (b.X - ax);
         }
 
         private Position GetCenterFrom3Vectors(Position a, Position b, Position c) {
             var ma = Gradient(a, b);
             var mb = Gradient(b, c);
-            // if (ma-mb < 0.01) -> not a _curve
             var x0 = (ma * mb * (a.Y - c.Y) + mb * (a.X + b.X) - ma * (b.X + c.X)) / (2 * (mb - ma));
             var y0 = (-2 * x0 + a.X + b.X) / (2 * ma) + (a.Y + b.Y) / 2.0;
+            // if (ma-mb < 0.01) -> not a _curve
             return new Position((float)x0, (float)y0);
 
         }

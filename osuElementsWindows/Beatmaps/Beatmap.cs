@@ -164,7 +164,7 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// whether or not a countdown occurs before the first hit object appears.
         /// </summary>
-        public bool Countdown { get; set; }
+        public CountDown Countdown { get; set; }
         /// <summary>
         /// which set of hit sounds will be used throughout the beatmap.
         /// </summary>
@@ -231,7 +231,7 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// is a multiplier for the "Distance Snap" feature.
         /// </summary>
-        public float DistanceSpacing { get; set; }
+        public double DistanceSpacing { get; set; }
         /// <summary>
         /// specifies the beat division for placing objects.
         /// </summary>

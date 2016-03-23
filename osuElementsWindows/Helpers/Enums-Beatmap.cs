@@ -2,7 +2,13 @@
 
 namespace osuElements.Helpers
 {
-
+    public enum CountDown
+    {
+        None,
+        Normal,
+        Half,
+        Double
+    }
     public enum GameMode
     {
         Standard,

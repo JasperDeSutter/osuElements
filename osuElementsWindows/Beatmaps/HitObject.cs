@@ -14,7 +14,7 @@ namespace osuElements.Beatmaps
             StartTime = startTime;
             StartPosition = position;
             NewCombo = isNewcombo || type.HasFlag(HitObjectType.NewCombo)
-                ? ((int)type & 112) >> 4 + 1
+                ? (((int)type & 112) >> 4) + 1
                 : 0;
             var typeint = (int)type;
             Type = (HitObjectType)(typeint - (typeint & 116)); //take out new combo bits (64, 32, 16 and 4)
@@ -99,7 +99,7 @@ namespace osuElements.Beatmaps
                     SoundType &= ~HitObjectSoundType.Clap;
             }
         }
-        
+
         protected string AdditionsForString =>
             $"{(int)SampleSet}:{(int)AdditionSampleSet}:{(int)Custom}:{CustomSet}:" + AdditionSound;
 
@@ -140,10 +140,7 @@ namespace osuElements.Beatmaps
             }
             if (!type.IsType(HitObjectType.Slider)) return null;
             var s = new Slider(position, time, isNewCombo, type, hitsound);
-            var repeat = Convert.ToInt32(parts[6]);
-            var length = Convert.ToDouble(parts[7], Constants.CULTUREINFO);
-            s.SegmentCount = repeat;
-            s.Length = length;
+            //type and points
             var points = parts[5].Split('|');
             SliderType sliderType;
             switch (points[0]) {
@@ -171,28 +168,32 @@ namespace osuElements.Beatmaps
                 pointPositions[i] = Position.FromHitobject(p[0], p[1]);
             }
             s.ControlPoints = pointPositions;
-            var pointHitsounds = Enumerable.Range(1, repeat + 1).Select(i => new Slider.PointHitsound()).ToList();
-
-            if (parts.Length > 8) {
-                var soundTypeParts = parts[8].Split('|');
-                var soundTypeCount = soundTypeParts.Length;
-                for (int i = 0; i < repeat + 1; i++) {
-                    if (i > soundTypeCount) break;
-                    pointHitsounds[i].SoundType = (HitObjectSoundType)int.Parse(soundTypeParts[i]);
-                }
-                var sampleParts = parts[9].Split('|');
-                var sampleCount = sampleParts.Length;
-                for (var i = 0; i < repeat + 1; i++) {
-                    if (i >= sampleCount) break;
-                    var sampleSplit = sampleParts[i].Split(':');
-                    pointHitsounds[i].SampleSet = (SampleSet)int.Parse(sampleSplit[0]);
-                    pointHitsounds[i].AdditionSampleSet = (SampleSet)int.Parse(sampleSplit[1]);
-                }
-                s.PointHitsounds = pointHitsounds;
-                if (parts.Length > 9) {
-                    GetAdditions(parts[10], s);
-                }
+            //repeat count
+            s.SegmentCount = int.Parse(parts[6]);
+            var pointcount = s.SegmentCount + 1;
+            //length
+            if (parts.Length > 7) s.Length = Convert.ToDouble(parts[7], Constants.CULTUREINFO);
+            //hitsounds
+            var pointHitsounds = Enumerable.Range(1, pointcount).Select(i => new Slider.PointHitsound()).ToList();
+            if (parts.Length < 9) return s;
+            var soundTypeParts = parts[8].Split('|');
+            for (int i = 0; i < pointcount + 1; i++) {
+                if (i >= soundTypeParts.Length) break;
+                pointHitsounds[i].SoundType = (HitObjectSoundType)int.Parse(soundTypeParts[i]);
             }
+            s.PointHitsounds = pointHitsounds;
+            //point samplesets
+            if (parts.Length < 10) return s;
+            var sampleParts = parts[9].Split('|');
+            for (var i = 0; i < pointcount + 1; i++) {
+                if (i >= sampleParts.Length) break;
+                var sampleSplit = sampleParts[i].Split(':');
+                pointHitsounds[i].SampleSet = (SampleSet)int.Parse(sampleSplit[0]);
+                pointHitsounds[i].AdditionSampleSet = (SampleSet)int.Parse(sampleSplit[1]);
+            }
+            //slider samplesets
+            if (parts.Length > 10)
+                GetAdditions(parts[10], s);
             return s;
         }
 
@@ -211,7 +212,7 @@ namespace osuElements.Beatmaps
 
         public override string ToString() => HitobjectToString;
 
-        protected string HitobjectToString => $"{StartPosition.ToHitObjectString()},{StartTime},{(int)Type | (IsNewCombo ? (NewCombo - 1 << 4) + 4 : 0)},{(int)SoundType}";
+        protected string HitobjectToString => $"{StartPosition.ToHitObjectString()},{StartTime},{(int)Type | (IsNewCombo ? ((NewCombo - 1) << 4) + 4 : 0)},{(int)SoundType}";
 
         public bool Equals(HitObject other) => CompareTo(other) == 0;
 

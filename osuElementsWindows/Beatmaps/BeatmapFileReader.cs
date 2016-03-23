@@ -27,7 +27,7 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, string>(b => b.AudioHash, ""),
                 new FileLine<Beatmap, int>(b => b.AudioLeadIn) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.PreviewTime) { WriteIfDefault = true },
-                new FileLine<Beatmap, bool>(b => b.Countdown, true) { WriteIfDefault = true },
+                new FileLine<Beatmap, CountDown>(b => b.Countdown) { WriteIfDefault = true },
                 new FileLine<Beatmap, SampleSet>(b => b.SampleSet) { WriteIfDefault = true },
                 new FileLine<Beatmap, float>(b => b.StackLeniency, 1) { WriteIfDefault = true },
                 new FileLine<Beatmap, GameMode>(b => b.Mode) { WriteIfDefault = true, WriteEnumAsInt = true },
@@ -45,7 +45,7 @@ namespace osuElements.Beatmaps
                 );
             var editor = new FileSection<Beatmap>("Editor",
                 new ListFileLine<Beatmap, int>(b => b.Bookmarks, 0) { WriteIfDefault = true },
-                new FileLine<Beatmap, float>(b => b.DistanceSpacing, 1) { WriteIfDefault = true },
+                new FileLine<Beatmap, double>(b => b.DistanceSpacing, 1) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.BeatDivisor, 4) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.GridSize, 4) { WriteIfDefault = true },
                 new FileLine<Beatmap, float>(b => b.TimelineZoom, 1) { WriteIfDefault = true }
@@ -95,6 +95,7 @@ namespace osuElements.Beatmaps
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
+                new WriteLine<Beatmap>("//Background Colour Transformations"),
                 new MultiFileLine<Beatmap, BackgroundColorEvent>(b => b.BackgroundColorTransformations, null) {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
@@ -110,7 +111,7 @@ namespace osuElements.Beatmaps
                 "TimingPoints",
                 TimingPoint.Parse, t => t.ToString());
             var colours = new FileSection<Beatmap>("Colours",
-                new MultiFileLine<Beatmap, Colour>(b => b.ComboColours, null) { Key = "Combo" },
+                new MultiFileLine<Beatmap, Colour>(b => b.ComboColours, null) { Key = "Combo", Format = "{0} : {1}" },
                 new FileLine<Beatmap, Colour?>(b => b.SliderBorder),
                 new FileLine<Beatmap, Colour?>(b => b.SliderTrackOverride)
                 );
