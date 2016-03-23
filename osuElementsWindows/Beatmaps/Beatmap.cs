@@ -240,10 +240,11 @@ namespace osuElements.Beatmaps
         /// specifies the size of the grid for the "Grid Snap" feature.
         /// </summary>
         public int GridSize { get; set; }
+
         /// <summary>
         /// specifies the zoom in the editor timeline.
         /// </summary>
-        public float TimelineZoom { get; set; }
+        public float TimelineZoom { get; set; } = 1;
 
         #endregion
 

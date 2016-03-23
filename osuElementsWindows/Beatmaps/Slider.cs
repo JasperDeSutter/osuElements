@@ -23,11 +23,6 @@ namespace osuElements.Beatmaps
 
         public CurveBase Curve { get; private set; }
 
-        private float TimeToCurve(float t) {
-            if (Curve == null) return t;
-            var result = t * (Length / Curve.Length);
-            return MathHelper.Clamp((float)result);
-        }
 
         public void CreateCurve(bool forceRefresh = false) {
             if (!forceRefresh && Curve != null) return;
@@ -53,8 +48,20 @@ namespace osuElements.Beatmaps
         public sealed override int SegmentCount { get; set; }
 
         public override Position EndPosition => Curve?.GetPointOnCurve(TimeToCurve(1)).Item1 ?? ControlPoints.Last();
+        
+        private float TimeToCurve(float t) {
+            if (Curve == null) return t;
+            var result = t * (Length / Curve.Length);
+            return MathHelper.Clamp((float)result);
+        }
 
-        public Position PositionAtTime(float time) => PositionAt((time - StartTime) / Duration);
+        public Position PositionAtTime(float time) {
+            var tfull = SegmentCount * (time - StartTime) / Duration;
+            var currepeat = (int)(tfull % 2);
+            if (currepeat == 1)
+                tfull = 2 - tfull;
+            return PositionAt(tfull%1);
+        }
 
         public Position PositionAt(float t) => Curve?.GetPointOnCurve(TimeToCurve(t)).Item1 ?? StartPosition;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -38,12 +39,12 @@ namespace osuElements.Api.Repositories
             }
         }
         protected static async Task<ApiReplay> GetReplay(string query) {
-            if (string.IsNullOrEmpty(ApiReplayRepository.Key)) throw new NullReferenceException("Please supply an api key (ApiReplayRepository.Key)");
+            if (string.IsNullOrEmpty(Key)) throw new NullReferenceException("Please supply an api key (ApiReplayRepository.Key)");
             var result = new ApiReplay();
             using (var client = new HttpClient()) {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var url = Url + query + $"&k={ApiReplayRepository.Key}";
+                var url = Url + query + $"&k={Key}";
                 var json = await client.GetStringAsync(url);
                 if ("{\"error\":\"Replay not available.\"}" == json) return null;
                 json = json.Remove(0, 12).TrimEnd('"', '}');
@@ -56,7 +57,8 @@ namespace osuElements.Api.Repositories
 
         protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode) {
             var scores = await GetList<ApiScore>(query + $"&m={(int)mode}");
-            foreach (var score in scores) {
+            if (scores == null) return null;
+            foreach (var score in scores.Where(score => score != null)) {
                 score.GameMode = mode;
             }
             return scores;

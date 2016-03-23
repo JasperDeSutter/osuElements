@@ -27,7 +27,7 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, string>(b => b.AudioHash, ""),
                 new FileLine<Beatmap, int>(b => b.AudioLeadIn) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.PreviewTime) { WriteIfDefault = true },
-                new FileLine<Beatmap, CountDown>(b => b.Countdown) { WriteIfDefault = true },
+                new FileLine<Beatmap, CountDown>(b => b.Countdown) { WriteIfDefault = true, WriteEnumAsInt = true },
                 new FileLine<Beatmap, SampleSet>(b => b.SampleSet) { WriteIfDefault = true },
                 new FileLine<Beatmap, float>(b => b.StackLeniency, 1) { WriteIfDefault = true },
                 new FileLine<Beatmap, GameMode>(b => b.Mode) { WriteIfDefault = true, WriteEnumAsInt = true },

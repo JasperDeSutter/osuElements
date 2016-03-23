@@ -42,10 +42,11 @@ namespace osuElements.Replays
         /// <param name="readData">uncomress and read the compressed replay data</param>
         public Replay(ApiScore score, ApiReplay replay, bool readData = true) : this() {
             score.CloneTo(this);
-            ReplayData = Convert.FromBase64String(replay.Content); // doesn't work yet
+            ReplayData = Convert.FromBase64String(replay.Content.Replace("\\/", "/")); // doesn't work yet
             if (readData) ReadData();
             FileFormat = 0; //?
             BeatmapHash = ""; // use api-call for this
+            //LifebarFrames aren't available
             ReplayHash = ""; //?
         }
 

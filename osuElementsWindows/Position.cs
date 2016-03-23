@@ -5,13 +5,15 @@ namespace osuElements
 {
     public struct Position
     {
-        public static readonly double CANVAS_PROPORTION = 4.0 / 3;
-        public static readonly int OSU_RESOLUTION_HEIGHT = 480;
-        public static readonly int OSU_RESOLUTION_WIDTH = 640;
-        public static readonly int HITOBJECTS_RESOLUTION_HEIGHT = 376;
-        public static readonly int HITOBJECTS_RESOLUTION_WIDTH = 512;
-        public static readonly int HITOBJECTS_LEFT_OFFSET = 64;
-        public static readonly int HITOBJECTS_TOP_OFFSET = 56;
+        public const double CANVAS_PROPORTION = 4.0 / 3;
+        public const int OSU_RESOLUTION_HEIGHT = 480;
+        public const int OSU_RESOLUTION_WIDTH = 640;
+        public const int HITOBJECTS_RESOLUTION_HEIGHT = 376;
+        public const int HITOBJECTS_RESOLUTION_WIDTH = 512;
+        public const int HITOBJECTS_LEFT_OFFSET = 64;
+        public const int HITOBJECTS_RIGHT_OFFSET = 64;
+        public const int HITOBJECTS_TOP_OFFSET = 56;
+        public const int HITOBJECTS_BOTTOM_OFFSET = 48;
 
         #region properties
         public float X { get; set; }

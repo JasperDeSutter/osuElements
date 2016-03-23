@@ -30,7 +30,6 @@ namespace osuElements.Api.Repositories
         }
 
         public async Task<ApiBeatmap> Get(string mapHash, GameMode? mode = null) {
-
             return (await GetMaps($"get_beatmaps?h={mapHash}", mode)).FirstOrDefault();
         }
 
@@ -39,8 +38,8 @@ namespace osuElements.Api.Repositories
             var userstring = userid.HasValue
                 ? $"&u={userid.Value}&type=id"
                 : string.IsNullOrEmpty(userName) ? "" : $"&u={userName}&type=string";
-            var modstring = mods.HasValue ? $"&mods={mods.Value}" : "";
-            return await GetList<ApiScore>($"get_scores?b={mapId}{userstring}&m={mode}{modstring}&limit={limit}");
+            var modstring = mods.HasValue ? $"&mods={(int)mods.Value}" : "";
+            return await GetScoreList($"get_scores?b={mapId}{userstring}{modstring}&limit={limit}", mode);
         }
 
         private async Task<List<ApiBeatmap>> GetMaps(string query, GameMode? mode) {

@@ -82,17 +82,17 @@ namespace osuElements.Curves
             private double[] _multiplier;
             public BezierSegment(Position[] points) : base(points) { }
             protected override void Init() {
-                var pointList = new List<Tuple<Position, float>>();
+                var pointList = new List<Position>();
                 for (var i = 0; i < Listcount; i++) {
                     var t = 1f * i / (Listcount - 1);
-                    pointList.Add(GetPointOnCurve(t));
+                    pointList.Add(GetBezierPoint(t));
                 }
                 _multiplier = new double[Listcount];
                 _length = 0;
 
                 double totalmultiplier = 0;
                 for (var i = 1; i < Listcount; i++) {
-                    var current = Position.Distance(pointList[i].Item1, pointList[i - 1].Item1);
+                    var current = Position.Distance(pointList[i], pointList[i - 1]);
                     _length += current;
                     _multiplier[i - 1] = 1 / (current);
                     totalmultiplier += _multiplier[i - 1];
@@ -127,12 +127,35 @@ namespace osuElements.Curves
                 result2 = GetBezierPointRecursive(t - float.Epsilon, Points, 0, Points.Length);
                 return new Tuple<Position, float>(result, (float)(Position.GetAngle(result2 - result) + MathHelper.PI2).NormalizeAngle());
             }
-            private static Position GetBezierPointRecursive(double t, IList<Position> controlPoints, int index, int count) {//recursive way of calculating n-point beziers based on quadratic bezier
+
+            private  Position GetBezierPointRecursive(double t, IList<Position> controlPoints, int index, int count) {//recursive way of calculating n-point beziers based on quadratic bezier
+                return GetBezierPoint(t);
                 if (count == 1) return controlPoints[index];
                 var p0 = GetBezierPointRecursive(t, controlPoints, index, count - 1);
                 var p1 = GetBezierPointRecursive(t, controlPoints, index + 1, count - 1);
                 //return new Position((float)((1 - t) * p0.X + t * p1.X), (float)((1 - t) * p0.Y + t * p1.Y));
                 return Position.Lerp(p0, p1, (float)t);
+            }
+
+            private Position GetBezierPoint(double t) {
+                var result = new Position();
+                var length = Points.Length-1;
+                for (var i = 0; i <= length; i++) {
+                    result += Points[i] * (float)Bernstein(i, length, t);
+                }
+                return result;
+            }
+            
+            private static double Bernstein(int i, int n, double t) {
+                var powers = Math.Pow(t, i) * Math.Pow(1 - t, n - i);
+                long r = 1;
+                long d;
+                if (i > n) return 0;
+                for (d = 1; d <= i; d++) {
+                    r *= n--;
+                    r /= d;
+                }
+                return r * powers;
             }
         }
 

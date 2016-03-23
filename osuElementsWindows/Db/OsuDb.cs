@@ -17,6 +17,38 @@ namespace osuElements.Db
             OsuDbRepository = osuElements.OsuDbRepository;
         }
 
+
+        public int FileVersion { get; set; }
+        public int CollectionCount { get; set; }
+        public bool SomeBool { get; set; }
+        public DateTime DateTime { get; set; }
+        public string UserName { get; set; }
+        public List<DbBeatmap> Beatmaps { get; set; }
+        public int SomeInt { get; set; }
+
+        #region File
+        public static IFileRepository<OsuDb> OsuDbRepository { get; set; }
+
+        public bool IsRead { get; private set; }
+        public string Directory { get; set; } = osuElements.OsuDirectory;
+        public string FileName { get; set; } = "osu!.db";
+        public string FullPath
+        {
+            get { return Path.Combine(Directory, FileName); }
+            set
+            {
+                Directory = Path.GetDirectoryName(value);
+                FileName = Path.GetFileName(value);
+            }
+        }
+        public void ReadFile(ILogger logger = null) {
+            OsuDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            IsRead = true;
+        }
+
+        public void WriteFile() {
+            OsuDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+        }
         public static BinaryFile<OsuDb> FileReader() {
             var result = new BinaryFile<OsuDb>(
                 new BinaryFileLine<OsuDb, int>(s => s.FileVersion),
@@ -88,38 +120,6 @@ namespace osuElements.Db
                 new BinaryFileLine<OsuDb, int>(s => s.SomeInt)
                 );
             return result;
-        }
-
-        public int FileVersion { get; set; }
-        public int CollectionCount { get; set; }
-        public bool SomeBool { get; set; }
-        public DateTime DateTime { get; set; }
-        public string UserName { get; set; }
-        public List<DbBeatmap> Beatmaps { get; set; }
-        public int SomeInt { get; set; }
-
-        #region File
-        public static IFileRepository<OsuDb> OsuDbRepository { get; set; }
-
-        public bool IsRead { get; private set; }
-        public string Directory { get; set; } = osuElements.OsuDirectory;
-        public string FileName { get; set; } = "osu!.db";
-        public string FullPath
-        {
-            get { return Path.Combine(Directory, FileName); }
-            set
-            {
-                Directory = Path.GetDirectoryName(value);
-                FileName = Path.GetFileName(value);
-            }
-        }
-        public void ReadFile(ILogger logger = null) {
-            OsuDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
-            IsRead = true;
-        }
-
-        public void WriteFile() {
-            OsuDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
 
