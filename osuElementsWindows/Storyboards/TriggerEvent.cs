@@ -1,5 +1,4 @@
 ﻿using System;
-using osuElements.Helpers;
 using osuElements.Storyboards.Triggers;
 
 namespace osuElements.Storyboards

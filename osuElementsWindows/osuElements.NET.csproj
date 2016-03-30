@@ -20,7 +20,9 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>bin\Debug\osuElements.Net.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,32 +35,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>D:\NugetPackages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>D:\NugetPackages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="7zip\Common\CRC.cs" />
-    <Compile Include="7zip\Compress\LZMA\LzmaBase.cs" />
-    <Compile Include="7zip\Compress\LZMA\LzmaDecoder.cs" />
-    <Compile Include="7zip\Compress\LZMA\LzmaEncoder.cs" />
-    <Compile Include="7zip\Compress\LZ\IMatchFinder.cs" />
-    <Compile Include="7zip\Compress\LZ\LzBinTree.cs" />
-    <Compile Include="7zip\Compress\LZ\LzInWindow.cs" />
-    <Compile Include="7zip\Compress\LZ\LzOutWindow.cs" />
-    <Compile Include="7zip\Compress\RangeCoder\RangeCoder.cs" />
-    <Compile Include="7zip\Compress\RangeCoder\RangeCoderBit.cs" />
-    <Compile Include="7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
-    <Compile Include="7zip\ICoder.cs" />
-    <Compile Include="7zip\LZMACoder.cs" />
+    <Compile Include="Helpers\LZMA\BitDecoder.cs" />
+    <Compile Include="Helpers\LZMA\BitTreeDecoder.cs" />
+    <Compile Include="Helpers\LZMA\CoderPropID.cs" />
+    <Compile Include="Helpers\LZMA\CRC.cs" />
+    <Compile Include="Helpers\LZMA\DataErrorException.cs" />
+    <Compile Include="Helpers\LZMA\ICodeProgress.cs" />
+    <Compile Include="Helpers\LZMA\InvalidParamException.cs" />
+    <Compile Include="Helpers\LZMA\Base.cs" />
+    <Compile Include="Helpers\LZMA\Decoder.cs" />
+    <Compile Include="Helpers\LZMA\Encoder.cs" />
+    <Compile Include="Helpers\LZMA\IMatchFinder.cs" />
+    <Compile Include="Helpers\LZMA\BinTree.cs" />
+    <Compile Include="Helpers\LZMA\InWindow.cs" />
+    <Compile Include="Helpers\LZMA\OutWindow.cs" />
+    <Compile Include="Helpers\LZMA\RangeCoder.cs" />
+    <Compile Include="Helpers\LZMA\BitEncoder.cs" />
+    <Compile Include="Helpers\LZMA\BitTreeEncoder.cs" />
+    <Compile Include="Helpers\LZMACoder.cs" />
+    <Compile Include="Helpers\LZMA\RangeDecoder.cs" />
     <Compile Include="Api\ApiBeatmap.cs" />
     <Compile Include="Api\ApiMulti.cs" />
     <Compile Include="Api\ApiReplay.cs" />
     <Compile Include="Api\ApiScore.cs" />
     <Compile Include="Api\ApiUser.cs" />
+    <Compile Include="Api\BoolConverter.cs" />
     <Compile Include="Api\Repositories\ApiBeatmapRepository.cs" />
     <Compile Include="Api\Repositories\ApiMultiplayerRepository.cs" />
     <Compile Include="Api\Repositories\ApiReplayRepository.cs" />
@@ -82,12 +92,12 @@
     <Compile Include="Beatmaps\Spinner.cs" />
     <Compile Include="Beatmaps\TimingPoint.cs" />
     <Compile Include="Colour.cs" />
-    <Compile Include="Curves\BezierCurve.cs" />
-    <Compile Include="Curves\CatmullCurve.cs" />
-    <Compile Include="Curves\CurveBase.cs" />
-    <Compile Include="Curves\CurveSegment.cs" />
-    <Compile Include="Curves\LinearCurve.cs" />
-    <Compile Include="Curves\PerfectCurve.cs" />
+    <Compile Include="Beatmaps\Curves\BezierCurve.cs" />
+    <Compile Include="Beatmaps\Curves\CatmullCurve.cs" />
+    <Compile Include="Beatmaps\Curves\CurveBase.cs" />
+    <Compile Include="Beatmaps\Curves\CurveSegment.cs" />
+    <Compile Include="Beatmaps\Curves\LinearCurve.cs" />
+    <Compile Include="Beatmaps\Curves\PerfectCurve.cs" />
     <Compile Include="Db\Collection.cs" />
     <Compile Include="Db\CollectionDb.cs" />
     <Compile Include="Db\DbBeatmap.cs" />
@@ -95,13 +105,17 @@
     <Compile Include="Db\ScoresDb.cs" />
     <Compile Include="Helpers\BitFunctions.cs" />
     <Compile Include="Helpers\Constants.cs" />
-    <Compile Include="Helpers\Enums-Beatmap.cs" />
-    <Compile Include="Helpers\Enums-Event.cs" />
-    <Compile Include="Helpers\Enums-HitObject.cs" />
-    <Compile Include="Helpers\Enums-Mania.cs" />
-    <Compile Include="Helpers\Enums-Other.cs" />
-    <Compile Include="Helpers\extensions.cs" />
+    <Compile Include="Beatmaps\Enums.cs" />
+    <Compile Include="GameMode.cs" />
     <Compile Include="Helpers\IHitsound.cs" />
+    <Compile Include="Mods.cs" />
+    <Compile Include="Replays\Enums.cs" />
+    <Compile Include="Storyboards\Enums.cs" />
+    <Compile Include="Skins\Enums.cs" />
+    <Compile Include="Helpers\Enums.cs" />
+    <Compile Include="Api\Enums.cs" />
+    <Compile Include="Helpers\extensions.cs" />
+    <Compile Include="Helpers\Hitsound.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="IO\Binary\BinaryCollection.cs" />
     <Compile Include="IO\Binary\BinaryExtensions.cs" />
@@ -145,7 +159,7 @@
     <Compile Include="Storyboards\SampleEvent.cs" />
     <Compile Include="Storyboards\SpriteEvent.cs" />
     <Compile Include="Storyboards\Storyboard.cs" />
-    <Compile Include="Storyboards\TransformableExtensions.cs" />
+    <Compile Include="Storyboards\Extensions.cs" />
     <Compile Include="Storyboards\TransformationEvent.cs" />
     <Compile Include="Storyboards\TriggerEvent.cs" />
     <Compile Include="Storyboards\Triggers\FailingTrigger.cs" />

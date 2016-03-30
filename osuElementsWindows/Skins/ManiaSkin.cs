@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using osuElements.Helpers;
 
 namespace osuElements.Skins
 {
@@ -57,7 +56,7 @@ namespace osuElements.Skins
             {
                 if (_keys == value) return;
                 _keys = value;
-                for (int i = 0; i < _keys; i++) {
+                for (var i = 0; i < _keys; i++) {
                     if (i > 0) ColumnSpacing.Add(0);
                     ColumnLineWidth.Add(2);
                     ColumnWidth.Add(30);
@@ -66,7 +65,7 @@ namespace osuElements.Skins
                     foreach (var flip in NoteFlipWhenUpsideDown.Values) {
                         flip.Add(true);
                     }
-                    NoteBodyStyle.Add(Helpers.NoteBodyStyle.RepeatBottom);
+                    NoteBodyStyle.Add(Skins.NoteBodyStyle.RepeatBottom);
                     KeyFlipWhenUpsideDown.Add(true);
                 }
                 ColumnLineWidth.Add(2);

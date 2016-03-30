@@ -1,20 +1,14 @@
-﻿using System;
-
-namespace osuElements.Helpers
+﻿namespace osuElements.Skins
 {
-    [Flags]
-    public enum ManiaKeys
+    /// <summary>
+    /// Not used anymore
+    /// </summary>
+    public enum SliderStyle
     {
-        None,
-        K1 = 1,
-        K2 = 2,
-        K3 = 4,
-        K4 = 8,
-        K5 = 16,
-        K6 = 32,
-        K7 = 64,
-        K8 = 128,
-        K9 = 256,
+        Opaque = 1,
+        Transparent = 2,
+        Toonsliders = 3,
+        LegacyOpenGl = 4
     }
     public enum ManiaSpecialStyle
     {
@@ -47,5 +41,4 @@ namespace osuElements.Helpers
         L, //L
         T //T
     }
-
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using osuElements.Api;
 using osuElements.Beatmaps;
 using osuElements.Helpers;
 
@@ -14,19 +15,6 @@ namespace osuElements.Db
         Ranked,
         Approved,
         Qualified,
-    }
-    public enum DbScoreRank
-    {
-        XH,
-        SH,
-        X,
-        S,
-        A,
-        B,
-        C,
-        D,
-        Fail,
-        NoRank,
     }
     /// <summary>
     /// The database-driven approach to the beatmap object
@@ -49,10 +37,10 @@ namespace osuElements.Db
         public ICollection<KeyValuePair<Mods, double>> TaikoDifficulties { get; set; }
         public ICollection<KeyValuePair<Mods, double>> CtbDifficulties { get; set; }
         public ICollection<KeyValuePair<Mods, double>> ManiaDifficulties { get; set; }
-        public DbScoreRank HighestTaikoRank { get; set; }
-        public DbScoreRank HighestStandardRank { get; set; }
-        public DbScoreRank HighestCtbRank { get; set; }
-        public DbScoreRank HighestManiaRank { get; set; }
+        public ScoreRank HighestTaikoRank { get; set; }
+        public ScoreRank HighestStandardRank { get; set; }
+        public ScoreRank HighestCtbRank { get; set; }
+        public ScoreRank HighestManiaRank { get; set; }
         public short UserOffset { get; set; }
         public short OnlineOffset { get; set; }
         public string TitleMarkdown { get; set; }

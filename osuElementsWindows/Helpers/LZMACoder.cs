@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using osuElements._7zip.Compress.LZMA;
+using osuElements.Helpers.LZMA;
 
-namespace osuElements._7zip
+namespace osuElements.Helpers
 {
     internal class LzmaCoder
     {

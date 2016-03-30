@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.File;
 
@@ -10,7 +9,6 @@ namespace osuElements.Storyboards
     public class Storyboard : IStoryboardEvents, IFileModel
     {
         public Storyboard() {
-            StoryboardFileRepository = osuElements.StoryboardFileRepository;
             BackgroundEvents = new List<SpriteEvent>();
             ForegroundEvents = new List<SpriteEvent>();
             FailEvents = new List<SpriteEvent>();
@@ -50,7 +48,6 @@ namespace osuElements.Storyboards
         }
 
         #region File
-        public static IFileRepository<Storyboard> StoryboardFileRepository { get; set; }
         public bool IsRead { get; private set; }
         public string FileName { get; set; }
         public string Directory { get; set; }
@@ -68,11 +65,11 @@ namespace osuElements.Storyboards
             }
         }
         public void ReadFile(ILogger logger = null) {
-            StoryboardFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.StoryboardFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
         public void WriteFile() {
-            StoryboardFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.StoryboardFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         public static FileReader<Storyboard> FileReader() {
             var variables = new CollectionFileSection<KeyValuePair<string, string>, Storyboard>(s => s.VariablesDictionary, "Variables",

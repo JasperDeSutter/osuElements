@@ -17,10 +17,10 @@ namespace osuElements.IO.File
         public async Task WriteFileAsync(Stream outStream, T instance) {
             var tasks = GetInstances(instance).Select(fileSection => Task.Factory.StartNew(fileSection.AllLines)).ToList();
             using (var sw = new StreamWriter(outStream)) {
-                for (int i = 0; i < tasks.Count; i++) {
+                for (var i = 0; i < tasks.Count; i++) {
                     var task = tasks[i];
                     var lines = await task;
-                    for (int j = 0; j < lines.Count; j++) {
+                    for (var j = 0; j < lines.Count; j++) {
                         if (i != tasks.Count - 1 || j != lines.Count - 1)
                             await sw.WriteLineAsync(lines[j]);
                     }
@@ -40,7 +40,7 @@ namespace osuElements.IO.File
         public void WriteFile(Stream outStream, T instance) {
             using (var sw = new StreamWriter(outStream)) {
                 var lines = GetInstances(instance).SelectMany(fileSection => fileSection.AllLines()).ToList();
-                for (int i = 0; i < lines.Count - 1; i++) {
+                for (var i = 0; i < lines.Count - 1; i++) {
                     var line = lines[i];
                     sw.WriteLine(line);
                 }

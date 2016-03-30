@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using osuElements.Helpers;
 
 namespace osuElements.Api.Repositories
 {
@@ -22,7 +21,7 @@ namespace osuElements.Api.Repositories
         Task<List<ApiBeatmap>> GetCreator(int userId, GameMode? mode = null, int limit = 500);
         Task<ApiBeatmap> Get(int mapId, GameMode? mode = null);
         Task<ApiBeatmap> Get(string mapHash, GameMode? mode = null);
-        Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string userName = null, GameMode mode = 0, Mods? mods = null, int limit = 100);
+        Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null, GameMode mode = 0, Mods? mods = null, int limit = 100);
     }
     public interface IApiReplayRepository
     {

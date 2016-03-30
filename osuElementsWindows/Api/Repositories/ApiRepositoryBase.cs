@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using osuElements.Helpers;
 
 namespace osuElements.Api.Repositories
 {
@@ -27,7 +26,6 @@ namespace osuElements.Api.Repositories
                     var url = Url + query + $"&k={Key}";
 
                     var json = await client.GetStringAsync(url);
-
 
                     var list = JsonConvert.DeserializeObject<List<T>>(json);
 
@@ -55,11 +53,12 @@ namespace osuElements.Api.Repositories
             return result;
         }
 
-        protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode) {
+        protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode, Action<ApiScore> action) {
             var scores = await GetList<ApiScore>(query + $"&m={(int)mode}");
             if (scores == null) return null;
             foreach (var score in scores.Where(score => score != null)) {
                 score.GameMode = mode;
+                action?.Invoke(score);
             }
             return scores;
         }

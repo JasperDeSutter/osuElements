@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using osuElements.Curves;
+using osuElements.Beatmaps.Curves;
 using osuElements.Helpers;
 
 namespace osuElements.Beatmaps
@@ -22,7 +20,17 @@ namespace osuElements.Beatmaps
         }
 
         public CurveBase Curve { get; private set; }
-
+        public override HitObject Clone() {
+            var result = (Slider)base.Clone();
+            result.PointHitsounds = new List<PointHitsound>();
+            foreach (var p in PointHitsounds) {
+                result.PointHitsounds.Add(new PointHitsound { SampleSet = p.SampleSet, AdditionSampleSet = p.AdditionSampleSet, Custom = p.Custom, SoundType = p.SoundType });
+            }
+            result.ControlPoints = new Position[ControlPoints.Length];
+            Array.Copy(ControlPoints, result.ControlPoints, ControlPoints.Length);
+            //no copy of curve
+            return result;
+        }
 
         public void CreateCurve(bool forceRefresh = false) {
             if (!forceRefresh && Curve != null) return;
@@ -39,33 +47,28 @@ namespace osuElements.Beatmaps
                 default:
                     //length > 3 can be either be B or C, not L or P
                     if (SliderType == SliderType.PerfectCurve || SliderType == SliderType.Linear)
-                        SliderType = SliderType.Bezier; //let's default to bezier here
+                        SliderType = SliderType.Bezier; //lets default to bezier here
                     break;
             }
-            Curve = CurveBase.CreateCurve(ControlPoints, SliderType);
+            Curve = CurveBase.CreateCurve(ControlPoints, SliderType, Length);
         }
 
         public sealed override int SegmentCount { get; set; }
 
-        public override Position EndPosition => Curve?.GetPointOnCurve(TimeToCurve(1)).Item1 ?? ControlPoints.Last();
-        
-        private float TimeToCurve(float t) {
-            if (Curve == null) return t;
-            var result = t * (Length / Curve.Length);
-            return MathHelper.Clamp((float)result);
-        }
+        public override Position EndPosition => Curve?.EndPosition ?? ControlPoints.Last();
 
-        public Position PositionAtTime(float time) {
+
+        public override Position PositionAtTime(double time) {
             var tfull = SegmentCount * (time - StartTime) / Duration;
             var currepeat = (int)(tfull % 2);
             if (currepeat == 1)
                 tfull = 2 - tfull;
-            return PositionAt(tfull%1);
+            return PositionAt(Math.Max(0, tfull % 1));
         }
 
-        public Position PositionAt(float t) => Curve?.GetPointOnCurve(TimeToCurve(t)).Item1 ?? StartPosition;
+        public Position PositionAt(double t) => Curve?.GetPointOnCurve(t) ?? StartPosition;
 
-        public Tuple<Position, float>[] GetAllCurvePoints(float t) => Curve?.GetPointsBeforeTOnCurve(TimeToCurve(t));
+        public List<CurveSegment> GetAllCurvePoints(double t) => Curve?.GetPointsBeforeTOnCurve(1);
 
         public SliderType SliderType { get; set; }
 
@@ -98,22 +101,23 @@ namespace osuElements.Beatmaps
             return sb.ToString();
         }
 
+        public HitSound[] GetPointHitsounds(int point) {
+            return PointHitsounds[point].InheritSoundsFrom(this).GetHitSounds();
+        }
+
         public class PointHitsound : IHitsound
         {
             public bool IsDefault() {
                 return SampleSet == SampleSet.None && AdditionSampleSet == SampleSet.None &&
-                       SoundType == HitObjectSoundType.Normal && Custom == Custom.Default;
+                       SoundType == HitObjectSoundType.Normal;
             }
 
             public SampleSet SampleSet { get; set; }
             public SampleSet AdditionSampleSet { get; set; }
             public HitObjectSoundType SoundType { get; set; }
 
-            public Custom Custom
-            {
-                get { return Custom.Default; }
-                set { }
-            }
+            public Custom Custom { get; set; }
+            public int Volume { get; set; }
 
             public override string ToString() {
                 return $"{SampleSet},{AdditionSampleSet},{Custom}:{SoundType}";

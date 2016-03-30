@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using osuElements.Helpers;
-using static osuElements.Helpers.Easing;
-using static osuElements.Helpers.TransformTypes;
+using static osuElements.Storyboards.Easing;
+using static osuElements.Storyboards.TransformTypes;
 
 namespace osuElements.Storyboards
 {
@@ -123,13 +123,8 @@ namespace osuElements.Storyboards
         #endregion
 
 
-        private static readonly TransformTypes[] _normalTransformations = { M, MX, MY, F, R, S, V, C, P };
-
-
-        private static void Optimization2(List<TransformationEvent> passed, TransformationEvent transform) {
-            foreach (var pass in passed) {
-                if (!MathHelper.Between(transform.StartTime, pass.StartTime, pass.EndTime))
-                    continue; //event doesnt start when other is active
+        private static void Optimization2(ICollection<TransformationEvent> passed, TransformationEvent transform) {
+            foreach (var pass in passed.Where(pass => MathHelper.Between(transform.StartTime, pass.StartTime, pass.EndTime))) {
                 if (MathHelper.Between(transform.EndTime, pass.StartTime, pass.EndTime))
                     return; //event is completely useless
                 //we can only interpolate without easing, otherwise not desired effect (might look into this further)
@@ -157,8 +152,12 @@ namespace osuElements.Storyboards
                     transformable.AddTransformation(my);
                 }
                 transformable.Transformations.RemoveAll(t => t.Transformtype == M);
-                transforms[M].Clear();
+                transforms = transformable.Transformations.OrderBy(t => t.StartTime).GroupBy(t => t.Transformtype)
+                .ToDictionary(t => t.Key, t => t.ToList());
+                globalstart = transformable.Transformations.Min(t => t.StartTime);
+                globalend = transformable.Transformations.Max(t => t.EndTime);
             }
+
             //strip off unneeded parts of transformations
             foreach (var transformList in transforms.Values) {
                 var passed = new List<TransformationEvent>();
@@ -179,17 +178,16 @@ namespace osuElements.Storyboards
                 transforms[transformList[0].Transformtype] = passed;
             }
 
-
             //TODO disable invisible parts of transformations
 
-            var fade0 = 0f.AsArray();
+            //var fade0 = 0f.AsArray();
 
-            var fades = transformable.Transformations.Where(t => t.Transformtype == F);
-            if (!fades.Any(t => t.StartValues == fade0 || t.EndValues == fade0)) return; //everything is always visible
-            foreach (var transformType in _normalTransformations) {
-                var transformables = transformable.Transformations.Where(t => t.Transformtype == transformType);
-                if (!transformables.Any()) continue;
-            }
+            //var fades = transformable.Transformations.Where(t => t.Transformtype == F);
+            //if (!fades.Any(t => t.StartValues == fade0 || t.EndValues == fade0)) return; //everything is always visible
+            //foreach (var transformType in _normalTransformations) {
+            //    var transformables = transformable.Transformations.Where(t => t.Transformtype == transformType);
+            //    if (!transformables.Any()) continue;
+            //}
         }
     }
 }

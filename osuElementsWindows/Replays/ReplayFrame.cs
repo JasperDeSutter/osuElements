@@ -1,5 +1,4 @@
 ﻿using System;
-using osuElements.Helpers;
 
 namespace osuElements.Replays
 {

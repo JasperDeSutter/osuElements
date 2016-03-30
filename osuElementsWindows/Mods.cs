@@ -1,30 +1,7 @@
-﻿using System;
+using System;
 
-namespace osuElements.Helpers
+namespace osuElements
 {
-    public enum CountDown
-    {
-        None,
-        Normal,
-        Half,
-        Double
-    }
-    public enum GameMode
-    {
-        Standard,
-        Taiko,
-        CatchTheBeat,
-        Mania,
-    }
-
-    [Flags]
-    public enum TimingPointOption
-    {
-        None = 0,
-        KiaiTime = 1,
-        OmitFirstBarLine = 8
-    }
-
     [Flags]
     public enum Mods
     {
@@ -62,24 +39,4 @@ namespace osuElements.Helpers
         // FreeModAllowed = KeyMod | FadeIn | Relax2 | SpunOut | Flashlight | Relax | SuddenDeath | HardRock | Hidden | Easy | NoFail,
         ScoreIncreaseMods = FadeIn | Flashlight | DoubleTime | HardRock | Hidden,
     }
-
-    public enum BeatmapDifficulty
-    {
-        Easy,
-        Normal,
-        Hard,
-        Insane,
-        Expert
-    }
-
-    public enum ApiBeatmapState
-    {
-        Graveyard = -2,
-        WorkInProgress,
-        Pending,
-        Ranked,
-        Approved,
-        Qualified,
-    }
-
 }

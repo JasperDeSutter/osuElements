@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using osuElements.Helpers;
 
 namespace osuElements.Api.Repositories
 {
@@ -33,17 +32,18 @@ namespace osuElements.Api.Repositories
             return (await GetMaps($"get_beatmaps?h={mapHash}", mode)).FirstOrDefault();
         }
 
-        public async Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string userName = null,
+        public async Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null,
             GameMode mode = 0, Mods? mods = null, int limit = 100) {
             var userstring = userid.HasValue
                 ? $"&u={userid.Value}&type=id"
-                : string.IsNullOrEmpty(userName) ? "" : $"&u={userName}&type=string";
+                : string.IsNullOrEmpty(username) ? "" : $"&u={username}&type=string";
             var modstring = mods.HasValue ? $"&mods={(int)mods.Value}" : "";
-            return await GetScoreList($"get_scores?b={mapId}{userstring}{modstring}&limit={limit}", mode);
+            return await GetScoreList($"get_scores?b={mapId}{userstring}{modstring}&limit={limit}", mode,
+                s => s.BeatmapId = mapId);
         }
 
         private async Task<List<ApiBeatmap>> GetMaps(string query, GameMode? mode) {
-            var modestring = (mode.HasValue && mode.Value != GameMode.Standard) ? $"&m={(int)mode.Value}&a=1" : "";
+            var modestring = mode.HasValue && mode.Value != GameMode.Standard ? $"&m={(int)mode.Value}&a=1" : "";
             var list = await GetList<ApiBeatmap>(query + modestring);
             return list;
         }

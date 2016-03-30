@@ -17,8 +17,8 @@ namespace osuElements.Beatmaps.Base
         public double[] Strains = { 1, 1 };
         private readonly Position _normalizedStartPosition;
         private readonly Position _normalizedEndPosition;
-        private readonly float _lazySliderLengthFirst;
-        private readonly float _lazySliderLengthSubsequent;
+        private readonly double _lazySliderLengthFirst;
+        private readonly double _lazySliderLengthSubsequent;
 
         public TpHitObject(HitObject baseHitObject, double radius) {
             BaseHitObject = baseHitObject;
@@ -29,7 +29,7 @@ namespace osuElements.Beatmaps.Base
             }
             _normalizedStartPosition = baseHitObject.StartPosition * scalingFactor;
 
-            if (baseHitObject.IsHitObjectType(Helpers.HitObjectType.Slider)) {
+            if (baseHitObject.IsHitObjectType(HitObjectType.Slider)) {
 
                 var slider = (Slider)baseHitObject;
                 while (slider.Curve == null) {
@@ -42,7 +42,7 @@ namespace osuElements.Beatmaps.Base
 
                 var cursorPos = slider.StartPosition;
 
-                for (int time = slider.StartTime + LAZY_SLIDER_STEP_LENGTH;
+                for (var time = slider.StartTime + LAZY_SLIDER_STEP_LENGTH;
                     time < segmentEndTime; time += LAZY_SLIDER_STEP_LENGTH) {
                     var difference = slider.PositionAtTime(time) - cursorPos;
                     var distance = difference.Length;
@@ -120,11 +120,11 @@ namespace osuElements.Beatmaps.Base
 
         private void CalculateSpecificStrain(TpHitObject previousHitObject, DifficultyType type, double speedMultiplier) {
             double addition = 0;
-            double timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) * speedMultiplier;
-            double decay = Math.Pow(DECAY_BASE[(int)type], timeElapsed / 1000);
+            var timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) * speedMultiplier;
+            var decay = Math.Pow(DECAY_BASE[(int)type], timeElapsed / 1000);
 
             switch (BaseHitObject.Type) {
-                case Helpers.HitObjectType.Slider:
+                case HitObjectType.Slider:
                     switch (type) {
                         case DifficultyType.Speed:
 
@@ -148,7 +148,7 @@ namespace osuElements.Beatmaps.Base
                             break;
                     }
                     break;
-                case Helpers.HitObjectType.HitCircle:
+                case HitObjectType.HitCircle:
                     addition = SpacingWeight(DistanceTo(previousHitObject), type) * SPACING_WEIGHT_SCALING[(int)type];
                     break;
             }

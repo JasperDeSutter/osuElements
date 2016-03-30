@@ -7,7 +7,6 @@ using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.Binary;
 using osuElements.IO.File;
-using osuElements._7zip;
 
 namespace osuElements.Replays
 {
@@ -19,7 +18,6 @@ namespace osuElements.Replays
         public Replay() {
             LifebarFrames = new List<LifebarFrame>();
             ReplayFrames = new List<ReplayFrame>();
-            ReplayFileRepository = osuElements.ReplayFileRepository;
         }
 
         public Replay(string filePath, bool readData) : this() {
@@ -51,8 +49,6 @@ namespace osuElements.Replays
         }
 
         #region File
-        public static IFileRepository<Replay> ReplayFileRepository { get; set; }
-
         public bool IsRead { get; private set; }
         public string Directory { get; set; }
         public string FileName { get; set; }
@@ -70,11 +66,11 @@ namespace osuElements.Replays
             }
         }
         public void ReadFile(ILogger logger = null) {
-            ReplayFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.ReplayFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
         public void WriteFile() {
-            ReplayFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.ReplayFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
 
@@ -85,21 +81,17 @@ namespace osuElements.Replays
         public string LifebarFrameString { get; set; }
         public List<LifebarFrame> LifebarFrames { get; }
         public byte[] ReplayData { get; set; }
-        public List<ReplayFrame> ReplayFrames { get; private set; }
-        public int Seed { get; set; }//?
-        public long SomeLong { get; set; }//?
+        public List<ReplayFrame> ReplayFrames { get; }
+        public int Seed { get; set; }
+        public long SomeLong { get; set; }
 
-        internal static object ReadSomeLong(BinaryReader reader, Replay replay) {
-            if (replay.FileFormat > 20140720)
-                return reader.ReadInt64();
-            return reader.ReadInt32();
+        private static object ReadSomeLong(BinaryReader reader, Replay replay) {
+            return replay.FileFormat > 20140720 ? reader.ReadInt64() : reader.ReadInt32();
         }
 
-        internal static void WriteSomeLong(BinaryWriter writer, Replay replay) {
-            if (replay.FileFormat > 20140720)
-                writer.Write(replay.SomeLong);
-            if (replay.FileFormat > 20121007)
-                writer.Write((int)replay.SomeLong);
+        private static void WriteSomeLong(BinaryWriter writer, Replay replay) {
+            if (replay.FileFormat > 20140720) writer.Write(replay.SomeLong);
+            else writer.Write((int) replay.SomeLong);
         }
 
         public static BinaryFile<Replay> FileReader() {
@@ -112,7 +104,7 @@ namespace osuElements.Replays
                 new BinaryFileLine<Replay, GameMode>(r => r.GameMode){Type = typeof (byte)},
                 new BinaryFileLine<Replay, int>(r => r.FileFormat),
                 new BinaryFileLine<Replay, string>(r => r.BeatmapHash),
-                new BinaryFileLine<Replay, string>(r => r.UserName),
+                new BinaryFileLine<Replay, string>(r => r.Username),
                 new BinaryFileLine<Replay, string>(r => r.ReplayHash),
                 new BinaryFileLine<Replay, ushort>(r => r.Count300),
                 new BinaryFileLine<Replay, ushort>(r => r.Count100),
@@ -122,8 +114,8 @@ namespace osuElements.Replays
                 new BinaryFileLine<Replay, ushort>(r => r.CountMiss),
                 new BinaryFileLine<Replay, int>(r => r.Score),
                 new BinaryFileLine<Replay, ushort>(r => r.MaxCombo),
-                new BinaryFileLine<Replay, bool>(r => r.IsPerfect),
-                new BinaryFileLine<Replay, Mods>(r => r.Enabled_Mods){Type = typeof (int)},
+                new BinaryFileLine<Replay, bool>(r => r.Perfect),
+                new BinaryFileLine<Replay, Mods>(r => r.EnabledMods){Type = typeof (int)},
                 new BinaryFileLine<Replay, string>(r => r.LifebarFrameString),
                 new BinaryFileLine<Replay, DateTime>(r => r.Date),
                 new BinaryFileLine<Replay, byte[]>(r => r.ReplayData),
@@ -138,7 +130,7 @@ namespace osuElements.Replays
         }
 
         private void ReadReplayCompressedData(string data) {
-            int lasttime = 0;
+            var lasttime = 0;
             foreach (var parts in data.Split(','). //split resulting string in parts
                 Where(frame => !string.IsNullOrEmpty(frame)). //check for null
                 Select(frame => frame.Split('|'))
@@ -151,7 +143,7 @@ namespace osuElements.Replays
                     continue;
                 }
 
-                int offset = int.Parse(parts[0]);
+                var offset = int.Parse(parts[0]);
                 lasttime += offset;
                 ReplayFrames.Add(new ReplayFrame() {
                     TimeOffset = offset,

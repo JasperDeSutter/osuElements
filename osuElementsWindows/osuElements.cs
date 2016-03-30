@@ -27,6 +27,12 @@ namespace osuElements
             CollectionDbRepository = CollectionDb.FileReader();
             OsuDbRepository = OsuDb.FileReader();
             ScoresDbRepository = ScoresDb.FileReader();
+
+            ApiReplayRepository = new ApiReplayRepository();
+            ApiBeatmapRepository = new ApiBeatmapRepository();
+            ApiReplayRepository = new ApiReplayRepository();
+            ApiUserRepository = new ApiUserRepository();
+
             using (var osureg = Registry.ClassesRoot.OpenSubKey("osu\\DefaultIcon")) {
                 if (osureg == null) return;
                 var osukey = osureg.GetValue(null).ToString();
@@ -65,10 +71,10 @@ namespace osuElements
         public static IFileRepository<ScoresDb> ScoresDbRepository { get; set; }
 
         //Not necessary right now
-        //public static IApiBeatmapRepository ApiBeatmapRepository { get; set; }
-        //public static IApiReplayRepository ApiReplayRepository { get; set; }
-        //public static IApiUserRepository ApiUserRepository { get; set; }
-        //public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
+        public static IApiBeatmapRepository ApiBeatmapRepository { get; set; }
+        public static IApiReplayRepository ApiReplayRepository { get; set; }
+        public static IApiUserRepository ApiUserRepository { get; set; }
+        public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
         public static string ApiKey
         {
             set { ApiRepositoryBase.Key = value; }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using osuElements.Api;
-using osuElements.Api.Repositories;
 using osuElements.Beatmaps.Events;
 using osuElements.Helpers;
 using osuElements.IO;
@@ -33,9 +32,13 @@ namespace osuElements.Beatmaps
             FailEvents = new List<SpriteEvent>();
             PassEvents = new List<SpriteEvent>();
             SampleEvents = new List<SampleEvent>();
-
-            BeatmapFileRepository = osuElements.BeatmapFileRepository;
+            
             IsRead = false;
+
+            DifficultyApproachRate = 5;
+            DifficultyCircleSize = 5;
+            DifficultyHpDrainRate = 5;
+            DifficultyOverall = 5;
         }
 
         public Beatmap(string file)
@@ -68,7 +71,6 @@ namespace osuElements.Beatmaps
 
 
         #region File
-        public IFileRepository<Beatmap> BeatmapFileRepository { get; set; }
         public bool IsRead { get; private set; }
         public string FileName { get; set; }
         public string Directory { get; set; }
@@ -87,11 +89,12 @@ namespace osuElements.Beatmaps
             }
         }
         public void ReadFile(ILogger logger = null) {
-            BeatmapFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.BeatmapFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            if (FormatVersion < 8) DifficultyApproachRate = DifficultyHpDrainRate;
             IsRead = true;
         }
         public void WriteFile() {
-            BeatmapFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.BeatmapFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
 
@@ -117,18 +120,17 @@ namespace osuElements.Beatmaps
         }
 
         public async Task AddApiProperties() {
-            var rep = new ApiBeatmapRepository();
-            var apimap = await rep.Get(Beatmap_Id, Mode);
+            var apimap = await osuElements.ApiBeatmapRepository.Get(BeatmapId, Mode);
             apimap.CopyTo(this, false);
         }
 
 
         public string GetHash(bool forceRenew = false) {
-            if (!forceRenew && !string.IsNullOrWhiteSpace(File_MD5)) return File_MD5;
+            if (!forceRenew && !string.IsNullOrWhiteSpace(BeatmapHash)) return BeatmapHash;
             var md5 = MD5.Create();
-            File_MD5 = md5.ComputeHash(osuElements.ReadStream(FullPath)).
+            BeatmapHash = md5.ComputeHash(osuElements.ReadStream(FullPath)).
                 Aggregate("", (current, b) => current + b.ToString("x2"));
-            return File_MD5;
+            return BeatmapHash;
         }
 
         public bool CompareHash(string hash) {
@@ -285,11 +287,11 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// a multiplier for the slider velocity. Default value is 1.4 
         /// </summary>
-        public double SliderMultiplier { get; set; } = 1.4;
+        public double DifficultySliderMultiplier { get; set; } = 1.4;
         /// <summary>
         /// specifies how often slider ticks appear. Default value is 1.
         /// </summary>
-        public float SliderTickRate { get; set; } = 1;
+        public float DifficultySliderTickRate { get; set; } = 1;
 
         #endregion
 

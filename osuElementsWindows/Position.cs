@@ -31,12 +31,12 @@ namespace osuElements
             Y = y;
         }
         public Position(Position copy) : this(copy.X, copy.Y) { }
-        public static Position FromHitobject(float x, float y) {
-            var result = new Position {
-                XForHitobject = Math.Max(0, Math.Min(512, x)), //make sure the values are inside playfield
-                YForHitobject = Math.Max(0, Math.Min(384, y))
+        public static Position FromHitobject(float x, float y, bool clamp = true) {
+            if (!clamp) return new Position { XForHitobject = x, YForHitobject = y };
+            return new Position {
+                XForHitobject = MathHelper.Clamp(x, 0, 512),
+                YForHitobject = MathHelper.Clamp(y, 0, 384),
             };
-            return result;
         }
         public float XForHitobject
         {
@@ -66,16 +66,26 @@ namespace osuElements
             !(a == b);
 
         #region Methods
-        public float Length =>
-            (float)Sqrt(X * X + Y * Y);
+        public double Length =>
+            Sqrt(1.0 * X * X + 1.0 * Y * Y);
 
-        public float Distance(Position b) =>
-            (this - b).Length;
+        public double LengthSquared =>
+           1.0 * X * X + 1.0 * Y * Y;
 
-        public static float Distance(Position a, Position b) =>
-            (b - a).Length;
-        public float LengthSquared() {
-            return X*X + Y*Y;
+
+        public double Distance(Position b) {
+            return (this - b).Length;
+        }
+
+        public double DistanceSquared(Position b) {
+            return (this - b).LengthSquared;
+        }
+
+        public Position SecondaryPoint(double length, double angle) {
+            var result = new Position(this);
+            result.X += (float)(length * Sin(angle));
+            result.Y += (float)(length * Cos(angle));
+            return result;
         }
 
         public double GetAngle(bool normalize = true) {
@@ -85,16 +95,6 @@ namespace osuElements
         public static double GetAngle(Position a, bool normalize = true) =>
             a.GetAngle(normalize);
 
-        public static Position SecondaryPoint(Position from, float length, float angle) =>
-            from.SecondaryPoint(length, angle);
-
-
-        public Position SecondaryPoint(float length, float angle) {
-            var result = new Position(this);
-            result.X += (float)(length * Sin(angle));
-            result.Y += (float)(length * Cos(angle));
-            return result;
-        }
         public static Position operator -(Position p1) {
             p1.X = -p1.X;
             p1.Y = -p1.Y;
@@ -120,6 +120,9 @@ namespace osuElements
             p.Y *= f;
             return p;
         }
+        public static Position operator *(Position p, double d) {
+            return p * (float)d;
+        }
         public static Position operator /(Position p1, Position p2) {
             p1.X /= p2.X;
             p1.Y /= p2.Y;
@@ -131,7 +134,7 @@ namespace osuElements
             return p;
         }
         public Position Normalize() =>
-            new Position(this / Length);
+            new Position(this / (float)Length);
 
         #endregion
 
@@ -139,5 +142,9 @@ namespace osuElements
             return a + (b - a) * t;
         }
 
+        public static Position Flip(Position pos) {
+            pos.YForHitobject = HITOBJECTS_RESOLUTION_HEIGHT - pos.YForHitobject;
+            return pos;
+        }
     }
 }

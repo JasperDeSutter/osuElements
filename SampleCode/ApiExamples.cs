@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using osuElements;
 using osuElements.Api.Repositories;
 using osuElements.Beatmaps;
-using osuElements.Curves;
 using osuElements.Helpers;
 
 namespace SampleCode
@@ -20,12 +19,12 @@ namespace SampleCode
             var firstMap = await bRep.Get(1);
             var someManiaMap = await bRep.Get("ds12dza68123sdq564", GameMode.Mania);
             var mapsByMe = await bRep.GetCreator("ExCellRaD", limit: 5);
-            var scoresOnMap = bRep.GetScores(firstMap.Beatmap_Id);
+            var scoresOnMap = bRep.GetScores(firstMap.BeatmapId);
             var maps2016 = bRep.GetSince(new DateTime(2016, 1, 1));
 
             var uRep = new ApiUserRepository(); //getting users, topscores and recent scores of users
             var peppy = await uRep.Get("peppy");
-            var peppyscores = await uRep.GetBest(peppy.User_Id, GameMode.CatchTheBeat);
+            var peppyscores = await uRep.GetBest(peppy.UserId, GameMode.CatchTheBeat);
             var recentscores = await uRep.GetRecent("Rafis");
 
             var mRep = new ApiMultiplayerRepository(); //getting active multiplayer matches
@@ -34,7 +33,7 @@ namespace SampleCode
 
             var rRep = new ApiReplayRepository(); //getting replay data (if available)
             var score = recentscores[0]; //should be rafis' top play
-            var replay = rRep.Get(score.Beatmap_Id, score.User_Id, score.GameMode);
+            var replay = rRep.Get(score.BeatmapId, score.UserId, score.GameMode);
         }
 
         public void Url() {

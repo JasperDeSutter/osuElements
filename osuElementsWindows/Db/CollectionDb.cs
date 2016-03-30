@@ -25,7 +25,6 @@ namespace osuElements.Db
 
         public CollectionDb() {
             Collections = new List<Collection>();
-            CollectionDbRepository = osuElements.CollectionDbRepository;
 
         }
         public void AddColection(string name, IEnumerable<Beatmap> beatmaps) {
@@ -52,8 +51,6 @@ namespace osuElements.Db
 
 
         #region File
-        public static IFileRepository<CollectionDb> CollectionDbRepository { get; set; }
-
         public bool IsRead { get; private set; }
         public string Directory { get; set; } = osuElements.OsuDirectory;
         public string FileName { get; set; } = "collection.db";
@@ -67,12 +64,12 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            CollectionDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.CollectionDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
 
         public void WriteFile() {
-            CollectionDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.CollectionDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
 

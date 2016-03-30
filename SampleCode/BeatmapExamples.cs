@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using osuElements;
 using osuElements.Api.Repositories;
 using osuElements.Beatmaps;
-using osuElements.Curves;
 using osuElements.Helpers;
 
 namespace SampleCode
@@ -21,7 +20,7 @@ namespace SampleCode
             beatmap =
                 new Beatmap(@"1 Kenji Ninuma - DISCO PRINCE\Kenji Ninuma - DISCOüÜPRINCE (peppy) [Normal].osu");
             beatmap.Version = "THIS MAP IS GREAT";
-            beatmap.Diff_Approach = 9.5f;
+            beatmap.DifficultyApproachRate = 9.5f;
             //Hitobject space has different coordinates that the rest of the game elements -> FromHitobject method
             var hitcircle = new HitCircle(Position.FromHitobject(10, 20), 200);
             beatmap.HitObjects.Add(hitcircle);
@@ -57,7 +56,7 @@ namespace SampleCode
             beatmapManager.DifficultyCalculations(); //recalculate the difficulties
             var timing300Hr = beatmapManager.HitWindow300; //this will now be different than the previous timing300
 
-            beatmapManager.SliderCalculations().Wait();
+            beatmapManager.SliderCalculations();
             //this will create curves for the sliders. As this is an intensive task, it's async -> wait
             //this will get the selected map's hitobjects (better to work this way, no need for a reference to the beatmap)
             var hitobjects = beatmapManager.GetHitObjects();

@@ -37,10 +37,10 @@ namespace ModelsTest
 
         private static readonly Dictionary<string, Func<DbBeatmap, object>> DICTIONARY =
             new Dictionary<string, Func<DbBeatmap, object>>{
-                {"OD", b => Math.Round(b.Diff_Overall)},
-                {"AR", b => b.Diff_Approach},
-                {"CS", b => b.Diff_Size},
-                {"HP", b => b.Diff_Drain},
+                {"OD", b => Math.Round(b.DifficultyOverall)},
+                {"AR", b => b.DifficultyApproachRate},
+                {"CS", b => b.DifficultyCircleSize},
+                {"HP", b => b.DifficultyHpDrainRate},
             };
 
         [TestMethod]

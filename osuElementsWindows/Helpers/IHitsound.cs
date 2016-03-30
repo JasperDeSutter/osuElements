@@ -1,45 +1,47 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.Generic;
 using static osuElements.Helpers.HitObjectSoundType;
-
 namespace osuElements.Helpers
 {
     public interface IHitsound
     {
+        /// <summary>
+        /// The <see cref="SampleSet"/> for the normal hitsound
+        /// </summary>
         SampleSet SampleSet { get; set; }
+
+        /// <summary>
+        /// The <see cref="SampleSet"/> for the additional hitsounds.
+        /// (clap, whistle, finish)
+        /// </summary>
         SampleSet AdditionSampleSet { get; set; }
+
+        /// <summary>
+        /// The sounds that the <see cref="HitObject"/> makes on hit.
+        /// can be one or more soundtypes
+        /// </summary>
         HitObjectSoundType SoundType { get; set; }
+
+        /// <summary>
+        /// The custom set from which the samples are taken.
+        /// 0 is default, use (Custom)int for higher values.
+        /// </summary>
         Custom Custom { get; set; }
-    }
-    /// <summary>
-    /// A container for a single hitsound (one clap, or one hitnormal...) from a sampleset
-    /// </summary>
-    public class HitSound
-    {
-        public HitSound(SampleSet set, HitObjectSoundType sound, int custom) {
-            SampleSet = set;
-            HitObjectSoundType = sound;
-            CustomSet = custom;
-        }
-        public SampleSet SampleSet { get; }
-        public HitObjectSoundType HitObjectSoundType { get; }
-        public int CustomSet { get; }
 
-        //basically the name of the file of the sound to be played without extension
-        public override string ToString() {
-            return (SampleSet + "-hit" + HitObjectSoundType + (CustomSet > 0 ? "" + CustomSet : "")).ToLower();
-        }
+        /// <summary>
+        /// The loudness of the samples in percent.
+        /// 0 to 100
+        /// </summary>
+        int Volume { get; set; }
     }
-
     public static class HitsoundExtensions
     {
         /// <summary>
-        /// inherit values from parent to child which aren't set on child
+        /// inherit the values from parent to child which aren't set on child
         /// </summary>
         /// <param name="child">hitobject (or sliderendpoint)</param>
         /// <param name="parent">timingpoint (or slider)</param>
         /// <param name="includeSoundType">if hitobjectsoundtype should be set too</param>
-        public static IHitsound InheritFrom(this IHitsound child, IHitsound parent, bool includeSoundType = false) {
+        public static IHitsound InheritSoundsFrom(this IHitsound child, IHitsound parent, bool includeSoundType = false) {
             if (child.SampleSet == SampleSet.None) {
                 child.SampleSet = parent.SampleSet;
                 child.Custom = parent.Custom;
@@ -55,7 +57,8 @@ namespace osuElements.Helpers
         public static HitSound[] GetHitSounds(this IHitsound hitsound) {
             //a sampleset needs to be supplied
             if (hitsound.SampleSet == SampleSet.None)
-                throw new InvalidEnumArgumentException(nameof(hitsound), (int)SampleSet.None, typeof(SampleSet));
+                hitsound.SampleSet = SampleSet.Normal;
+            //throw new InvalidEnumArgumentException(nameof(hitsound), (int)SampleSet.None, typeof(SampleSet));
 
             var additionset = hitsound.AdditionSampleSet == SampleSet.None ? hitsound.SampleSet : hitsound.AdditionSampleSet;
             var custom = (int)hitsound.Custom;

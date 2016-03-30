@@ -30,6 +30,7 @@ namespace osuElements.Skins
                 new FileLine<Skin, SliderStyle>(s => s.SliderStyle, SliderStyle.Transparent)
                 );
             var colours = new FileSection<Skin>("Colours",
+                new MultiFileLine<Skin, Colour>(s => s.ComboColours, null) { Key = "Combo"},
                 new FileLine<Skin, Colour>(s => s.SongSelectActiveText, new Colour(0, 0, 0)),
                 new FileLine<Skin, Colour>(s => s.SongSelectInactiveText, new Colour(255, 255, 255)),
                 new FileLine<Skin, Colour>(s => s.StarBreakAdditive, new Colour(255, 182, 193)),

@@ -1,17 +1,17 @@
-﻿namespace osuElements.Curves
+﻿namespace osuElements.Beatmaps.Curves
 {
     public class CurveSegment
     {
         private Position _startPosition;
         private Position _endPosition;
-        private Position _between;
+        public Position Between { get; private set; }
         public Position StartPosition
         {
             get { return _startPosition; }
             set
             {
                 _startPosition = value;
-                _between = _endPosition - value;
+                SetBetween(_endPosition - value);
             }
         }
 
@@ -21,20 +21,26 @@
             set
             {
                 _endPosition = value;
-                _between = value - _startPosition;
+                SetBetween(value - _startPosition);
             }
         }
         public CurveSegment(Position start, Position end) {
             _startPosition = start;
             EndPosition = end;
         }
+        public static explicit operator Position(CurveSegment a) {
+            return a.Between;
+        }
 
-        public double Angle() => _between.GetAngle();
-        public float LengthSquared() => _between.LengthSquared();
-        public float Length() => _between.Length;
+        public bool IsCorner { get; set; }
+        public double Angle => Between.GetAngle();
+        public double Length => Between.Length;
+        private void SetBetween(Position between) {
+            Between = between;
+        }
 
         public override string ToString() {
-            return $"{StartPosition},{Length()},{Angle()}";
+            return $"{StartPosition} L:{Length} A:{Angle}";
         }
     }
 }

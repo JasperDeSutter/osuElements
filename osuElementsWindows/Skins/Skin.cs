@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.File;
 
@@ -16,15 +15,10 @@ namespace osuElements.Skins
 
         public Skin() {
             Version = osuElements.LatestSkinVersion;
-            Combo = new List<Colour?>(8);
-            for (int i = 0; i < 8; i++) {
-                Combo.Add(null);
-            }
+            ComboColours = new List<Colour>(8);
             ManiaSkins = new List<ManiaSkin>();
-            SkinFileRepository = osuElements.SkinFileRepository;
         }
         #region File
-        public static IFileRepository<Skin> SkinFileRepository { private get; set; }
         public bool IsRead { get; private set; }
         public string FileName { get; set; } = "skin.ini";
         public string Directory { get; set; }
@@ -44,11 +38,11 @@ namespace osuElements.Skins
             }
         }
         public void ReadFile(ILogger logger = null) {
-            SkinFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.SkinFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
         public void WriteFile() {
-            SkinFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.SkinFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
 
@@ -75,7 +69,7 @@ namespace osuElements.Skins
         public SliderStyle SliderStyle { get; set; } = SliderStyle.Transparent;
         public float Version { get; set; }
         //Colours
-        public List<Colour?> Combo { get; set; }
+        public List<Colour> ComboColours { get; set; }
         public List<Colour> Triangle { get; set; }
         public Colour MenuGlow { get; set; } = new Colour(0, 78, 255);
         public Colour SliderBall { get; set; } = new Colour(2, 170, 255);

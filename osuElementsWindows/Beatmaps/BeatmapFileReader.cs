@@ -59,32 +59,32 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, string>(b => b.Version, "") { WriteIfDefault = true, Format = "{0}:{1}" },
                 new FileLine<Beatmap, string>(b => b.Source, "") { WriteIfDefault = true, Format = "{0}:{1}" },
                 new FileLine<Beatmap, string>(b => b.Tags, "") { WriteIfDefault = true, Format = "{0}:{1}" },
-                new FileLine<Beatmap, int>(b => b.Beatmap_Id) { Key = "BeatmapID", Format = "{0}:{1}" },
-                new FileLine<Beatmap, int>(b => b.BeatmapSet_Id) { Key = "BeatmapSetID", Format = "{0}:{1}" }
+                new FileLine<Beatmap, int>(b => b.BeatmapId) { Key = "BeatmapID", Format = "{0}:{1}" },
+                new FileLine<Beatmap, int>(b => b.BeatmapSetId) { Key = "BeatmapSetID", Format = "{0}:{1}" }
                 );
             var difficulty = new FileSection<Beatmap>("Difficulty",
-                new FileLine<Beatmap, float>(b => b.Diff_Drain, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyHpDrainRate, 5) {
                     WriteIfDefault = true,
                     Key = "HPDrainRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Size, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyCircleSize, 5) {
                     WriteIfDefault = true,
                     Key = "CircleSize",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Overall, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyOverall, 5) {
                     WriteIfDefault = true,
                     Key = "OverallDifficulty",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Approach, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyApproachRate, 5) {
                     WriteIfDefault = true,
                     Key = "ApproachRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, double>(b => b.SliderMultiplier, 1.4) { WriteIfDefault = true, Format = "{0}:{1}" },
-                new FileLine<Beatmap, float>(b => b.SliderTickRate, 1) { WriteIfDefault = true, Format = "{0}:{1}" }
+                new FileLine<Beatmap, double>(b => b.DifficultySliderMultiplier, 1.4) { WriteIfDefault = true, Format = "{0}:{1}" },
+                new FileLine<Beatmap, float>(b => b.DifficultySliderTickRate, 1) { WriteIfDefault = true, Format = "{0}:{1}" }
                 );
             var events = new StoryboardSection<Beatmap>("Events",
                 new FileLine<Beatmap, BackgroundEvent>(b => b.Background) {

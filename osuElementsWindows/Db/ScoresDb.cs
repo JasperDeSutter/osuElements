@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using osuElements.IO;
 using osuElements.IO.Binary;
 using osuElements.IO.File;
 using osuElements.Replays;
@@ -11,7 +10,6 @@ namespace osuElements.Db
     {
         public ScoresDb() {
             ScoreLists = new List<ScoreList>();
-            ScoreDbRepository = osuElements.ScoresDbRepository;
         }
 
         public List<ScoreList> ScoreLists { get; set; }
@@ -36,8 +34,6 @@ namespace osuElements.Db
             }
         }
         #region File
-        public static IFileRepository<ScoresDb> ScoreDbRepository { get; set; }
-
         public bool IsRead { get; private set; }
         public string Directory { get; set; } = osuElements.OsuDirectory;
         public string FileName { get; set; } = "scores.db";
@@ -51,12 +47,12 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            ScoreDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.ScoresDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
 
         public void WriteFile() {
-            ScoreDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.ScoresDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         #endregion
     }

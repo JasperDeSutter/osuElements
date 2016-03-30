@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using osuElements.Api;
 using osuElements.Beatmaps;
 using osuElements.Helpers;
-using osuElements.IO;
 using osuElements.IO.Binary;
 using osuElements.IO.File;
 
@@ -14,7 +14,6 @@ namespace osuElements.Db
     {
         public OsuDb() {
             Beatmaps = new List<DbBeatmap>();
-            OsuDbRepository = osuElements.OsuDbRepository;
         }
 
 
@@ -27,8 +26,6 @@ namespace osuElements.Db
         public int SomeInt { get; set; }
 
         #region File
-        public static IFileRepository<OsuDb> OsuDbRepository { get; set; }
-
         public bool IsRead { get; private set; }
         public string Directory { get; set; } = osuElements.OsuDirectory;
         public string FileName { get; set; } = "osu!.db";
@@ -42,12 +39,12 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            OsuDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.OsuDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
 
         public void WriteFile() {
-            OsuDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.OsuDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         public static BinaryFile<OsuDb> FileReader() {
             var result = new BinaryFile<OsuDb>(
@@ -64,38 +61,38 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, string>(b => b.Creator),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Version),
                     new BinaryFileLine<DbBeatmap, string>(b => b.AudioFilename),
-                    new BinaryFileLine<DbBeatmap, string>(b => b.File_MD5),
+                    new BinaryFileLine<DbBeatmap, string>(b => b.BeatmapHash),
                     new BinaryFileLine<DbBeatmap, string>(b => b.FileName),
                     new BinaryFileLine<DbBeatmap, DbBeatmapState>(b => b.DbBeatmapState) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, ushort>(b => b.HitCircleAmount),
                     new BinaryFileLine<DbBeatmap, ushort>(b => b.SliderAmount),
                     new BinaryFileLine<DbBeatmap, ushort>(b => b.SpinnerAmount),
                     new BinaryFileLine<DbBeatmap, DateTime>(b => b.DownloadDate),
-                    new BinaryFileLine<DbBeatmap, float>(b => b.Diff_Approach),
-                    new BinaryFileLine<DbBeatmap, float>(b => b.Diff_Size),
-                    new BinaryFileLine<DbBeatmap, float>(b => b.Diff_Drain),
-                    new BinaryFileLine<DbBeatmap, float>(b => b.Diff_Overall),
-                    new BinaryFileLine<DbBeatmap, double>(b => b.SliderMultiplier),
+                    new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyApproachRate),
+                    new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyCircleSize),
+                    new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyHpDrainRate),
+                    new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyOverall),
+                    new BinaryFileLine<DbBeatmap, double>(b => b.DifficultySliderMultiplier),
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.StandardDifficulties) {
                         KeyType = typeof(int)
                     },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.TaikoDifficulties) { KeyType = typeof(int) },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.CtbDifficulties) { KeyType = typeof(int) },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.ManiaDifficulties) { KeyType = typeof(int) },
-                    new BinaryFileLine<DbBeatmap, int>(b => b.Hit_Length),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.Total_Length),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.HitLength),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.TotalLength),
                     new BinaryFileLine<DbBeatmap, int>(b => b.PreviewTime),
                     new BinaryCollection<DbBeatmap, TimingPoint>(b => b.TimingPoints,
                         new BinaryFileLine<TimingPoint, double>(t => t.Value),
                         new BinaryFileLine<TimingPoint, double>(t => t.Offset),
                         new BinaryFileLine<TimingPoint, bool>(t => t.IsTiming)),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.Beatmap_Id),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapSet_Id),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.Genre_Id),
-                    new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestStandardRank) { Type = typeof(byte) },
-                    new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestCtbRank) { Type = typeof(byte) },
-                    new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestTaikoRank) { Type = typeof(byte) },
-                    new BinaryFileLine<DbBeatmap, DbScoreRank>(b => b.HighestManiaRank) { Type = typeof(byte) },
+                    new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapId),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapSetId),
+                    new BinaryFileLine<DbBeatmap, Genre>(b => b.Genre) {Type = typeof(int)},
+                    new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestStandardRank) { Type = typeof(byte) },
+                    new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestCtbRank) { Type = typeof(byte) },
+                    new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestTaikoRank) { Type = typeof(byte) },
+                    new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestManiaRank) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, short>(b => b.UserOffset),
                     new BinaryFileLine<DbBeatmap, float>(b => b.StackLeniency),
                     new BinaryFileLine<DbBeatmap, GameMode>(b => b.Mode) { Type = typeof(byte) },
@@ -124,7 +121,7 @@ namespace osuElements.Db
         #endregion
 
         public DbBeatmap FindHash(string hash) {
-            return Beatmaps.FirstOrDefault(b => b.File_MD5 == hash);
+            return Beatmaps.FirstOrDefault(b => b.BeatmapHash == hash);
         }
     }
 }

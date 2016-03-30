@@ -71,6 +71,8 @@ namespace osuElements.Storyboards.Triggers
             }
         }
 
+        public int Volume { get; set; }
+
         public override string ToString() {
             var result = TriggerType.ToString();
             if (_triggerOnSampleSet) result += SampleSet;

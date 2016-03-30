@@ -23,11 +23,11 @@ namespace osuElements.Helpers
         /// <summary>
         /// Pi / 2
         /// </summary>
-        public const float PI2 = MathHelper.PI / 2;
+        public const float PI2 = PI / 2;
 
         /// <summary>
         /// Pi * 2
         /// </summary>
-        public const float TAU = MathHelper.PI * 2;
+        public const float TAU = PI * 2;
     }
 }

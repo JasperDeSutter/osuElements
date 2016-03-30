@@ -1,16 +1,18 @@
 // LzOutWindow.cs
 
-namespace osuElements._7zip.Compress.LZ
-{
-	public class OutWindow
-	{
-		byte[] _buffer = null;
-		uint _pos;
-		uint _windowSize = 0;
-		uint _streamPos;
-		System.IO.Stream _stream;
+using System.IO;
 
-		public uint TrainSize = 0;
+namespace osuElements.Helpers.LZMA
+{
+	internal class OutWindow
+	{
+	    private byte[] _buffer;
+	    private uint _pos;
+	    private uint _windowSize;
+	    private uint _streamPos;
+	    private Stream _stream;
+
+		public uint TrainSize;
 
 		public void Create(uint windowSize)
 		{
@@ -24,7 +26,7 @@ namespace osuElements._7zip.Compress.LZ
 			_streamPos = 0;
 		}
 
-		public void Init(System.IO.Stream stream, bool solid)
+		public void Init(Stream stream, bool solid)
 		{
 			ReleaseStream();
 			_stream = stream;
@@ -36,19 +38,19 @@ namespace osuElements._7zip.Compress.LZ
 			}
 		}
 	
-		public bool Train(System.IO.Stream stream)
+		public bool Train(Stream stream)
 		{
-			long len = stream.Length;
-			uint size = (len < _windowSize) ? (uint)len : _windowSize;
+			var len = stream.Length;
+			var size = len < _windowSize ? (uint)len : _windowSize;
 			TrainSize = size;
 			stream.Position = len - size;
 			_streamPos = _pos = 0;
 			while (size > 0)
 			{
-				uint curSize = _windowSize - _pos;
+				var curSize = _windowSize - _pos;
 				if (size < curSize)
 					curSize = size;
-				int numReadBytes = stream.Read(_buffer, (int)_pos, (int)curSize);
+				var numReadBytes = stream.Read(_buffer, (int)_pos, (int)curSize);
 				if (numReadBytes == 0)
 					return false;
 				size -= (uint)numReadBytes;
@@ -68,7 +70,7 @@ namespace osuElements._7zip.Compress.LZ
 
 		public void Flush()
 		{
-			uint size = _pos - _streamPos;
+			var size = _pos - _streamPos;
 			if (size == 0)
 				return;
 			_stream.Write(_buffer, (int)_streamPos, (int)size);
@@ -79,7 +81,7 @@ namespace osuElements._7zip.Compress.LZ
 
 		public void CopyBlock(uint distance, uint len)
 		{
-			uint pos = _pos - distance - 1;
+			var pos = _pos - distance - 1;
 			if (pos >= _windowSize)
 				pos += _windowSize;
 			for (; len > 0; len--)
@@ -101,7 +103,7 @@ namespace osuElements._7zip.Compress.LZ
 
 		public byte GetByte(uint distance)
 		{
-			uint pos = _pos - distance - 1;
+			var pos = _pos - distance - 1;
 			if (pos >= _windowSize)
 				pos += _windowSize;
 			return _buffer[pos];

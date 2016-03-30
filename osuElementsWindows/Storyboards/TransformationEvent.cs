@@ -22,7 +22,7 @@ namespace osuElements.Storyboards
         public float[] ValuesAt(float time) {
             var t = MathHelper.Clamp(time / Duration);
             var result = new float[ValueCount];
-            for (int i = 0; i < ValueCount; i++) {
+            for (var i = 0; i < ValueCount; i++) {
                 result[i] = MathHelper.Lerp(t, StartValues[i], EndValues[i]);
             }
             return result;
@@ -127,7 +127,7 @@ namespace osuElements.Storyboards
 
             var result = new TransformationEvent[--count];
 
-            for (int i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 var ev =
                     Enumerable.Range((i + 1) * valuecount, valuecount)
                         .Select(j => float.Parse(values[j], Constants.CULTUREINFO))

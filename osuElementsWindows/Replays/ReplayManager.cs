@@ -28,7 +28,7 @@ namespace osuElements.Replays
             if (!beatmap.CompareHash(Replay.BeatmapHash)) throw new Exception("The beatmap does not have the hash the replay requires.");
             Beatmap = beatmap;
             _bManager = new BeatmapManager(beatmap);
-            _bManager.SetMods(Replay.Enabled_Mods);
+            _bManager.SetMods(Replay.EnabledMods);
             _bManager.DifficultyCalculations();
         }
         

@@ -1,4 +1,4 @@
-﻿namespace osuElements.Helpers
+﻿namespace osuElements.Storyboards
 {
     public enum EventTypes //print as string in osb, as int in osu
     {
@@ -20,15 +20,15 @@
     }
     public enum Origin//print as string
     {
-        TopLeft = 0,
-        TopCentre = 1,
-        TopRight = 2,
-        CentreLeft = 10,
-        Centre = 11,
-        CentreRight = 12,
-        BottomLeft = 20,
-        BottomCentre = 21,
-        BottomRight = 22,
+        TopLeft,
+        TopCentre,
+        TopRight,
+        CentreLeft,
+        Centre,
+        CentreRight,
+        BottomLeft,
+        BottomCentre,
+        BottomRight,
     }
     public enum Easing //print as int
     {
