@@ -56,6 +56,11 @@ namespace osuElements.Skins
             {
                 if (_keys == value) return;
                 _keys = value;
+                ColumnWidth = new List<float>(_keys-1);
+                ColumnLineWidth = new List<float>(_keys-1);
+                ColumnSpacing = new List<float>(_keys-1);
+                LightingNWidth = new List<float>(_keys-1);
+                ColumnWidth = new List<float>(_keys-1);
                 for (var i = 0; i < _keys; i++) {
                     if (i > 0) ColumnSpacing.Add(0);
                     ColumnLineWidth.Add(2);

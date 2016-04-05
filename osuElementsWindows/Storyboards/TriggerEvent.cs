@@ -48,9 +48,9 @@ namespace osuElements.Storyboards
         public new static TriggerEvent Parse(string line) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             TriggerBase trigger;
-            TriggerBase.TryParse(line, out trigger);
-            var result = new TriggerEvent(trigger, int.Parse(parts[1]), int.Parse(parts[2]));
-            if (parts.Length > 3) result.Group = int.Parse(parts[3]);
+            TriggerBase.TryParse(parts[1], out trigger);
+            var result = new TriggerEvent(trigger, int.Parse(parts[2]), int.Parse(parts[3]));
+            if (parts.Length > 4) result.Group = int.Parse(parts[4]);
             return result;
         }
     }

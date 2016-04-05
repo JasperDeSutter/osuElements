@@ -28,7 +28,7 @@ namespace osuElements.Helpers
         Custom Custom { get; set; }
 
         /// <summary>
-        /// The loudness of the samples in percent.
+        /// The loudness of the samples in percentage.
         /// 0 to 100
         /// </summary>
         int Volume { get; set; }
@@ -48,6 +48,7 @@ namespace osuElements.Helpers
             }
             if (child.AdditionSampleSet == SampleSet.None) child.AdditionSampleSet = parent.AdditionSampleSet;
             if (includeSoundType && child.SoundType == Normal) child.SoundType = parent.SoundType;
+            if (child.Volume == 0) child.Volume = parent.Volume;
             return child;
         }
         /// <summary>

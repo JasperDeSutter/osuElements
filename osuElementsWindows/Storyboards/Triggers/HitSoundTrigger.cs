@@ -2,7 +2,7 @@
 
 namespace osuElements.Storyboards.Triggers
 {
-    public class HitSoundTrigger : TriggerBase, IHitsound
+    public class HitSoundTrigger : TriggerBase
     {
         private SampleSet _sampleSet;
         private SampleSet _additionSampleSet;
@@ -70,8 +70,6 @@ namespace osuElements.Storyboards.Triggers
                 _triggerOnCustom = true;
             }
         }
-
-        public int Volume { get; set; }
 
         public override string ToString() {
             var result = TriggerType.ToString();

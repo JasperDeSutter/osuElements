@@ -124,7 +124,6 @@ namespace osuElements.Beatmaps
             apimap.CopyTo(this, false);
         }
 
-
         public string GetHash(bool forceRenew = false) {
             if (!forceRenew && !string.IsNullOrWhiteSpace(BeatmapHash)) return BeatmapHash;
             var md5 = MD5.Create();

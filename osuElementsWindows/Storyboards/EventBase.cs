@@ -24,10 +24,8 @@ namespace osuElements.Storyboards
             int a;
             EventTypes t;
             if (!int.TryParse(s3[0], out a) && !Enum.TryParse(s3[0], out t)) return false;
-            var result = Parse(s2);
-            if (result == null) return false;
-            e = result;
-            return true;
+            e = Parse(s2);
+            return e == null?false:true;
         }
 
         public static EventBase Parse(string s) {
@@ -35,17 +33,15 @@ namespace osuElements.Storyboards
             EventTypes etype;
             EventBase result;
             if (Enum.TryParse(parts[0], out etype)) {
-                var path = "";
-                if (parts.Length > 3) path = parts[3].Trim('\"');
                 switch (etype) {
                     case EventTypes.Sprite:
-                        result = new SpriteEvent(path,
+                        result = new SpriteEvent(parts[3].Trim('\"'),
                             (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
                             (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),
                             float.Parse(parts[5], Constants.CULTUREINFO));
                         break;
                     case EventTypes.Animation:
-                        result = new AnimationEvent(path,
+                        result = new AnimationEvent(parts[3].Trim('\"'),
                             int.Parse(parts[6]), int.Parse(parts[7]),
                             (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
                             (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),

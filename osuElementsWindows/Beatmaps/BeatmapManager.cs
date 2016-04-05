@@ -73,24 +73,39 @@ namespace osuElements.Beatmaps
         /// </summary>
         public void SetBeatmap(Beatmap beatmap) {
             _beatmap = beatmap;
-            ComboColours = _beatmap.ComboColours;
+            //ComboColours = _beatmap.ComboColours;
             _hitObjects = beatmap.HitObjects.Select(h => h.Clone()).ToList();
-            CalculateComboColors();
-            CalculateStacking();
+            //CalculateComboColors();
+            //CalculateStacking();
             DifficultyCalculations();
+        }
+
+        /// <summary>
+        /// Adds HitLength, DifficultyRating, Bpm, TotalLength and MaxCombo
+        /// </summary>
+        public void ApiCalculations() {
+            var modsbuffer = Mods;
+            SetMods(Mods.None);
+            _beatmap.DifficultyRating = CalculateDifficlty();
+            SetMods(modsbuffer);
+            _beatmap.Bpm = (int)_beatmap.TimingPoints.First(tp => tp.IsTiming).Bpm;
+            _beatmap.TotalLength = _hitObjects.Max(h => h.EndTime) - _hitObjects.Min(h => h.StartTime);
+            _beatmap.HitLength = _beatmap.TotalLength - _beatmap.BreakPeriods.Sum(b => b.Duration);
+            _beatmap.MaxCombo = _hitObjects.Sum(h => h.MaxCombo);
         }
 
         public void SliderCalculations() {
             foreach (var slider in GetHitObjects().OfType<Slider>()) {
-                slider.Duration = (int)(slider.Length * slider.SegmentCount / SliderVelocityAt(slider.StartTime));
+                var mult = SliderVelocityAt(slider.StartTime);
+                slider.Duration = (int)(slider.Length * slider.SegmentCount / mult);
                 slider.CreateCurve();
-                //Todo add slider scoring points here
+                slider.ScorePointCount = (int)(_beatmap.DifficultySliderTickRate * slider.SegmentDuration / BeatlengthAt(slider.StartTime));
             }
         }
 
         public void DifficultyCalculations() {
             var difficulty = Math.Min(10, DifficultyModMultiplier * _beatmap.DifficultyOverall);
-            HitObjectRadius = (float)(54.4 - AdjustDifficulty(_beatmap.DifficultyCircleSize) * 4.48);
+            HitObjectRadius = (float)(54.422 - AdjustDifficulty(_beatmap.DifficultyCircleSize) * 4.4818);
             HitWindow300 = (int)(80 - difficulty * 6);
             HitWindow100 = (int)(140 - difficulty * 8);
             HitWindow50 = (int)(200 - difficulty * 10);
@@ -128,7 +143,7 @@ namespace osuElements.Beatmaps
             Mods = mods;
             DifficultyCalculations();
         }
-        
+
 
         public void CalculateStacking() {
             const int stackLenience = 3;
@@ -175,9 +190,9 @@ namespace osuElements.Beatmaps
             }
         }
 
-        public async Task<double> CalculateDifficlty() {
+        public double CalculateDifficlty() {
             if (_tpDifficulty == null) _tpDifficulty = new TpDifficulty(this);
-            return await Task.Factory.StartNew(() => _tpDifficulty.CalculateDifficulty());
+            return _tpDifficulty.CalculateDifficulty();
         }
 
         public double BpmAt(int time) {

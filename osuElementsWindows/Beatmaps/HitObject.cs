@@ -103,7 +103,12 @@ namespace osuElements.Beatmaps
                 if (_newCombo == value) return;
                 _newCombo = Math.Max(1, Math.Min(Constants.MAXIMUM_NEW_COMBO, value));
             }
-        } 
+        }
+
+        /// <summary>
+        /// The amount of combo the player gets if played perfectly
+        /// </summary>
+        public virtual int MaxCombo { get; } = 1;
         #endregion
 
         #region Time
@@ -117,7 +122,7 @@ namespace osuElements.Beatmaps
         public int Duration
         {
             get { return EndTime - StartTime; }
-            set { EndTime = value - StartTime; }
+            set { EndTime = value + StartTime; }
         }
 
         /// <summary>
@@ -145,6 +150,8 @@ namespace osuElements.Beatmaps
         public virtual Position PositionAtTime(double time) {
             return StartPosition;
         }
+
+        public virtual void Update(double time){}
 
         public virtual HitObject Clone() {
             var result = (HitObject)MemberwiseClone();

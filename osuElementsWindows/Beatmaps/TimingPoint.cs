@@ -105,7 +105,7 @@ namespace osuElements.Beatmaps
         public static TimingPoint Parse(string line) {
             TimingPoint result;
             var parts = line.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries);
-            var offset = int.Parse(parts[0], Constants.CULTUREINFO);
+            var offset = double.Parse(parts[0], Constants.CULTUREINFO);
             var bpm = double.Parse(parts[1], Constants.CULTUREINFO);
             if (parts.Length > 2) {
                 var signature = (TimeSignature)int.Parse(parts[2]);

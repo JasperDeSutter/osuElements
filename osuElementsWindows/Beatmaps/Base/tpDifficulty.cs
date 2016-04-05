@@ -17,14 +17,15 @@ namespace osuElements.Beatmaps.Base
         }
         public void SetManager(BeatmapManager manager) {
             _modSpeed = manager.ModSpeedMultiplier;
-            TpHitObjects = manager.GetHitObjects().Select(ho => new TpHitObject(ho, manager.HitObjectRadius));//.ToList();
+            var radius = (float)(54.4 - manager.AdjustDifficulty(manager.GetBeatmap().DifficultyCircleSize) * 4.48);
+            TpHitObjects = manager.GetHitObjects().Select(ho => new TpHitObject(ho, radius)).ToList();
         }
 
         private float _modSpeed;
         public IEnumerable<TpHitObject> TpHitObjects { get; set; }
 
 
-        public const double STAR_SCALING_FACTOR = 0.0625;
+        public const double STAR_SCALING_FACTOR = 0.0675;
         public const double EXTREME_SCALING_FACTOR = 0.5;
         
         public bool CalculateStrainValues() {
