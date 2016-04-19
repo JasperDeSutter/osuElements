@@ -75,6 +75,7 @@ namespace osuElements.Beatmaps
             _beatmap = beatmap;
             //ComboColours = _beatmap.ComboColours;
             _hitObjects = beatmap.HitObjects.Select(h => h.Clone()).ToList();
+            _flipHitObjects = Mods.HasFlag(Mods.HardRock);
             //CalculateComboColors();
             //CalculateStacking();
             DifficultyCalculations();
@@ -88,7 +89,7 @@ namespace osuElements.Beatmaps
             SetMods(Mods.None);
             _beatmap.DifficultyRating = CalculateDifficlty();
             SetMods(modsbuffer);
-            _beatmap.Bpm = (int)_beatmap.TimingPoints.First(tp => tp.IsTiming).Bpm;
+            _beatmap.Bpm = _beatmap.TimingPoints.First(tp => tp.IsTiming).Bpm;
             _beatmap.TotalLength = _hitObjects.Max(h => h.EndTime) - _hitObjects.Min(h => h.StartTime);
             _beatmap.HitLength = _beatmap.TotalLength - _beatmap.BreakPeriods.Sum(b => b.Duration);
             _beatmap.MaxCombo = _hitObjects.Sum(h => h.MaxCombo);

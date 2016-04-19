@@ -15,8 +15,6 @@ namespace osuElements.Db
         public OsuDb() {
             Beatmaps = new List<DbBeatmap>();
         }
-
-
         public int FileVersion { get; set; }
         public int CollectionCount { get; set; }
         public bool SomeBool { get; set; }
@@ -102,7 +100,7 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, string>(b => b.TitleMarkdown),
                     new BinaryFileLine<DbBeatmap, bool>(b => b.Unplayed),
                     new BinaryFileLine<DbBeatmap, DateTime>(b => b.LastPlayTime),
-                    new BinaryFileLine<DbBeatmap, bool>(b => b.Bool1),
+                    new BinaryFileLine<DbBeatmap, bool>(b => b.Osz2),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Directory),
                     new BinaryFileLine<DbBeatmap, DateTime>(b => b.LastRead),
                     new BinaryFileLine<DbBeatmap, bool>(b => b.IgnoreHitsounds),
@@ -111,7 +109,7 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, bool>(b => b.IgnoreVideo),
                     new BinaryFileLine<DbBeatmap, bool>(b => b.Bool2),
                     new BinaryFileLine<DbBeatmap, int>(b => b.Int),
-                    new BinaryFileLine<DbBeatmap, byte>(b => b.Byte)
+                    new BinaryFileLine<DbBeatmap, byte>(b => b.ManiaScrollSpeed)
                     ),
 
                 new BinaryFileLine<OsuDb, int>(s => s.SomeInt)

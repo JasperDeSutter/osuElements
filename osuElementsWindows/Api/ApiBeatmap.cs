@@ -51,7 +51,7 @@ namespace osuElements.Api
         /// The tempo in Beats Per Minute of the song
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true, Name = "bpm", Order = 6)]
-        public int Bpm { get; set; } //could be a float, not sure
+        public double Bpm { get; set; } //could be a float, not sure
 
         /// <summary>
         /// Username of this beatmap's creator

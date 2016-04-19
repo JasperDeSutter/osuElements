@@ -17,7 +17,7 @@ namespace ModelsTest
 
         [TestMethod]
         public async Task BeatmapTest() {
-            var map = await _beatmapRepository.Get(831443);
+            var map = await _beatmapRepository.Get(11090);
             var json = JsonConvert.SerializeObject(map);
             Assert.IsNotNull(map);
             Assert.Equals(map.Creator, "peppy");

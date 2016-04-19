@@ -55,8 +55,8 @@ namespace osuElements.Db
 
         //Unsure
         public int Int { get; set; } //nearly always 0
-        public bool Bool1 { get; set; } //always false
+        public bool Osz2 { get; set; } //always false
         public bool Bool2 { get; set; } //always false
-        public byte Byte { get; set; } //always 0
+        public byte ManiaScrollSpeed { get; set; } //always 0
     }
 }
