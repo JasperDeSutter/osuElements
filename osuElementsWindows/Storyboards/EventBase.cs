@@ -25,7 +25,7 @@ namespace osuElements.Storyboards
             EventTypes t;
             if (!int.TryParse(s3[0], out a) && !Enum.TryParse(s3[0], out t)) return false;
             e = Parse(s2);
-            return e == null?false:true;
+            return e == null ? false : true;
         }
 
         public static EventBase Parse(string s) {
@@ -50,7 +50,7 @@ namespace osuElements.Storyboards
                         break;
                     case EventTypes.Sample:
                         result = new SampleEvent(parts[3], int.Parse(parts[1]),
-                            int.Parse(parts[4]), (EventLayer)int.Parse(parts[2]));
+                            parts.Length > 4 ? int.Parse(parts[4]) : 100, (EventLayer)int.Parse(parts[2]));
                         break;
                     case EventTypes.Background:
                         result = new BackgroundEvent(int.Parse(parts[1]), parts[2].Trim('"'),

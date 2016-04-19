@@ -66,7 +66,10 @@ namespace osuElements.IO.Binary
             if (Type == typeof(double)) return reader.ReadDouble();
             if (Type == typeof(float)) return reader.ReadSingle();
             if (Type == typeof(bool)) return reader.ReadBoolean();
-            if (Type == typeof(DateTime)) return new DateTime(reader.ReadInt64(), DateTimeKind.Local);
+            if (Type == typeof(DateTime)) {
+                var ticks = reader.ReadInt64();
+                return new DateTime(ticks, DateTimeKind.Utc);
+            }
             if (Type == typeof(string)) return reader.ReadNullableString();
             if (Type == typeof(byte[])) return reader.ReadByteArray();
             return DefaultValue;

@@ -52,11 +52,12 @@ namespace osuElements.Db
         public DateTime LastRead { get; set; }
         public DateTime LastPlayTime { get; set; }
         public bool Unplayed { get; set; }
+        public bool Osz2 { get; set; } 
+        public byte ManiaScrollSpeed { get; set; } 
 
         //Unsure
         public int Int { get; set; } //nearly always 0
-        public bool Osz2 { get; set; } //always false
         public bool Bool2 { get; set; } //always false
-        public byte ManiaScrollSpeed { get; set; } //always 0
+        public int New { get; set; } // between 400 and 30000, not sure what it is yet
     }
 }

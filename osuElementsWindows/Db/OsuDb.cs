@@ -17,11 +17,12 @@ namespace osuElements.Db
         }
         public int FileVersion { get; set; }
         public int CollectionCount { get; set; }
-        public bool SomeBool { get; set; }
-        public DateTime DateTime { get; set; }
         public string UserName { get; set; }
         public List<DbBeatmap> Beatmaps { get; set; }
+        //unsure
         public int SomeInt { get; set; }
+        public bool SomeBool { get; set; }
+        public DateTime DateTime { get; set; }
 
         #region File
         public bool IsRead { get; private set; }
@@ -52,6 +53,7 @@ namespace osuElements.Db
                 new BinaryFileLine<OsuDb, DateTime>(s => s.DateTime),
                 new BinaryFileLine<OsuDb, string>(s => s.UserName),
                 new BinaryCollection<OsuDb, DbBeatmap>(s => s.Beatmaps,
+                    new BinaryFileLine<DbBeatmap, int>(b => b.New),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Artist),
                     new BinaryFileLine<DbBeatmap, string>(b => b.ArtistUnicode),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Title),
@@ -86,7 +88,7 @@ namespace osuElements.Db
                         new BinaryFileLine<TimingPoint, bool>(t => t.IsTiming)),
                     new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapId),
                     new BinaryFileLine<DbBeatmap, int>(b => b.BeatmapSetId),
-                    new BinaryFileLine<DbBeatmap, Genre>(b => b.Genre) {Type = typeof(int)},
+                    new BinaryFileLine<DbBeatmap, Genre>(b => b.Genre) { Type = typeof(int) },
                     new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestStandardRank) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestCtbRank) { Type = typeof(byte) },
                     new BinaryFileLine<DbBeatmap, ScoreRank>(b => b.HighestTaikoRank) { Type = typeof(byte) },
@@ -116,6 +118,8 @@ namespace osuElements.Db
                 );
             return result;
         }
+        
+
         #endregion
 
         public DbBeatmap FindHash(string hash) {
