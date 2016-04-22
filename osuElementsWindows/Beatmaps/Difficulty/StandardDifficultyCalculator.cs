@@ -2,32 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace osuElements.Beatmaps.Base
+namespace osuElements.Beatmaps.Difficulty
 {
-    public enum DifficultyType
+    internal class StandardDifficultyCalculator : DifficultyCalculatorBase
     {
-        Speed = 0,
-        Aim =1,
-    }
-    
-    internal class TpDifficulty
-    {
-        public TpDifficulty(BeatmapManager manager) {
+        public StandardDifficultyCalculator(BeatmapManager manager) {
             SetManager(manager);
         }
         public void SetManager(BeatmapManager manager) {
-            _modSpeed = manager.ModSpeedMultiplier;
             var radius = (float)(54.4 - manager.AdjustDifficulty(manager.GetBeatmap().DifficultyCircleSize) * 4.48);
-            TpHitObjects = manager.GetHitObjects().Select(ho => new TpHitObject(ho, radius)).ToList();
+            TpHitObjects = manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
         }
 
-        private float _modSpeed;
-        public IEnumerable<TpHitObject> TpHitObjects { get; set; }
+        public IEnumerable<StandardDifficultyHitObject> TpHitObjects { get; set; }
 
 
         public const double STAR_SCALING_FACTOR = 0.0675;
         public const double EXTREME_SCALING_FACTOR = 0.5;
-        
+
         public bool CalculateStrainValues() {
             var hitObjectsEnumerator = TpHitObjects.GetEnumerator();
             if (hitObjectsEnumerator.MoveNext() == false) {
@@ -35,51 +27,51 @@ namespace osuElements.Beatmaps.Base
             }
 
             var currentHitObject = hitObjectsEnumerator.Current;
-            
+
             while (hitObjectsEnumerator.MoveNext()) {
                 var nextHitObject = hitObjectsEnumerator.Current;
-                nextHitObject.CalculateStrains(currentHitObject, _modSpeed);
+                nextHitObject.CalculateStrains(currentHitObject, ModSpeed);
                 currentHitObject = nextHitObject;
             }
 
             return true;
         }
-        
+
         private const double STRAIN_STEP = 400;
-        
+
         private const double DECAY_WEIGHT = 0.9;
 
         public double CalculateDifficulty(DifficultyType type) {
             var highestStrains = new List<double>();
-            var intervalEndTime = STRAIN_STEP * _modSpeed;
+            var intervalEndTime = STRAIN_STEP * ModSpeed;
 
-            double maximumStrain = 0;
-            TpHitObject previousHitObject = null;
+            var maximumStrain = 0.0;
+            StandardDifficultyHitObject previousHitObject = null;
             foreach (var hitObject in TpHitObjects) {
                 while (hitObject.BaseHitObject.StartTime > intervalEndTime) {
                     highestStrains.Add(maximumStrain);
-                    
+
                     if (previousHitObject == null) {
-                        maximumStrain = 0;
+                        maximumStrain = 0.0;
                     }
                     else {
-                        var decay = Math.Pow(TpHitObject.DECAY_BASE[(int)type], (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000);
+                        var decay = Math.Pow(StandardDifficultyHitObject.DECAY_BASE[(int)type], (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000.0);
                         maximumStrain = previousHitObject.Strains[(int)type] * decay;
                     }
-                    
+
                     intervalEndTime += STRAIN_STEP;
                 }
-                
+
                 if (hitObject.Strains[(int)type] > maximumStrain) {
                     maximumStrain = hitObject.Strains[(int)type];
                 }
 
                 previousHitObject = hitObject;
             }
-            
-            double difficulty = 0;
-            double weight = 1;
-            highestStrains.Sort((a, b) => b.CompareTo(a)); 
+
+            var difficulty = 0.0;
+            var weight = 1.0;
+            highestStrains.Sort((a, b) => b.CompareTo(a));
 
             foreach (var strain in highestStrains) {
                 difficulty += weight * strain;
@@ -92,11 +84,19 @@ namespace osuElements.Beatmaps.Base
             if (!CalculateStrainValues()) return 0;
             var speedDifficulty = CalculateDifficulty(DifficultyType.Speed);
             var aimDifficulty = CalculateDifficulty(DifficultyType.Aim);
-            var speedStars = Math.Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
-            var aimStars = Math.Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
-            return speedStars + aimStars + Math.Abs(speedStars - aimStars) * EXTREME_SCALING_FACTOR;
+            AimDifficulty = Math.Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
+            SpeedDifficulty = Math.Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
+            return SpeedDifficulty + AimDifficulty + Math.Abs(SpeedDifficulty - AimDifficulty) * EXTREME_SCALING_FACTOR;
         }
 
 
+        public override GameMode GameMode => GameMode.Standard;
+        public override double StarDifficulty { get; protected set; }
+        public double AimDifficulty { get; private set; }
+        public double SpeedDifficulty { get; private set; }
+        public override void Calculate(Mods mods) {
+            base.Calculate(mods);
+            StarDifficulty = CalculateDifficulty();
+        }
     }
 }

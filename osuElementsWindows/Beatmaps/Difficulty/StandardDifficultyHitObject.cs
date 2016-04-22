@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace osuElements.Beatmaps.Base
+namespace osuElements.Beatmaps.Difficulty
 {
-    internal class TpHitObject
+    internal class StandardDifficultyHitObject
     {
         public static readonly double[] DECAY_BASE = { 0.3, 0.15 };
 
@@ -17,7 +17,7 @@ namespace osuElements.Beatmaps.Base
         private readonly double _lazySliderLengthFirst;
         private readonly double _lazySliderLengthSubsequent;
 
-        public TpHitObject(HitObject baseHitObject, double radius) {
+        public StandardDifficultyHitObject(HitObject baseHitObject, double radius) {
             BaseHitObject = baseHitObject;
             var scalingFactor = 52 / (float)radius;
 
@@ -77,7 +77,7 @@ namespace osuElements.Beatmaps.Base
             }
         }
 
-        public void CalculateStrains(TpHitObject previousHitObject, double speedMultiplier) {
+        public void CalculateStrains(StandardDifficultyHitObject previousHitObject, double speedMultiplier) {
             CalculateSpecificStrain(previousHitObject, DifficultyType.Speed, speedMultiplier);
             CalculateSpecificStrain(previousHitObject, DifficultyType.Aim, speedMultiplier);
         }
@@ -106,7 +106,7 @@ namespace osuElements.Beatmaps.Base
         }
 
 
-        private void CalculateSpecificStrain(TpHitObject previousHitObject, DifficultyType type, double speedMultiplier) {
+        private void CalculateSpecificStrain(StandardDifficultyHitObject previousHitObject, DifficultyType type, double speedMultiplier) {
             var addition = .0;
             var timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) * speedMultiplier;
             var decay = Math.Pow(DECAY_BASE[(int)type], timeElapsed * 0.001);
@@ -148,7 +148,7 @@ namespace osuElements.Beatmaps.Base
 
 
 
-        public double DistanceTo(TpHitObject other) =>
+        public double DistanceTo(StandardDifficultyHitObject other) =>
             _normalizedStartPosition.Distance(other._normalizedEndPosition);
 
     }

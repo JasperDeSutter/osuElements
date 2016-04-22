@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace osuElements.Beatmaps.Base
+namespace osuElements.Beatmaps
 {
     public abstract class HitObjectManagerBase //: MarshalByRefObject
     {

@@ -67,9 +67,9 @@ namespace ModelsTest
 
         public PerfectCurveTest() {
             _points = new[]{
-                new Position(10, 10),
-                new Position(20, 20),
-                new Position(30, 10)
+                new Position(50, 50),
+                new Position(600, 200),
+                new Position(750, 430)
             };
             _curve = new PerfectCurve(_points, -1);
         }

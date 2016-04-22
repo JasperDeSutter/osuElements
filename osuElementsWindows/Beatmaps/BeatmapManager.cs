@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using osuElements.Beatmaps.Base;
+using osuElements.Beatmaps.Difficulty;
 using osuElements.Helpers;
 
 namespace osuElements.Beatmaps
@@ -16,7 +16,7 @@ namespace osuElements.Beatmaps
         #region Fields
         private Beatmap _beatmap;
         private int _currentcombocolor;
-        private TpDifficulty _tpDifficulty;
+        private StandardDifficultyCalculator _standardDifficultyCalculator;
         private bool _hitObjectsFlipped;
         private bool _flipHitObjects;
         private List<HitObject> _hitObjects;
@@ -192,8 +192,9 @@ namespace osuElements.Beatmaps
         }
 
         public double CalculateDifficlty() {
-            if (_tpDifficulty == null) _tpDifficulty = new TpDifficulty(this);
-            return _tpDifficulty.CalculateDifficulty();
+            if (_standardDifficultyCalculator == null) _standardDifficultyCalculator = new StandardDifficultyCalculator(this);
+            _standardDifficultyCalculator.Calculate(Mods);
+            return _standardDifficultyCalculator.StarDifficulty;
         }
 
         public double BpmAt(int time) {

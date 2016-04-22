@@ -83,13 +83,13 @@ namespace osuElements
 
         public Position SecondaryPoint(double length, double angle) {
             var result = new Position(this);
-            result.X += (float)(length * Sin(angle));
-            result.Y += (float)(length * Cos(angle));
+            result.X += (float)(length * Cos(angle));
+            result.Y -= (float)(length * Sin(angle));
             return result;
         }
 
         public double GetAngle(bool normalize = true) {
-            return normalize ? Atan2(Y, X).NormalizeAngle() : Atan2(Y, X);
+            return normalize ? Atan2(-Y, X).NormalizeAngle() : Atan2(-Y, X);
         }
 
         public static double GetAngle(Position a, bool normalize = true) =>

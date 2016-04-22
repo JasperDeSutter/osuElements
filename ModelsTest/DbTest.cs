@@ -29,6 +29,9 @@ namespace ModelsTest
             osuDb.ReadFile(logger);
             var beatmap = osuDb.Beatmaps.FirstOrDefault(d => d.Mode == GameMode.Mania);
             Assert.IsNotNull(beatmap);
+            var maps =
+                osuDb.Beatmaps.Where(b => b.Bool2 || b.Int != 0).Select(b => new { b.Title, b.Version, b.Bool2, b.Int }).ToArray();
+
             beatmap.ReadFile(logger);
             beatmap.FileName += "-copy";
             beatmap.WriteFile();

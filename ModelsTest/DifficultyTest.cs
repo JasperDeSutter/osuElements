@@ -33,7 +33,7 @@ namespace ModelsTest
             }
         }
 
-        struct SomeStruct
+        private struct SomeStruct
         {
             public double Expected { get; set; }
             public double Calculated { get; set; }

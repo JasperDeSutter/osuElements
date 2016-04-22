@@ -44,6 +44,11 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Beatmaps\Difficulty\DifficultyCalculatorBase.cs" />
+    <Compile Include="Beatmaps\Difficulty\CtbDifficultyCalculator.cs" />
+    <Compile Include="Beatmaps\Difficulty\Enums.cs" />
+    <Compile Include="Beatmaps\Difficulty\TaikoDifficultyCalculator.cs" />
+    <Compile Include="Beatmaps\Difficulty\ManiaDifficultyCalculator.cs" />
     <Compile Include="Helpers\LZMA\BitDecoder.cs" />
     <Compile Include="Helpers\LZMA\BitTreeDecoder.cs" />
     <Compile Include="Helpers\LZMA\CoderPropID.cs" />
@@ -75,9 +80,9 @@
     <Compile Include="Api\Repositories\ApiRepositoryBase.cs" />
     <Compile Include="Api\Repositories\ApiUserRepository.cs" />
     <Compile Include="Api\Repositories\IApiRepository.cs" />
-    <Compile Include="Beatmaps\Base\HitObjectManagerBase.cs" />
-    <Compile Include="Beatmaps\Base\tpDifficulty.cs" />
-    <Compile Include="Beatmaps\Base\tpHitObject.cs" />
+    <Compile Include="Beatmaps\HitObjectManagerBase.cs" />
+    <Compile Include="Beatmaps\Difficulty\StandardDifficultyCalculator.cs" />
+    <Compile Include="Beatmaps\Difficulty\StandardDifficultyHitObject.cs" />
     <Compile Include="Beatmaps\Beatmap.cs" />
     <Compile Include="Beatmaps\BeatmapFileReader.cs" />
     <Compile Include="Beatmaps\BeatmapManager.cs" />

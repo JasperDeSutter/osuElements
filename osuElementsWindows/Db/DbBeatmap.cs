@@ -57,7 +57,7 @@ namespace osuElements.Db
 
         //Unsure
         public int Int { get; set; } //nearly always 0
-        public bool Bool2 { get; set; } //always false
+        public bool Bool2 { get; set; } //nearly always false
         public int New { get; set; } // between 400 and 30000, not sure what it is yet
     }
 }
