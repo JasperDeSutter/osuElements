@@ -108,7 +108,7 @@ namespace osuElements.Beatmaps.Difficulty
 
         private void CalculateSpecificStrain(StandardDifficultyHitObject previousHitObject, DifficultyType type, double speedMultiplier) {
             var addition = .0;
-            var timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) * speedMultiplier;
+            var timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) / speedMultiplier;
             var decay = Math.Pow(DECAY_BASE[(int)type], timeElapsed * 0.001);
 
             switch (BaseHitObject.Type) {

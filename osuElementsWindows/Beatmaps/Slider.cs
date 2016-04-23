@@ -6,7 +6,7 @@ using osuElements.Beatmaps.Curves;
 using osuElements.Helpers;
 
 namespace osuElements.Beatmaps
-{   
+{
     public class Slider : HitObject
     {
         public Slider(Position position, int startTime, bool isNewCombo = false,
@@ -20,7 +20,7 @@ namespace osuElements.Beatmaps
         }
 
         public int ScorePointCount { get; set; }
-        public override int MaxCombo => 1 + SegmentCount * ScorePointCount;
+        public override int MaxCombo => 1 + SegmentCount * (ScorePointCount + 1); //+1 for sliderendcircles
 
         public CurveBase Curve { get; private set; }
         public override HitObject Clone() {

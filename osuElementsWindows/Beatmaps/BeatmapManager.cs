@@ -16,7 +16,7 @@ namespace osuElements.Beatmaps
         #region Fields
         private Beatmap _beatmap;
         private int _currentcombocolor;
-        private StandardDifficultyCalculator _standardDifficultyCalculator;
+        private DifficultyCalculatorBase _difficultyCalculator;
         private bool _hitObjectsFlipped;
         private bool _flipHitObjects;
         private List<HitObject> _hitObjects;
@@ -41,9 +41,6 @@ namespace osuElements.Beatmaps
             (Mods.IsType(Mods.HardRock) ? Constants.CIRCLE_SIZE_MOD_MULTIPLIER : 1) *
             (Mods.IsType(Mods.Easy) ? Constants.EASY_MULTIPLIER : 1);
 
-        public float ModSpeedMultiplier =>
-            (Mods.IsType(Mods.DoubleTime) || Mods.IsType(Mods.Nightcore) ? Constants.DT_MULTIPLIER : 1) *
-            (Mods.IsType(Mods.HalfTime) ? Constants.HT_MULTIPLIER : 1);
         #endregion
 
         #region Methods
@@ -192,9 +189,10 @@ namespace osuElements.Beatmaps
         }
 
         public double CalculateDifficlty() {
-            if (_standardDifficultyCalculator == null) _standardDifficultyCalculator = new StandardDifficultyCalculator(this);
-            _standardDifficultyCalculator.Calculate(Mods);
-            return _standardDifficultyCalculator.StarDifficulty;
+            if (_difficultyCalculator == null)
+                _difficultyCalculator = DifficultyCalculatorBase.GetForMode(GetBeatmap().Mode, this);
+            _difficultyCalculator.Calculate(Mods);
+            return _difficultyCalculator.StarDifficulty;
         }
 
         public double BpmAt(int time) {
@@ -218,6 +216,10 @@ namespace osuElements.Beatmaps
             var result = timingpoints.LastOrDefault(tp => tp.Offset <= time && tp.IsTiming == isBpm);
             if (isBpm && result == null) result = timingpoints.First(tp => tp.IsTiming);
             return result;
+        }
+
+        public double CalculatePerformancePoints() {
+            return _difficultyCalculator.PerformancePoints((ushort)_hitObjects.Count, 0, 0, 0, false);
         }
 
         public Position AutoCursorPosition(float timing) {

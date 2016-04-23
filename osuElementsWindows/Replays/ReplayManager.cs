@@ -31,7 +31,7 @@ namespace osuElements.Replays
             _bManager.SetMods(Replay.EnabledMods);
             _bManager.DifficultyCalculations();
         }
-        
+
         private float _timing50;
         private float _timing100;
         private float _timing300;
@@ -67,15 +67,15 @@ namespace osuElements.Replays
                 .Where(h => h.Type.IsType(HitObjectType.HitCircle | HitObjectType.Slider));
             if (hitobjects == null) return null;
             var result = new List<HitobjectTiming>();
-
-            _timing50 = _bManager.HitWindow50 * _bManager.ModSpeedMultiplier;
-            _timing100 = _bManager.HitWindow100 * _bManager.ModSpeedMultiplier;
-            _timing300 = _bManager.HitWindow300 * _bManager.ModSpeedMultiplier;
+            var speed = (float)_bManager.Mods.SpeedMultiplier();
+            _timing50 = _bManager.HitWindow50 * speed;
+            _timing100 = _bManager.HitWindow100 * speed;
+            _timing300 = _bManager.HitWindow300 * speed;
             CalculateKeyPresses();
 
             var frames = new List<ReplayFrame>(Replay.ReplayFrames);
             var keypresses = _keyPresses;
-            
+
             foreach (var ho in hitobjects) {
                 float time = ho.StartTime;
                 _keyPresses.RemoveAll(k => k.Start < time - _bManager.PreEmpt);

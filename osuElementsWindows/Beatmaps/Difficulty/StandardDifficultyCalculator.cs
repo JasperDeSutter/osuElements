@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using osuElements.Api;
+using static System.Math;
 
 namespace osuElements.Beatmaps.Difficulty
 {
-    internal class StandardDifficultyCalculator : DifficultyCalculatorBase
+    public class StandardDifficultyCalculator : DifficultyCalculatorBase
     {
+        private BeatmapManager _manager;
+        internal IEnumerable<StandardDifficultyHitObject> TpHitObjects { get; set; }
+        public const double STAR_SCALING_FACTOR = 0.0675;
+        public const double EXTREME_SCALING_FACTOR = 0.5;
+        private const double STRAIN_STEP = 400;
+        private const double DECAY_WEIGHT = 0.9;
+
         public StandardDifficultyCalculator(BeatmapManager manager) {
             SetManager(manager);
         }
+
         public void SetManager(BeatmapManager manager) {
             var radius = (float)(54.4 - manager.AdjustDifficulty(manager.GetBeatmap().DifficultyCircleSize) * 4.48);
             TpHitObjects = manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
+            _manager = manager;
         }
-
-        public IEnumerable<StandardDifficultyHitObject> TpHitObjects { get; set; }
-
-
-        public const double STAR_SCALING_FACTOR = 0.0675;
-        public const double EXTREME_SCALING_FACTOR = 0.5;
 
         public bool CalculateStrainValues() {
             var hitObjectsEnumerator = TpHitObjects.GetEnumerator();
@@ -37,10 +42,6 @@ namespace osuElements.Beatmaps.Difficulty
             return true;
         }
 
-        private const double STRAIN_STEP = 400;
-
-        private const double DECAY_WEIGHT = 0.9;
-
         public double CalculateDifficulty(DifficultyType type) {
             var highestStrains = new List<double>();
             var intervalEndTime = STRAIN_STEP * ModSpeed;
@@ -55,7 +56,8 @@ namespace osuElements.Beatmaps.Difficulty
                         maximumStrain = 0.0;
                     }
                     else {
-                        var decay = Math.Pow(StandardDifficultyHitObject.DECAY_BASE[(int)type], (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000.0);
+                        var decay = Pow(StandardDifficultyHitObject.DECAY_BASE[(int)type],
+                            (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000.0);
                         maximumStrain = previousHitObject.Strains[(int)type] * decay;
                     }
 
@@ -80,23 +82,97 @@ namespace osuElements.Beatmaps.Difficulty
 
             return difficulty;
         }
-        public double CalculateDifficulty() {
-            if (!CalculateStrainValues()) return 0;
-            var speedDifficulty = CalculateDifficulty(DifficultyType.Speed);
-            var aimDifficulty = CalculateDifficulty(DifficultyType.Aim);
-            AimDifficulty = Math.Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
-            SpeedDifficulty = Math.Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
-            return SpeedDifficulty + AimDifficulty + Math.Abs(SpeedDifficulty - AimDifficulty) * EXTREME_SCALING_FACTOR;
-        }
-
 
         public override GameMode GameMode => GameMode.Standard;
-        public override double StarDifficulty { get; protected set; }
-        public double AimDifficulty { get; private set; }
-        public double SpeedDifficulty { get; private set; }
+        public override double StarDifficulty { get; set; }
+        public double AimDifficulty { get; set; }
+        public double SpeedDifficulty { get; set; }
+
         public override void Calculate(Mods mods) {
+            StarDifficulty = 0;
+            AimDifficulty = 0;
+            SpeedDifficulty = 0;
             base.Calculate(mods);
-            StarDifficulty = CalculateDifficulty();
+            if (!CalculateStrainValues()) return;
+            var speedDifficulty = CalculateDifficulty(DifficultyType.Speed);
+            var aimDifficulty = CalculateDifficulty(DifficultyType.Aim);
+            AimDifficulty = Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
+            SpeedDifficulty = Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
+            StarDifficulty = SpeedDifficulty + AimDifficulty +
+                             Abs(SpeedDifficulty - AimDifficulty) * EXTREME_SCALING_FACTOR;
+        }
+
+        public static double PerformancePoints(Mods mods, double aimdifficulty, double speeddifficulty, double hit300, double preempt,
+             int maxCombo, ushort count300, ushort count100, ushort count50, ushort countMiss, int hitcirlcecount, bool scorev2) {
+            if (mods.HasFlag(Mods.Relax | Mods.Relax2 | Mods.Autoplay)) return 0;
+            var total = count300 + count100 + count50 + countMiss;
+            var acc = (count300 * 6 + count100 * 2 + count50) / (total * 6d);
+            var modspeed = mods.SpeedMultiplier();
+            var od = (80d - hit300 / modspeed) / 6d;
+            var ar = preempt / modspeed;
+            if (ar > 1200) ar = -(ar - 1800d) / 120d;
+            else ar = -(ar - 1200) / 150 + 5;
+
+            //aim
+            var aimvalue = Pow(5.0 * Max(1.0, aimdifficulty / STAR_SCALING_FACTOR) - 4.0, 3.0) * 0.00001;
+            var lengthbonus = 0.95 + 0.4 * Min(1d, total * 0.0005) + (total > 2000d ? Log10(total * 0.0005) / 2d : 0d);
+            aimvalue *= lengthbonus;
+            var arfactor = 1.0;
+            if (ar > 10.33) arfactor += 0.45 * (ar - 10.33);
+            else if (ar < 8.0) {
+                if (mods.HasFlag(Mods.Hidden)) arfactor += 0.02 * (8.0 - ar);
+                else arfactor += 0.01 * (8 - ar);
+            }
+            aimvalue *= arfactor;
+            //speed
+            var speedvalue = Pow(5d * Max(1.0, speeddifficulty / STAR_SCALING_FACTOR) - 4d, 3d) * 0.00001;
+            speedvalue *= lengthbonus;
+            if (maxCombo > 0d) {
+                var pow = Pow(maxCombo, 0.8);
+                var m = Min(pow / pow, 1d);
+                aimvalue *= m;
+                speedvalue *= m;
+            }
+            //acc
+            var betteraccpercent = acc;
+            var amountobjectsacc = total;
+            if (!scorev2) {
+                amountobjectsacc = hitcirlcecount;
+                if (amountobjectsacc > 0d) {
+                    betteraccpercent = ((count300 - (total - amountobjectsacc)) * 6 + count100 * 2 +
+                                        count50) / (amountobjectsacc * 6d);
+                    if (betteraccpercent < 0d) betteraccpercent = 0d;
+                }
+                else betteraccpercent = 0d;
+            }
+            var accvalue = Pow(1.51263, od) * Pow(betteraccpercent, 24d) * 2.83;
+            accvalue *= Min(1.15, Pow(amountobjectsacc * 0.001, 0.3));
+            //mods
+            var multiplier = 1.12;
+            if ((mods & Mods.NoFail) > 0) multiplier *= 0.9;
+            if ((mods & Mods.SpunOut) > 0) multiplier *= 0.95;
+            if (mods.HasFlag(Mods.Hidden)) {
+                accvalue *= 1.02;
+                aimvalue *= 1.18;
+            }
+            if (mods.HasFlag(Mods.Flashlight)) {
+                accvalue *= 1.02;
+                aimvalue *= 1.45 * lengthbonus;
+            }
+            var accmod = (0.5 + acc /2d) * (0.98 + Pow(od, 2) * 0.0004) * Pow(0.97, countMiss);
+            aimvalue *= accmod;
+            speedvalue *= accmod;
+
+            return Pow(Pow(aimvalue, 1.1) + Pow(speedvalue, 1.1) + Pow(accvalue, 1.1), 1d / 1.1) * multiplier;
+        }
+
+        /// <summary>
+        /// Make sure to Calculate(Mods) with the same mods before this
+        /// </summary>
+        public override double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2) {
+            return PerformancePoints(_manager.Mods, AimDifficulty, SpeedDifficulty, _manager.HitWindow300,
+                _manager.PreEmpt, _manager.GetHitObjects().Sum(h => h.MaxCombo), count300, count100, count50,
+                countMiss, _manager.GetHitObjects().OfType<HitCircle>().Count(), scorev2);
         }
     }
 }

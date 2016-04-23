@@ -39,4 +39,11 @@ namespace osuElements
         // FreeModAllowed = KeyMod | FadeIn | Relax2 | SpunOut | Flashlight | Relax | SuddenDeath | HardRock | Hidden | Easy | NoFail,
         ScoreIncreaseMods = FadeIn | Flashlight | DoubleTime | HardRock | Hidden,
     }
+    public static class ModsExtensions
+    {
+        public static double SpeedMultiplier(this Mods mods) {
+            if ((mods & Mods.DoubleTime) > 0) return 1.5;
+            return (mods & Mods.HalfTime) > 0 ? 0.75 : 1;
+        }
+    }
 }

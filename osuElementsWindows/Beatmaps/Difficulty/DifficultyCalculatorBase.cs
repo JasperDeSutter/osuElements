@@ -3,13 +3,13 @@
     public abstract class DifficultyCalculatorBase
     {
         public abstract GameMode GameMode { get; }
-        public abstract double StarDifficulty { get; protected set; }
+        public abstract double StarDifficulty { get; set; }
         public virtual void Calculate(Mods mods) {
-            ModSpeed = (mods & Mods.DoubleTime) > 0 ? 1.5 : (mods & Mods.HalfTime) > 0 ? 0.75 : 1;
+            ModSpeed = mods.SpeedMultiplier();
         }
         protected double ModSpeed;
 
-        public DifficultyCalculatorBase GetForMode(GameMode mode, BeatmapManager manager) {
+        public static DifficultyCalculatorBase GetForMode(GameMode mode, BeatmapManager manager) {
             switch (mode) {
                 case GameMode.Standard:
                     return new StandardDifficultyCalculator(manager);
@@ -63,5 +63,6 @@
         }
         #endregion
 
+        public abstract double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2);
     }
 }
