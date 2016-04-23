@@ -23,7 +23,7 @@ namespace ModelsTest
         [TestMethod]
         public void CalculateAll() {
             var results = new List<SomeStruct>();
-            const Mods mod = Mods.DoubleTime;
+            const Mods mod = Mods.DoubleTime | Mods.Hidden | Mods.SpunOut;
             foreach (var map in _osuDb.Beatmaps.Where(t =>
                             t.DbBeatmapState == DbBeatmapState.Ranked && File.Exists(t.FullPath) &&
                             t.Mode == GameMode.Standard).Skip(100).Take(20)) {
@@ -34,7 +34,7 @@ namespace ModelsTest
                 //manager.ApiCalculations();
                 //var diff = manager.CalculateDifficlty();
                 results.Add(new SomeStruct {
-                    Expected = map.StandardDifficulties[mod],
+                    Expected = map.StandardDifficulties[manager.DifficultyCalculator.RemoveNonDifficultyChangers(mod)],
                     Calculated = manager.CalculateDifficlty(),
                     Pp = manager.CalculatePerformancePoints()
                 });

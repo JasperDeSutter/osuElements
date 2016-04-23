@@ -3,6 +3,7 @@
     public class CtbDifficultyCalculator : DifficultyCalculatorBase
     {
         public override GameMode GameMode => GameMode.CatchTheBeat;
+        protected override Mods DifficultyChangers => Mods.Easy | Mods.HardRock | Mods.DoubleTime | Mods.HalfTime;
         public override double StarDifficulty { get; set; }
         public override void Calculate(Mods mods) {
             base.Calculate(mods);

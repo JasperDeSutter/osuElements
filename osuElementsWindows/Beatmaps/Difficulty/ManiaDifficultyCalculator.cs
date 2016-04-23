@@ -3,6 +3,7 @@
     public class ManiaDifficultyCalculator : DifficultyCalculatorBase
     {
         public override GameMode GameMode => GameMode.Mania;
+        protected override Mods DifficultyChangers => Mods.Easy | Mods.HardRock | Mods.DoubleTime | Mods.HalfTime | Mods.KeyMod;
         public override double StarDifficulty { get; set; }
         public override void Calculate(Mods mods) {
             base.Calculate(mods);

@@ -9,24 +9,35 @@ namespace osuElements.Beatmaps.Difficulty
     public class StandardDifficultyCalculator : DifficultyCalculatorBase
     {
         private BeatmapManager _manager;
-        internal IEnumerable<StandardDifficultyHitObject> TpHitObjects { get; set; }
-        public const double STAR_SCALING_FACTOR = 0.0675;
-        public const double EXTREME_SCALING_FACTOR = 0.5;
+        private List<StandardDifficultyHitObject> _tpHitObjects;
+        private const double STAR_SCALING_FACTOR = 0.0675;
+        private const double EXTREME_SCALING_FACTOR = 0.5;
         private const double STRAIN_STEP = 400;
         private const double DECAY_WEIGHT = 0.9;
 
         public StandardDifficultyCalculator(BeatmapManager manager) {
             SetManager(manager);
         }
+        public override GameMode GameMode => GameMode.Standard;
+        protected override Mods DifficultyChangers => Mods.Easy | Mods.HardRock | Mods.DoubleTime | Mods.HalfTime;
+        public override double StarDifficulty { get; set; }
+        public double AimDifficulty { get; set; }
+        public double SpeedDifficulty { get; set; }
+
 
         public void SetManager(BeatmapManager manager) {
-            var radius = (float)(54.4 - manager.AdjustDifficulty(manager.GetBeatmap().DifficultyCircleSize) * 4.48);
-            TpHitObjects = manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
             _manager = manager;
+            RedoHitObjects();
+        }
+
+        private void RedoHitObjects() {
+            var radius = (float)(54.4 - _manager.AdjustDifficulty(_manager.GetBeatmap().DifficultyCircleSize) * 4.48);
+            _tpHitObjects = _manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
+            CurrentMods = _manager.Mods;
         }
 
         public bool CalculateStrainValues() {
-            var hitObjectsEnumerator = TpHitObjects.GetEnumerator();
+            var hitObjectsEnumerator = _tpHitObjects.GetEnumerator();
             if (hitObjectsEnumerator.MoveNext() == false) {
                 return false;
             }
@@ -48,7 +59,7 @@ namespace osuElements.Beatmaps.Difficulty
 
             var maximumStrain = 0.0;
             StandardDifficultyHitObject previousHitObject = null;
-            foreach (var hitObject in TpHitObjects) {
+            foreach (var hitObject in _tpHitObjects) {
                 while (hitObject.BaseHitObject.StartTime > intervalEndTime) {
                     highestStrains.Add(maximumStrain);
 
@@ -83,12 +94,10 @@ namespace osuElements.Beatmaps.Difficulty
             return difficulty;
         }
 
-        public override GameMode GameMode => GameMode.Standard;
-        public override double StarDifficulty { get; set; }
-        public double AimDifficulty { get; set; }
-        public double SpeedDifficulty { get; set; }
-
         public override void Calculate(Mods mods) {
+            if ((mods & Mods.HardRock) != (CurrentMods & Mods.HardRock) ||
+                (mods & Mods.Easy) != (CurrentMods & Mods.Easy))
+                RedoHitObjects();
             StarDifficulty = 0;
             AimDifficulty = 0;
             SpeedDifficulty = 0;
@@ -159,7 +168,7 @@ namespace osuElements.Beatmaps.Difficulty
                 accvalue *= 1.02;
                 aimvalue *= 1.45 * lengthbonus;
             }
-            var accmod = (0.5 + acc /2d) * (0.98 + Pow(od, 2) * 0.0004) * Pow(0.97, countMiss);
+            var accmod = (0.5 + acc / 2d) * (0.98 + Pow(od, 2) * 0.0004) * Pow(0.97, countMiss);
             aimvalue *= accmod;
             speedvalue *= accmod;
 
@@ -167,7 +176,7 @@ namespace osuElements.Beatmaps.Difficulty
         }
 
         /// <summary>
-        /// Make sure to Calculate(Mods) with the same mods before this
+        /// Make sure to Calculate(Mods) before this
         /// </summary>
         public override double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2) {
             return PerformancePoints(_manager.Mods, AimDifficulty, SpeedDifficulty, _manager.HitWindow300,

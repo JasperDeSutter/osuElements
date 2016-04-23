@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using osuElements.Api;
 using osuElements.Beatmaps.Difficulty;
 using osuElements.Helpers;
 
@@ -17,6 +18,9 @@ namespace osuElements.Beatmaps
         private Beatmap _beatmap;
         private int _currentcombocolor;
         private DifficultyCalculatorBase _difficultyCalculator;
+        public DifficultyCalculatorBase DifficultyCalculator =>
+            _difficultyCalculator ?? (_difficultyCalculator = DifficultyCalculatorBase.GetForMode(_beatmap.Mode, this));
+
         private bool _hitObjectsFlipped;
         private bool _flipHitObjects;
         private List<HitObject> _hitObjects;
@@ -189,10 +193,8 @@ namespace osuElements.Beatmaps
         }
 
         public double CalculateDifficlty() {
-            if (_difficultyCalculator == null)
-                _difficultyCalculator = DifficultyCalculatorBase.GetForMode(GetBeatmap().Mode, this);
-            _difficultyCalculator.Calculate(Mods);
-            return _difficultyCalculator.StarDifficulty;
+            DifficultyCalculator.Calculate(Mods);
+            return DifficultyCalculator.StarDifficulty;
         }
 
         public double BpmAt(int time) {
@@ -218,8 +220,11 @@ namespace osuElements.Beatmaps
             return result;
         }
 
-        public double CalculatePerformancePoints() {
-            return _difficultyCalculator.PerformancePoints((ushort)_hitObjects.Count, 0, 0, 0, false);
+        public double CalculatePerformancePoints(ApiScore score = null, bool scoreV2 = false) {
+            if (score == null)
+                return DifficultyCalculator.PerformancePoints((ushort)_hitObjects.Count, 0, 0, 0, scoreV2);
+            return DifficultyCalculator.PerformancePoints(score.Count300, score.Count100, score.Count50,
+                score.CountMiss, scoreV2);
         }
 
         public Position AutoCursorPosition(float timing) {

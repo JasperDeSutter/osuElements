@@ -5,9 +5,13 @@
         public abstract GameMode GameMode { get; }
         public abstract double StarDifficulty { get; set; }
         public virtual void Calculate(Mods mods) {
+            mods = RemoveNonDifficultyChangers(mods);
             ModSpeed = mods.SpeedMultiplier();
+            CurrentMods = mods;
         }
         protected double ModSpeed;
+
+        public Mods CurrentMods { get; protected set; }
 
         public static DifficultyCalculatorBase GetForMode(GameMode mode, BeatmapManager manager) {
             switch (mode) {
@@ -25,6 +29,12 @@
         }
 
         #region mods
+
+        public Mods RemoveNonDifficultyChangers(Mods mods) {
+            return mods & DifficultyChangers;
+        }
+
+        protected abstract Mods DifficultyChangers { get; }
 
         public double ScoreMultiplier(Mods mods) => ScoreMultiplier(mods, GameMode);
 
