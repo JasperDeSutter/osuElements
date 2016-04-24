@@ -84,11 +84,10 @@ namespace ModelsTest
 
         //manager
         [TestMethod]
-        public void Difficulty() { //TODO doesn't work at all
+        public void Difficulty() { 
             _beatmap.ReadFile();
             _manager = new BeatmapManager(_beatmap);
             _manager.SliderCalculations();
-            //Assert.AreEqual(5.64, Math.Round(diff.ActualDifficultyCalculation(), 2));
             var diff = _manager.CalculateDifficlty();
             Assert.AreEqual(5.64, Math.Round(diff, 2));
         }

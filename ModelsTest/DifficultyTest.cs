@@ -26,7 +26,8 @@ namespace ModelsTest
             const Mods mod = Mods.DoubleTime | Mods.Hidden | Mods.SpunOut;
             foreach (var map in _osuDb.Beatmaps.Where(t =>
                             t.DbBeatmapState == DbBeatmapState.Ranked && File.Exists(t.FullPath) &&
-                            t.Mode == GameMode.Standard).Skip(100).Take(20)) {
+                            t.Mode == GameMode.Standard &&
+                            t.StandardDifficulties.Count > 0).Take(20)) {
                 map.ReadFile();
                 var manager = new BeatmapManager(map);
                 manager.SetMods(mod);

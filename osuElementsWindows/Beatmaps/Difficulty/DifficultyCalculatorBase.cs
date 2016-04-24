@@ -5,9 +5,16 @@ namespace osuElements.Beatmaps.Difficulty
     public abstract class DifficultyCalculatorBase
     {
         protected double ModSpeed;
+        protected BeatmapManager Manager;
+
+        protected DifficultyCalculatorBase(BeatmapManager manager) {
+            Manager = manager;
+        }
+
         public abstract GameMode GameMode { get; }
         public Mods CurrentMods { get; protected set; }
         public abstract double StarDifficulty { get; set; }
+
         public virtual void Calculate(Mods mods) {
             mods = RemoveNonDifficultyChangers(mods);
             ModSpeed = mods.SpeedMultiplier();
@@ -21,11 +28,11 @@ namespace osuElements.Beatmaps.Difficulty
                 case GameMode.Standard:
                     return new StandardDifficultyCalculator(manager);
                 case GameMode.Mania:
-                    return new ManiaDifficultyCalculator();
+                    return new ManiaDifficultyCalculator(manager);
                 case GameMode.CatchTheBeat:
-                    return new CtbDifficultyCalculator();
+                    return new CtbDifficultyCalculator(manager);
                 case GameMode.Taiko:
-                    return new TaikoDifficultyCalculator();
+                    return new TaikoDifficultyCalculator(manager);
                 default:
                     return null;
             }
@@ -56,6 +63,7 @@ namespace osuElements.Beatmaps.Difficulty
                     break;
                 case GameMode.Mania:
                     if ((mods & Mods.HalfTime) > 0) result *= 0.5;
+                    //TODO keys stuff
                     break;
                 case GameMode.Taiko:
                     if ((mods & Mods.HalfTime) > 0) result *= 0.3;

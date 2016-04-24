@@ -8,15 +8,14 @@ namespace osuElements.Beatmaps.Difficulty
 {
     public class StandardDifficultyCalculator : DifficultyCalculatorBase
     {
-        private BeatmapManager _manager;
         private List<StandardDifficultyHitObject> _tpHitObjects;
         private const double STAR_SCALING_FACTOR = 0.0675;
         private const double EXTREME_SCALING_FACTOR = 0.5;
         private const double STRAIN_STEP = 400;
         private const double DECAY_WEIGHT = 0.9;
 
-        public StandardDifficultyCalculator(BeatmapManager manager) {
-            SetManager(manager);
+        public StandardDifficultyCalculator(BeatmapManager manager) : base(manager) {
+            RedoHitObjects();
         }
         public override GameMode GameMode => GameMode.Standard;
         protected override Mods DifficultyChangers => Mods.Easy | Mods.HardRock | Mods.DoubleTime | Mods.HalfTime;
@@ -24,16 +23,11 @@ namespace osuElements.Beatmaps.Difficulty
         public double AimDifficulty { get; set; }
         public double SpeedDifficulty { get; set; }
         public static bool UseScoreV2 { get; set; }
-
-        public void SetManager(BeatmapManager manager) {
-            _manager = manager;
-            RedoHitObjects();
-        }
-
+        
         private void RedoHitObjects() {
-            var radius = (float)(54.4 - _manager.AdjustDifficulty(_manager.GetBeatmap().DifficultyCircleSize) * 4.48);
-            _tpHitObjects = _manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
-            CurrentMods = _manager.Mods;
+            var radius = (float)(54.4 - Manager.AdjustDifficulty(Manager.GetBeatmap().DifficultyCircleSize) * 4.48);
+            _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
+            CurrentMods = Manager.Mods;
         }
 
         public bool CalculateStrainValues() {
@@ -180,9 +174,9 @@ namespace osuElements.Beatmaps.Difficulty
         /// Make sure to Calculate(Mods) before this
         /// </summary>
         public override double PerformancePoints(ApiScore score) {
-            return PerformancePoints(_manager.Mods, AimDifficulty, SpeedDifficulty, _manager.HitWindow300,
-                _manager.PreEmpt, _manager.GetHitObjects().Sum(h => h.MaxCombo), score.Count300, score.Count100, score.Count50,
-                score.CountMiss, _manager.GetHitObjects().OfType<HitCircle>().Count(), UseScoreV2);
+            return PerformancePoints(Manager.Mods, AimDifficulty, SpeedDifficulty, Manager.HitWindow300,
+                Manager.PreEmpt, Manager.GetHitObjects().Sum(h => h.MaxCombo), score.Count300, score.Count100, score.Count50,
+                score.CountMiss, Manager.GetHitObjects().OfType<HitCircle>().Count(), UseScoreV2);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace osuElements.Api
         /// Whether or not the user missed a note
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true, Name = "perfect", Order = 13)]
-        [JsonConverter(typeof (BoolConverter))]
+        [JsonConverter(typeof(BoolConverter))]
         public bool Perfect { get; set; }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace osuElements.Api
         /// <summary>
         /// The recieved score rank
         /// </summary>
-        [JsonConverter(typeof (StringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "rank", Order = 17)]
         public ScoreRank Rank { get; set; }
 
@@ -123,7 +123,7 @@ namespace osuElements.Api
         /// Only for beatmap and player topscores
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = false, Name = "pp", Order = 18)]
-        public float Pp { get; set; }
+        public float? Pp { get; set; }
 
         #region non-api
 
@@ -132,8 +132,10 @@ namespace osuElements.Api
         /// </summary>
         public GameMode GameMode { get; set; }
 
-        public int MaxHitCount {
-            get {
+        public int MaxHitCount
+        {
+            get
+            {
                 switch (GameMode) {
                     case Mania:
                         return Count300 + Count100 + Count50 + CountMiss + CountGeki + CountKatu;
@@ -148,13 +150,13 @@ namespace osuElements.Api
         public double CalculateAccuracy() {
             switch (GameMode) {
                 case Standard:
-                    return (Count300*300 + Count100*100 + Count50*50.0)/MaxHitCount;
+                    return (Count300 * 300 + Count100 * 100 + Count50 * 50.0) / MaxHitCount;
                 case Taiko:
-                    return (Count100*150.0 + Count300*300)/(MaxHitCount*300);
+                    return (Count100 * 150.0 + Count300 * 300) / (MaxHitCount * 300);
                 case Mania:
-                    return (Count50*50.0 + Count100*100 + CountKatu*200 + (Count300 + CountGeki)*300)/(MaxHitCount*300);
+                    return (Count50 * 50.0 + Count100 * 100 + CountKatu * 200 + (Count300 + CountGeki) * 300) / (MaxHitCount * 300);
                 case CatchTheBeat:
-                    return (Count300 + Count100 + Count50*1.0)/MaxHitCount;
+                    return (Count300 + Count100 + Count50 * 1.0) / MaxHitCount;
             }
             return 1;
         }
@@ -164,8 +166,8 @@ namespace osuElements.Api
             if (accuracy == 0) return D;
             switch (GameMode) {
                 default:
-                    var count300 = 1f*Count300/MaxHitCount;
-                    var count50 = 1f*Count50/MaxHitCount;
+                    var count300 = 1f * Count300 / MaxHitCount;
+                    var count50 = 1f * Count50 / MaxHitCount;
                     if (count300 == 1)
                         return EnabledMods.IsType(Hidden | Flashlight) ? XH : X;
                     if (Perfect && count300 > 0.9 && count50 < 0.01)
