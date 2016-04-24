@@ -1,4 +1,6 @@
-﻿namespace osuElements.Beatmaps.Difficulty
+﻿using osuElements.Api;
+
+namespace osuElements.Beatmaps.Difficulty
 {
     public class ManiaDifficultyCalculator : DifficultyCalculatorBase
     {
@@ -10,7 +12,7 @@
             throw new System.NotImplementedException();
         }
 
-        public override double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2) {
+        public override double PerformancePoints(ApiScore score) {
             throw new System.NotImplementedException();
         }
     }

@@ -23,7 +23,7 @@ namespace osuElements.Beatmaps.Difficulty
         public override double StarDifficulty { get; set; }
         public double AimDifficulty { get; set; }
         public double SpeedDifficulty { get; set; }
-
+        public static bool UseScoreV2 { get; set; }
 
         public void SetManager(BeatmapManager manager) {
             _manager = manager;
@@ -112,7 +112,7 @@ namespace osuElements.Beatmaps.Difficulty
         }
 
         public static double PerformancePoints(Mods mods, double aimdifficulty, double speeddifficulty, double hit300, double preempt,
-             int maxCombo, ushort count300, ushort count100, ushort count50, ushort countMiss, int hitcirlcecount, bool scorev2) {
+             int maxCombo, int count300, int count100, int count50, int countMiss, int hitcirlcecount, bool scorev2) {
             if (mods.HasFlag(Mods.Relax | Mods.Relax2 | Mods.Autoplay)) return 0;
             var total = count300 + count100 + count50 + countMiss;
             var acc = (count300 * 6 + count100 * 2 + count50) / (total * 6d);
@@ -154,7 +154,7 @@ namespace osuElements.Beatmaps.Difficulty
                 }
                 else betteraccpercent = 0d;
             }
-            var accvalue = Pow(1.51263, od) * Pow(betteraccpercent, 24d) * 2.83;
+            var accvalue = Pow(1.52163, od) * Pow(betteraccpercent, 24d) * 2.83;
             accvalue *= Min(1.15, Pow(amountobjectsacc * 0.001, 0.3));
             //mods
             var multiplier = 1.12;
@@ -174,14 +174,15 @@ namespace osuElements.Beatmaps.Difficulty
 
             return Pow(Pow(aimvalue, 1.1) + Pow(speedvalue, 1.1) + Pow(accvalue, 1.1), 1d / 1.1) * multiplier;
         }
+        
 
         /// <summary>
         /// Make sure to Calculate(Mods) before this
         /// </summary>
-        public override double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2) {
+        public override double PerformancePoints(ApiScore score) {
             return PerformancePoints(_manager.Mods, AimDifficulty, SpeedDifficulty, _manager.HitWindow300,
-                _manager.PreEmpt, _manager.GetHitObjects().Sum(h => h.MaxCombo), count300, count100, count50,
-                countMiss, _manager.GetHitObjects().OfType<HitCircle>().Count(), scorev2);
+                _manager.PreEmpt, _manager.GetHitObjects().Sum(h => h.MaxCombo), score.Count300, score.Count100, score.Count50,
+                score.CountMiss, _manager.GetHitObjects().OfType<HitCircle>().Count(), UseScoreV2);
         }
     }
 }

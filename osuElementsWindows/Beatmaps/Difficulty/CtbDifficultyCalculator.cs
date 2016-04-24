@@ -1,4 +1,6 @@
-﻿namespace osuElements.Beatmaps.Difficulty
+﻿using osuElements.Api;
+
+namespace osuElements.Beatmaps.Difficulty
 {
     public class CtbDifficultyCalculator : DifficultyCalculatorBase
     {
@@ -10,8 +12,13 @@
             throw new System.NotImplementedException();
         }
 
-        public override double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2) {
-            throw new System.NotImplementedException();
+        public override double PerformancePoints(ApiScore score) {
+            return PerformancePoints(Mods.None, 0, 0, 0, score.Count300, score.Count100, score.Count50, score.CountKatu, score.CountMiss);
+        }
+
+        public static double PerformancePoints(Mods mods, double aimdifficulty, int maxcombo, double preempt, int count300, int count100
+            , int count50, int countKatu, int count) {
+            return 0;
         }
     }
 }

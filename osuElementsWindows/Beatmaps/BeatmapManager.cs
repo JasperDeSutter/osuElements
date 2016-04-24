@@ -220,11 +220,10 @@ namespace osuElements.Beatmaps
             return result;
         }
 
-        public double CalculatePerformancePoints(ApiScore score = null, bool scoreV2 = false) {
+        public double CalculatePerformancePoints(ApiScore score = null) {
             if (score == null)
-                return DifficultyCalculator.PerformancePoints((ushort)_hitObjects.Count, 0, 0, 0, scoreV2);
-            return DifficultyCalculator.PerformancePoints(score.Count300, score.Count100, score.Count50,
-                score.CountMiss, scoreV2);
+                score = new ApiScore { Count300 = (ushort)_hitObjects.Count };
+            return DifficultyCalculator.PerformancePoints(score);
         }
 
         public Position AutoCursorPosition(float timing) {

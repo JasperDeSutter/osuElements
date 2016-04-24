@@ -1,17 +1,20 @@
-﻿namespace osuElements.Beatmaps.Difficulty
+﻿using osuElements.Api;
+
+namespace osuElements.Beatmaps.Difficulty
 {
     public abstract class DifficultyCalculatorBase
     {
+        protected double ModSpeed;
         public abstract GameMode GameMode { get; }
+        public Mods CurrentMods { get; protected set; }
         public abstract double StarDifficulty { get; set; }
         public virtual void Calculate(Mods mods) {
             mods = RemoveNonDifficultyChangers(mods);
             ModSpeed = mods.SpeedMultiplier();
             CurrentMods = mods;
         }
-        protected double ModSpeed;
+        public abstract double PerformancePoints(ApiScore score);
 
-        public Mods CurrentMods { get; protected set; }
 
         public static DifficultyCalculatorBase GetForMode(GameMode mode, BeatmapManager manager) {
             switch (mode) {
@@ -73,6 +76,5 @@
         }
         #endregion
 
-        public abstract double PerformancePoints(ushort count300, ushort count100, ushort count50, ushort countMiss, bool scorev2);
     }
 }
