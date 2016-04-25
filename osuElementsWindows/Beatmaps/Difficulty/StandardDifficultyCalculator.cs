@@ -23,7 +23,7 @@ namespace osuElements.Beatmaps.Difficulty
         public double AimDifficulty { get; set; }
         public double SpeedDifficulty { get; set; }
         public static bool UseScoreV2 { get; set; }
-        
+
         private void RedoHitObjects() {
             var radius = (float)(54.4 - Manager.AdjustDifficulty(Manager.GetBeatmap().DifficultyCircleSize) * 4.48);
             _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
@@ -99,8 +99,8 @@ namespace osuElements.Beatmaps.Difficulty
             if (!CalculateStrainValues()) return;
             var speedDifficulty = CalculateDifficulty(DifficultyType.Speed);
             var aimDifficulty = CalculateDifficulty(DifficultyType.Aim);
-            AimDifficulty = Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
-            SpeedDifficulty = Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
+            AimDifficulty = Sqrt(aimDifficulty) * STAR_SCALING_FACTOR;
+            SpeedDifficulty = Sqrt(speedDifficulty) * STAR_SCALING_FACTOR;
             StarDifficulty = SpeedDifficulty + AimDifficulty +
                              Abs(SpeedDifficulty - AimDifficulty) * EXTREME_SCALING_FACTOR;
         }
@@ -168,14 +168,14 @@ namespace osuElements.Beatmaps.Difficulty
 
             return Pow(Pow(aimvalue, 1.1) + Pow(speedvalue, 1.1) + Pow(accvalue, 1.1), 1d / 1.1) * multiplier;
         }
-        
+
 
         /// <summary>
         /// Make sure to Calculate(Mods) before this
         /// </summary>
         public override double PerformancePoints(ApiScore score) {
             return PerformancePoints(Manager.Mods, AimDifficulty, SpeedDifficulty, Manager.HitWindow300,
-                Manager.PreEmpt, Manager.GetHitObjects().Sum(h => h.MaxCombo), score.Count300, score.Count100, score.Count50,
+                Manager.PreEmpt, score.MaxCombo, score.Count300, score.Count100, score.Count50,
                 score.CountMiss, Manager.GetHitObjects().OfType<HitCircle>().Count(), UseScoreV2);
         }
     }

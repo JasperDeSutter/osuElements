@@ -222,7 +222,10 @@ namespace osuElements.Beatmaps
 
         public double CalculatePerformancePoints(ApiScore score = null) {
             if (score == null)
-                score = new ApiScore { Count300 = (ushort)_hitObjects.Count };
+                score = new ApiScore {
+                    Count300 = (ushort)_hitObjects.Count,
+                    MaxCombo = (ushort)_hitObjects.Sum(h => h.MaxCombo),
+                };
             return DifficultyCalculator.PerformancePoints(score);
         }
 

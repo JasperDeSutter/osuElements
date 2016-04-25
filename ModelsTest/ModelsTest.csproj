@@ -65,7 +65,6 @@
     <Compile Include="DbTest.cs" />
     <Compile Include="ApiTest.cs" />
     <Compile Include="DifficultyTest.cs" />
-    <Compile Include="PpTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\osuElementsWindows\osuElements.NET.csproj">

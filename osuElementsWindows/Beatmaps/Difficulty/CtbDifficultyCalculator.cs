@@ -17,7 +17,7 @@ namespace osuElements.Beatmaps.Difficulty
 
         public double AimDifficulty { get; set; }
         public override double PerformancePoints(ApiScore score) {
-            return PerformancePoints(Manager.Mods, AimDifficulty, Manager.GetHitObjects().Sum(h => h.MaxCombo), Manager.PreEmpt, score.Count300, score.Count100, score.Count50, score.CountKatu, score.CountMiss);
+            return PerformancePoints(Manager.Mods, AimDifficulty, score.MaxCombo, Manager.PreEmpt, score.Count300, score.Count100, score.Count50, score.CountKatu, score.CountMiss);
         }
 
         public static double PerformancePoints(Mods mods, double aimdifficulty, int maxcombo, double preempt, int count300, int count100
@@ -43,15 +43,15 @@ namespace osuElements.Beatmaps.Difficulty
             else ar = -(ar - 1200) / 150 + 5;
             var arfactor = 1d;
             if (ar > 9d)
-                arfactor += 0.1*(ar - 9d);
+                arfactor += 0.1 * (ar - 9d);
             else if (ar < 8d)
-                arfactor += 0.025*(8d - ar);
+                arfactor += 0.025 * (8d - ar);
             value *= arfactor;
 
             if (mods.HasFlag(Mods.Hidden))
-                value *= 1.05 + 0.075*(10d - Min(10d, ar));
+                value *= 1.05 + 0.075 * (10d - Min(10d, ar));
             if (mods.HasFlag(Mods.Flashlight))
-                value *= 1.35*lengthbonus;
+                value *= 1.35 * lengthbonus;
             value *= Pow(acc, 5.5);
             if (mods.HasFlag(Mods.NoFail))
                 value *= 0.9;
