@@ -67,10 +67,10 @@ namespace osuElements
 
         #region Methods
         public double Length =>
-            Sqrt(1.0 * X * X + 1.0 * Y * Y);
+            Sqrt((double)X * X + (double)Y * Y);
 
         public double LengthSquared =>
-           1.0 * X * X + 1.0 * Y * Y;
+           (double)X * X + (double)Y * Y;
 
 
         public double Distance(Position b) {

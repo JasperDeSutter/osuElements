@@ -11,7 +11,7 @@ namespace osuElements.Beatmaps
         private static bool TryParseVersion(string line, out int result) {
             result = 0;
             if (line.IndexOf('v') < 1) return false;
-            result = Int32.Parse(line.Remove(0, line.LastIndexOf('v') + 1));
+            result = int.Parse(line.Remove(0, line.LastIndexOf('v') + 1));
             return true;
         }
         public static FileReader<Beatmap> BeatmapReader() {

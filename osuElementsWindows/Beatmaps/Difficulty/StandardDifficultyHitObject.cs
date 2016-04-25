@@ -8,7 +8,7 @@ namespace osuElements.Beatmaps.Difficulty
 
         private static readonly double[] SPACING_WEIGHT_SCALING = { 1400, 26.25 };
         private const int LAZY_SLIDER_STEP_LENGTH = 10;
-        private const double CIRCLESIZE_BUFF_TRESHOLD = 30.0;
+        private const float CIRCLESIZE_BUFF_TRESHOLD = 30f;
 
         public HitObject BaseHitObject;
         public double[] Strains = { 1, 1 };
@@ -17,19 +17,19 @@ namespace osuElements.Beatmaps.Difficulty
         private readonly double _lazySliderLengthFirst;
         private readonly double _lazySliderLengthSubsequent;
 
-        public StandardDifficultyHitObject(HitObject baseHitObject, double radius) {
+        public StandardDifficultyHitObject(HitObject baseHitObject, float radius) {
             BaseHitObject = baseHitObject;
-            var scalingFactor = 52 / (float)radius;
+            var scalingFactor = 52f / radius;
 
             if (radius < CIRCLESIZE_BUFF_TRESHOLD) { //CS ~5.5 -> ~6.5, up to 10% increase
-                scalingFactor *= (float)Math.Min(1.1, (50 + CIRCLESIZE_BUFF_TRESHOLD - radius) * 0.02);
+                scalingFactor *= Math.Min(1.1f, 1 + (CIRCLESIZE_BUFF_TRESHOLD - radius) * 0.02f);
             }
             _normalizedStartPosition = baseHitObject.StartPosition * scalingFactor;
 
             if (baseHitObject.IsHitObjectType(HitObjectType.Slider)) {
 
                 var slider = (Slider)baseHitObject;
-                var sliderFollowCircleRadius = (float)radius * 3;
+                var sliderFollowCircleRadius = radius * 3f;
 
                 var segmentLength = Math.Min(slider.SegmentDuration, 60000);
                 var segmentEndTime = slider.StartTime + segmentLength;
@@ -59,7 +59,7 @@ namespace osuElements.Beatmaps.Difficulty
                 for (var time = segmentEndTime - segmentLength + LAZY_SLIDER_STEP_LENGTH;
                     time < segmentEndTime; time += LAZY_SLIDER_STEP_LENGTH) {
                     var difference = slider.PositionAtTime((int)time) - cursorPos;
-                    var distance = difference.Length;
+                    var distance = (float)difference.Length;
 
                     if (distance <= sliderFollowCircleRadius) continue;
                     difference.Normalize();
@@ -83,10 +83,10 @@ namespace osuElements.Beatmaps.Difficulty
         }
 
         private static double SpacingWeight(double distance, DifficultyType type) {
-            const double ALMOST_DIAMETER = 90;
-            const double HALF_ALMOST_DIAMETER = 45;
-            const double STREAM_SPACING_TRESHOLD = 110;
-            const double SINGLE_SPACING_TRESHOLD = 125;
+            const double ALMOST_DIAMETER = 90d;
+            const double HALF_ALMOST_DIAMETER = 45d;
+            const double STREAM_SPACING_TRESHOLD = 110d;
+            const double SINGLE_SPACING_TRESHOLD = 125d;
 
             if (type != DifficultyType.Speed) return type == DifficultyType.Aim ? Math.Pow(distance, 0.99) : 0;
 
@@ -94,11 +94,11 @@ namespace osuElements.Beatmaps.Difficulty
             if (distance > SINGLE_SPACING_TRESHOLD)
                 weight = 2.5;
             else if (distance > STREAM_SPACING_TRESHOLD)
-                weight = 1.6 +0.9*(distance - STREAM_SPACING_TRESHOLD)/15;
+                weight = 1.6 + 0.9 * (distance - STREAM_SPACING_TRESHOLD) / 15d;
             else if (distance > ALMOST_DIAMETER)
-                weight = 1.2 + 0.4*(distance - ALMOST_DIAMETER)*0.05;
+                weight = 1.2 + 0.4 * (distance - ALMOST_DIAMETER) * 0.05;
             else if (distance > HALF_ALMOST_DIAMETER)
-                weight = 0.95 + 0.25*(distance - HALF_ALMOST_DIAMETER)/HALF_ALMOST_DIAMETER;
+                weight = 0.95 + 0.25 * (distance - HALF_ALMOST_DIAMETER) / HALF_ALMOST_DIAMETER;
             else
                 weight = 0.95;
 
@@ -148,8 +148,8 @@ namespace osuElements.Beatmaps.Difficulty
 
 
 
-        public double DistanceTo(StandardDifficultyHitObject other) =>
-            _normalizedStartPosition.Distance(other._normalizedEndPosition);
+        public float DistanceTo(StandardDifficultyHitObject other) =>
+            (float)(_normalizedStartPosition - other._normalizedEndPosition).Length;
 
     }
 }

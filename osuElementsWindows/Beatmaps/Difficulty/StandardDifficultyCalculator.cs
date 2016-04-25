@@ -26,7 +26,9 @@ namespace osuElements.Beatmaps.Difficulty
 
         private void RedoHitObjects() {
             var radius = (float)(54.4 - Manager.AdjustDifficulty(Manager.GetBeatmap().DifficultyCircleSize) * 4.48);
-            _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius)).ToList();
+            _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius))
+                .OrderBy(tp => tp.BaseHitObject.StartTime)
+                .ToList();
             CurrentMods = Manager.Mods;
         }
 
@@ -58,21 +60,18 @@ namespace osuElements.Beatmaps.Difficulty
                     highestStrains.Add(maximumStrain);
 
                     if (previousHitObject == null) {
-                        maximumStrain = 0.0;
+                        maximumStrain = .0;
                     }
                     else {
                         var decay = Pow(StandardDifficultyHitObject.DECAY_BASE[(int)type],
-                            (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000.0);
+                            (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000d);
                         maximumStrain = previousHitObject.Strains[(int)type] * decay;
                     }
 
-                    intervalEndTime += STRAIN_STEP;
+                    intervalEndTime += STRAIN_STEP * ModSpeed;
                 }
-
-                if (hitObject.Strains[(int)type] > maximumStrain) {
+                if (hitObject.Strains[(int)type] > maximumStrain)
                     maximumStrain = hitObject.Strains[(int)type];
-                }
-
                 previousHitObject = hitObject;
             }
 

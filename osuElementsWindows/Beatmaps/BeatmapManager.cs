@@ -59,7 +59,9 @@ namespace osuElements.Beatmaps
         }
 
         public override double AdjustDifficulty(double difficulty) {
-            return Math.Min(10, difficulty * CircleSizeModMultiplier);
+            if ((Mods & Mods.Easy) > 0) return Math.Max(0d, difficulty * Constants.EASY_MULTIPLIER);
+            if ((Mods & Mods.HardRock) > 0) return Math.Min(10d, difficulty * Constants.CIRCLE_SIZE_MOD_MULTIPLIER);
+            return difficulty;
         }
 
         public override double MapDifficultyRange(double difficulty, double min, double mid, double max) {
