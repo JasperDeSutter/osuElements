@@ -26,14 +26,17 @@ namespace osuElements
 
         public Position(float xy) : this(xy, xy) { }
 
-        public Position(float x, float y) {
+        public Position(float x, float y)
+        {
             X = x;
             Y = y;
         }
         public Position(Position copy) : this(copy.X, copy.Y) { }
-        public static Position FromHitobject(float x, float y, bool clamp = true) {
+        public static Position FromHitobject(float x, float y, bool clamp = true)
+        {
             if (!clamp) return new Position { XForHitobject = x, YForHitobject = y };
-            return new Position {
+            return new Position
+            {
                 XForHitobject = MathHelper.Clamp(x, 0, 512),
                 YForHitobject = MathHelper.Clamp(y, 0, 384),
             };
@@ -73,62 +76,78 @@ namespace osuElements
            (double)X * X + (double)Y * Y;
 
 
-        public double Distance(Position b) {
-            return (this - b).Length;
+        public double Distance(Position b)
+        {
+            double y = b.Y - Y;
+            double x = b.X - X;
+            return Sqrt(y * y + x * x);
         }
 
-        public double DistanceSquared(Position b) {
-            return (this - b).LengthSquared;
+        public double DistanceSquared(Position b)
+        {
+            double y = b.Y - Y;
+            double x = b.X - X;
+            return y * y + x * x;
         }
 
-        public Position SecondaryPoint(double length, double angle) {
+        public Position SecondaryPoint(double length, double angle)
+        {
             var result = new Position(this);
             result.X += (float)(length * Cos(angle));
             result.Y -= (float)(length * Sin(angle));
             return result;
         }
 
-        public double GetAngle(bool normalize = true) {
+        public double GetAngle(bool normalize = true)
+        {
             return normalize ? Atan2(-Y, X).NormalizeAngle() : Atan2(-Y, X);
         }
 
         public static double GetAngle(Position a, bool normalize = true) =>
             a.GetAngle(normalize);
 
-        public static Position operator -(Position p1) {
+        public static Position operator -(Position p1)
+        {
             p1.X = -p1.X;
             p1.Y = -p1.Y;
             return p1;
         }
-        public static Position operator -(Position p1, Position p2) {
+        public static Position operator -(Position p1, Position p2)
+        {
             p1.X -= p2.X;
             p1.Y -= p2.Y;
             return p1;
         }
-        public static Position operator +(Position p1, Position p2) {
+        public static Position operator +(Position p1, Position p2)
+        {
             p1.X += p2.X;
             p1.Y += p2.Y;
             return p1;
         }
-        public static Position operator *(Position p1, Position p2) {
+        public static Position operator *(Position p1, Position p2)
+        {
             p1.X *= p2.X;
             p1.Y *= p2.Y;
             return p1;
         }
-        public static Position operator *(Position p, float f) {
+        public static Position operator *(Position p, float f)
+        {
             p.X *= f;
             p.Y *= f;
             return p;
         }
-        public static Position operator *(Position p, double d) {
+        public static Position operator *(Position p, double d)
+        {
             return p * (float)d;
         }
-        public static Position operator /(Position p1, Position p2) {
+        public static Position operator /(Position p1, Position p2)
+        {
             p1.X /= p2.X;
             p1.Y /= p2.Y;
             return p1;
         }
-        public static Position operator /(Position p, float f) {
+        public static Position operator /(Position p, float f)
+        {
             p.X /= f;
             p.Y /= f;
             return p;
@@ -138,11 +157,13 @@ namespace osuElements
 
         #endregion
 
-        public static Position Lerp(Position a, Position b, float t) {
+        public static Position Lerp(Position a, Position b, float t)
+        {
             return a + (b - a) * t;
         }
 
-        public static Position Flip(Position pos) {
+        public static Position Flip(Position pos)
+        {
             pos.YForHitobject = HITOBJECTS_RESOLUTION_HEIGHT - pos.YForHitobject;
             return pos;
         }

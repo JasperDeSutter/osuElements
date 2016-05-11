@@ -34,6 +34,7 @@ namespace osuElements.Helpers
             while (a < 0) a += Math.PI * 2;
             return a % (Math.PI * 2);
         }
+
     }
 
     public static class publicExtensions

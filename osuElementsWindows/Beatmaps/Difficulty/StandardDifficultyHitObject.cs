@@ -1,4 +1,5 @@
 ﻿using System;
+using osuElements.Helpers;
 
 namespace osuElements.Beatmaps.Difficulty
 {
@@ -6,9 +7,8 @@ namespace osuElements.Beatmaps.Difficulty
     {
         public static readonly double[] DECAY_BASE = { 0.3, 0.15 };
 
-        private static readonly double[] SPACING_WEIGHT_SCALING = { 1400, 26.25 };
+        private static readonly double[] SPACING_WEIGHT_SCALING = { 1400d, 26.25 };
         private const int LAZY_SLIDER_STEP_LENGTH = 10;
-        private const float CIRCLESIZE_BUFF_TRESHOLD = 30f;
 
         public HitObject BaseHitObject;
         public double[] Strains = { 1, 1 };
@@ -17,72 +17,78 @@ namespace osuElements.Beatmaps.Difficulty
         private readonly double _lazySliderLengthFirst;
         private readonly double _lazySliderLengthSubsequent;
 
-        public StandardDifficultyHitObject(HitObject baseHitObject, float radius) {
+        public StandardDifficultyHitObject(HitObject baseHitObject, float radius, float scalingFactor, Position stack)
+        {
+
             BaseHitObject = baseHitObject;
-            var scalingFactor = 52f / radius;
+            _normalizedStartPosition = (baseHitObject.StartPosition + stack) * scalingFactor;
 
-            if (radius < CIRCLESIZE_BUFF_TRESHOLD) { //CS ~5.5 -> ~6.5, up to 10% increase
-                scalingFactor *= Math.Min(1.1f, 1 + (CIRCLESIZE_BUFF_TRESHOLD - radius) * 0.02f);
-            }
-            _normalizedStartPosition = baseHitObject.StartPosition * scalingFactor;
-
-            if (baseHitObject.IsHitObjectType(HitObjectType.Slider)) {
-
-                var slider = (Slider)baseHitObject;
-                var sliderFollowCircleRadius = radius * 3f;
-
-                var segmentLength = Math.Min(slider.SegmentDuration, 60000);
-                var segmentEndTime = slider.StartTime + segmentLength;
-
-                var cursorPos = slider.StartPosition;
-
-                for (var time = slider.StartTime + LAZY_SLIDER_STEP_LENGTH;
-                    time < segmentEndTime; time += LAZY_SLIDER_STEP_LENGTH) {
-                    var difference = slider.PositionAtTime(time) - cursorPos;
-                    var distance = difference.Length;
-
-                    if (distance <= sliderFollowCircleRadius) continue;
-                    difference = difference.Normalize();
-                    distance -= sliderFollowCircleRadius;
-                    cursorPos += difference * distance;
-                    _lazySliderLengthFirst += distance;
-                }
-
-                _lazySliderLengthFirst *= scalingFactor;
-                if (slider.SegmentCount % 2 == 1) {
-                    _normalizedEndPosition = cursorPos * scalingFactor;
-                }
-
-                if (slider.SegmentCount <= 1) return;
-
-                segmentEndTime += segmentLength;
-                for (var time = segmentEndTime - segmentLength + LAZY_SLIDER_STEP_LENGTH;
-                    time < segmentEndTime; time += LAZY_SLIDER_STEP_LENGTH) {
-                    var difference = slider.PositionAtTime((int)time) - cursorPos;
-                    var distance = (float)difference.Length;
-
-                    if (distance <= sliderFollowCircleRadius) continue;
-                    difference.Normalize();
-                    distance -= sliderFollowCircleRadius;
-                    cursorPos += difference * distance;
-                    _lazySliderLengthSubsequent += distance;
-                }
-
-                if (slider.SegmentCount % 2 != 0) return;
-                _normalizedEndPosition = cursorPos * scalingFactor;
-
-            }
-            else {
+            if (!baseHitObject.IsHitObjectType(HitObjectType.Slider))
+            {
                 _normalizedEndPosition = _normalizedStartPosition;
+                return;
             }
+
+            var slider = (Slider)baseHitObject;
+            var sliderFollowCircleRadius = radius * 3f;
+
+            var segmentLength = Math.Min(slider.SegmentDuration, 60000);
+            var segmentEndTime = slider.StartTime + segmentLength;
+
+            var cursorPos = slider.StartPosition;
+
+            for (var time = slider.StartTime + LAZY_SLIDER_STEP_LENGTH;
+                time < segmentEndTime;
+                time += LAZY_SLIDER_STEP_LENGTH)
+            {
+                var difference = slider.PositionAtTime(time) - cursorPos;
+                var distance = difference.Length;
+
+                if (distance <= sliderFollowCircleRadius) continue;
+                difference = difference.Normalize();
+                distance -= sliderFollowCircleRadius;
+                cursorPos += difference * distance;
+                _lazySliderLengthFirst += distance;
+            }
+
+            _lazySliderLengthFirst *= scalingFactor;
+            if (slider.SegmentCount % 2 == 1)
+            {
+                _normalizedEndPosition = cursorPos * scalingFactor + stack;
+            }
+            if (slider.SegmentCount <= 1) return;
+
+            segmentEndTime += segmentLength;
+            for (var time = segmentEndTime - segmentLength + LAZY_SLIDER_STEP_LENGTH;
+                time < segmentEndTime;
+                time += LAZY_SLIDER_STEP_LENGTH)
+            {
+                var difference = slider.PositionAtTime((int)time) - cursorPos;
+                var distance = (float)difference.Length;
+                if (distance <= sliderFollowCircleRadius) continue;
+                difference.Normalize();
+                distance -= sliderFollowCircleRadius;
+                cursorPos += difference * distance;
+                _lazySliderLengthSubsequent += distance;
+            }
+
+            if (_lazySliderLengthSubsequent < 0 || double.IsNaN(_lazySliderLengthSubsequent))
+            {
+                _lazySliderLengthSubsequent = 0;
+            }
+
+            if (slider.SegmentCount % 2 != 0) return;
+            _normalizedEndPosition = cursorPos * scalingFactor + stack;
         }
 
-        public void CalculateStrains(StandardDifficultyHitObject previousHitObject, double speedMultiplier) {
+        public void CalculateStrains(StandardDifficultyHitObject previousHitObject, double speedMultiplier)
+        {
             CalculateSpecificStrain(previousHitObject, DifficultyType.Speed, speedMultiplier);
             CalculateSpecificStrain(previousHitObject, DifficultyType.Aim, speedMultiplier);
         }
 
-        private static double SpacingWeight(double distance, DifficultyType type) {
+        private static double SpacingWeight(double distance, DifficultyType type)
+        {
             const double ALMOST_DIAMETER = 90d;
             const double HALF_ALMOST_DIAMETER = 45d;
             const double STREAM_SPACING_TRESHOLD = 110d;
@@ -106,14 +112,17 @@ namespace osuElements.Beatmaps.Difficulty
         }
 
 
-        private void CalculateSpecificStrain(StandardDifficultyHitObject previousHitObject, DifficultyType type, double speedMultiplier) {
+        private void CalculateSpecificStrain(StandardDifficultyHitObject previousHitObject, DifficultyType type, double speedMultiplier)
+        {
             var addition = .0;
             var timeElapsed = (BaseHitObject.StartTime - previousHitObject.BaseHitObject.StartTime) / speedMultiplier;
             var decay = Math.Pow(DECAY_BASE[(int)type], timeElapsed * 0.001);
 
-            switch (BaseHitObject.Type) {
+            switch (BaseHitObject.Type)
+            {
                 case HitObjectType.Slider:
-                    switch (type) {
+                    switch (type)
+                    {
                         case DifficultyType.Speed:
 
                             addition =

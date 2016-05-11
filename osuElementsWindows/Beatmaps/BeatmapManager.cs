@@ -28,7 +28,8 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// Sets the beatmap and calculates the Combo numbers and colors.
         /// </summary>
-        public BeatmapManager(Beatmap beatmap) {
+        public BeatmapManager(Beatmap beatmap)
+        {
             SetBeatmap(beatmap);
         }
 
@@ -50,21 +51,25 @@ namespace osuElements.Beatmaps
         #region Methods
         public override Beatmap GetBeatmap() => _beatmap;
 
-        public override List<HitObject> GetHitObjects() {
-            if (_hitObjectsFlipped != _flipHitObjects) {
+        public override List<HitObject> GetHitObjects()
+        {
+            if (_hitObjectsFlipped != _flipHitObjects)
+            {
                 FlipHitobjects();
                 _hitObjectsFlipped = _flipHitObjects;
             }
             return _hitObjects;
         }
 
-        public override double AdjustDifficulty(double difficulty) {
+        public override double AdjustDifficulty(double difficulty)
+        {
             if ((Mods & Mods.Easy) > 0) return Math.Max(0d, difficulty * Constants.EASY_MULTIPLIER);
             if ((Mods & Mods.HardRock) > 0) return Math.Min(10d, difficulty * Constants.CIRCLE_SIZE_MOD_MULTIPLIER);
             return difficulty;
         }
 
-        public override double MapDifficultyRange(double difficulty, double min, double mid, double max) {
+        public override double MapDifficultyRange(double difficulty, double min, double mid, double max)
+        {
             difficulty = Math.Min(10, DifficultyModMultiplier * difficulty);
             if (difficulty == 5) return mid;
             if (difficulty > 5) return MathHelper.Lerp((difficulty - 5) / 5, mid, max);
@@ -74,7 +79,8 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// Sets the beatmap and calculates difficulties, ComboColors and Stacking
         /// </summary>
-        public void SetBeatmap(Beatmap beatmap) {
+        public void SetBeatmap(Beatmap beatmap)
+        {
             _beatmap = beatmap;
             //ComboColours = _beatmap.ComboColours;
             _hitObjects = beatmap.HitObjects.Select(h => h.Clone()).ToList();
@@ -87,7 +93,8 @@ namespace osuElements.Beatmaps
         /// <summary>
         /// Adds HitLength, DifficultyRating, Bpm, TotalLength and MaxCombo
         /// </summary>
-        public void ApiCalculations() {
+        public void ApiCalculations()
+        {
             var modsbuffer = Mods;
             SetMods(Mods.None);
             _beatmap.DifficultyRating = CalculateDifficlty();
@@ -98,8 +105,10 @@ namespace osuElements.Beatmaps
             _beatmap.MaxCombo = _hitObjects.Sum(h => h.MaxCombo);
         }
 
-        public void SliderCalculations() {
-            foreach (var slider in GetHitObjects().OfType<Slider>()) {
+        public void SliderCalculations()
+        {
+            foreach (var slider in GetHitObjects().OfType<Slider>())
+            {
                 var mult = SliderVelocityAt(slider.StartTime);
                 slider.Duration = (int)(slider.Length * slider.SegmentCount / mult);
                 slider.CreateCurve();
@@ -107,7 +116,8 @@ namespace osuElements.Beatmaps
             }
         }
 
-        public void DifficultyCalculations() {
+        public void DifficultyCalculations()
+        {
             var difficulty = Math.Min(10, DifficultyModMultiplier * _beatmap.DifficultyOverall);
             HitObjectRadius = (float)(54.422 - AdjustDifficulty(_beatmap.DifficultyCircleSize) * 4.4818);
             HitWindow300 = (int)(80 - difficulty * 6);
@@ -119,26 +129,33 @@ namespace osuElements.Beatmaps
             SliderScoringPointDistance = 100 * _beatmap.DifficultySliderMultiplier / _beatmap.DifficultySliderTickRate;
         }
 
-        private void FlipHitobjects() {
-            foreach (var hitObject in _hitObjects) {
+        private void FlipHitobjects()
+        {
+            foreach (var hitObject in _hitObjects)
+            {
                 hitObject.StartPosition = Position.Flip(hitObject.StartPosition);
                 if (!hitObject.IsHitObjectType(HitObjectType.Slider)) continue;
                 var slider = hitObject as Slider;
-                for (var i = 0; i < slider.ControlPoints.Length; i++) {
+                for (var i = 0; i < slider.ControlPoints.Length; i++)
+                {
                     slider.ControlPoints[i] = Position.Flip(slider.ControlPoints[i]);
                 }
             }
         }
 
-        public void SetMods(Mods mods) {
-            if (mods.HasFlag(Mods.Easy)) {
+        public void SetMods(Mods mods)
+        {
+            if (mods.HasFlag(Mods.Easy))
+            {
                 if (mods.HasFlag(Mods.HardRock)) throw new ArgumentException("Easy and HardRock are enabled at the same time");
                 _flipHitObjects = false;
             }
-            if (mods.HasFlag(Mods.HardRock)) {
+            if (mods.HasFlag(Mods.HardRock))
+            {
                 _flipHitObjects = true;
             }
-            if (mods.HasFlag(Mods.HalfTime) && mods.HasFlag(Mods.DoubleTime)) {
+            if (mods.HasFlag(Mods.HalfTime) && mods.HasFlag(Mods.DoubleTime))
+            {
                 throw new ArgumentException("HalfTime and DoubleTime (or Nightcore) are enabled at the same time");
             }
             if (mods.HasFlag(Mods.Nightcore) && !mods.HasFlag(Mods.DoubleTime)) throw new ArgumentException("Nightcore is enabled without DoubleTime");
@@ -148,45 +165,66 @@ namespace osuElements.Beatmaps
             DifficultyCalculations();
         }
 
+        public bool Stacked { get; private set; }
 
-        public void CalculateStacking() {
-            const int stackLenience = 3;
+        public void ResetStacking()
+        {
+            Stacked = false;
+            foreach (var hitObject in _hitObjects)
+            {
+                hitObject.StackCount = 0;
+            }
+        }
+
+        public void CalculateStacking()
+        {
+            if (Stacked) ResetStacking();
+            Stacked = true;
+            const double stackLenience = 3d;
             var hitobjects = GetHitObjects();
-            for (var i = hitobjects.Count - 1; i > 0; i--) {
+            var count = hitobjects.Count;
+            var stackThreshold = PreEmpt * _beatmap.StackLeniency;
+
+            for (var i = count - 1; i > 0; i--)
+            {
                 var n = i;
                 var objectI = hitobjects[i];
 
-                if (objectI.StackCount != 0 || objectI is Spinner) continue;
-
-                if (objectI is Slider) {
-                    while (--n >= 0) {
+                if (objectI is Spinner) continue;
+                if (objectI is Slider)
+                {
+                    while (--n >= 0)
+                    {
                         var objectN = hitobjects[n];
                         if (objectN is Spinner) continue;
 
-                        if (objectI.StartTime - (PreEmpt * _beatmap.StackLeniency) > objectN.EndTime)
-                            break;
-                        if (!(objectN.EndPosition.Distance(objectI.StartPosition) < stackLenience)) continue;
+                        if (objectI.StartTime - objectN.StartTime > stackThreshold) break;
+                        if (objectN.EndPosition.Distance(objectI.StartPosition) >= stackLenience) continue;
                         objectN.StackCount = objectI.StackCount + 1;
                         objectI = objectN;
+
                     }
                 }
-                else if (objectI is HitCircle) {
-                    while (--n >= 0) {
+                else if (objectI is HitCircle)
+                {
+                    while (--n >= 0)
+                    {
                         var objectN = hitobjects[n];
                         if (objectN is Spinner) continue;
 
-                        if (objectI.StartTime - (PreEmpt * _beatmap.StackLeniency) > objectN.EndTime)
-                            break;
-                        if (objectN != null && objectN.EndPosition.Distance(objectI.StartPosition) < stackLenience) {
+                        if (objectI.StartTime - objectN.EndTime > stackThreshold) break;
+                        if (objectN is Slider && objectN.EndPosition.Distance(objectI.StartPosition) < stackLenience)
+                        {
                             var offset = objectI.StackCount - objectN.StackCount + 1;
-                            for (var j = n + 1; j <= i; j++) {
+                            for (var j = n + 1; j <= i; j++)
+                            {
                                 if (objectN.EndPosition.Distance(hitobjects[j].StartPosition) < stackLenience)
                                     hitobjects[j].StackCount -= offset;
                             }
                             break;
                         }
 
-                        if (!(objectN.StartPosition.Distance(objectI.StartPosition) < stackLenience)) continue;
+                        if (objectN.StartPosition.Distance(objectI.StartPosition) >= stackLenience) continue;
                         objectN.StackCount = objectI.StackCount + 1;
                         objectI = objectN;
                     }
@@ -194,20 +232,24 @@ namespace osuElements.Beatmaps
             }
         }
 
-        public double CalculateDifficlty() {
+        public double CalculateDifficlty()
+        {
             DifficultyCalculator.Calculate(Mods);
             return DifficultyCalculator.StarDifficulty;
         }
 
-        public double BpmAt(int time) {
+        public double BpmAt(int time)
+        {
             return (Last(time, true).Bpm);
         }
 
-        public double BeatlengthAt(int time) {
+        public double BeatlengthAt(int time)
+        {
             return Last(time, true).BeatLength;
         }
 
-        public override double SliderVelocityAt(int time) {
+        public override double SliderVelocityAt(int time)
+        {
             var mult = Last(time); //if result is timing, return bpm. if its not, return speedmult * lastbpm
             var bpm = Last(time, true);
             var result = bpm.Bpm * _beatmap.DifficultySliderMultiplier / 600; // divide by 60,000 minutes->ms and multiply 100 for default slider length
@@ -215,30 +257,37 @@ namespace osuElements.Beatmaps
             return mult.SliderVelocityMultiplier * result;
         }
 
-        public TimingPoint Last(float time, bool isBpm = false) {
+        public TimingPoint Last(float time, bool isBpm = false)
+        {
             var timingpoints = TimingPoints;
             var result = timingpoints.LastOrDefault(tp => tp.Offset <= time && tp.IsTiming == isBpm);
             if (isBpm && result == null) result = timingpoints.First(tp => tp.IsTiming);
             return result;
         }
 
-        public double CalculatePerformancePoints(ApiScore score = null) {
+        public double CalculatePerformancePoints(ApiScore score = null)
+        {
             if (score == null)
-                score = new ApiScore {
+                score = new ApiScore
+                {
                     Count300 = (ushort)_hitObjects.Count,
                     MaxCombo = (ushort)_hitObjects.Sum(h => h.MaxCombo),
                 };
             return DifficultyCalculator.PerformancePoints(score);
         }
 
-        public Position AutoCursorPosition(float timing) {
+        public Position AutoCursorPosition(float timing)
+        {
             var result = Constants.CENTER_OF_SCREEN;
             var hitobjects = GetHitObjects();
-            for (var i = 0; i < hitobjects.Count; i++) {
+            for (var i = 0; i < hitobjects.Count; i++)
+            {
                 var ho = hitobjects[i];
                 if (timing > ho.EndTime) continue;
-                if (timing < ho.StartTime) {
-                    if (i == 0) {
+                if (timing < ho.StartTime)
+                {
+                    if (i == 0)
+                    {
                         result = ho.StartPosition;
                         break;
                     }
@@ -259,17 +308,21 @@ namespace osuElements.Beatmaps
             return result;
         }
 
-        private Colour NextColor(int newCombo) {
+        private Colour NextColor(int newCombo)
+        {
             _currentcombocolor += newCombo;
             _currentcombocolor %= ComboColours.Count;
             return ComboColours[_currentcombocolor];
         }
 
-        private void CalculateComboColors() {
+        private void CalculateComboColors()
+        {
             var currentcombo = 1;
             HitObject previous = null;
-            foreach (var ho in _hitObjects) {
-                if (ho.IsNewCombo || (previous != null && previous.IsHitObjectType(HitObjectType.Spinner))) {
+            foreach (var ho in _hitObjects)
+            {
+                if (ho.IsNewCombo || (previous != null && previous.IsHitObjectType(HitObjectType.Spinner)))
+                {
                     if (previous != null) previous.LastInCombo = true;
                     currentcombo = 1;
                     ho.Colour = NextColor(ho.NewCombo);
@@ -281,7 +334,8 @@ namespace osuElements.Beatmaps
             }
         }
 
-        public HitSound[] GetHitsoundsForHitobject(HitObject ho) {
+        public HitSound[] GetHitsoundsForHitobject(HitObject ho)
+        {
             var timingPoint = Last(ho.StartTime);
             if (timingPoint == null) return new[] { new HitSound(SampleSet.Normal, HitObjectSoundType.Normal, 0) };
             var result = ho.InheritSoundsFrom(timingPoint);

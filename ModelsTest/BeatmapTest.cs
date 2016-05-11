@@ -40,6 +40,7 @@ namespace ModelsTest
         public void ManagerTest() {
             _beatmap.ReadFile();
             _manager = new BeatmapManager(_beatmap);
+            _manager.SliderCalculations();
             _manager.SetMods(Mods.HardRock);
             var hos = _manager.GetHitObjects();
         }
@@ -88,6 +89,8 @@ namespace ModelsTest
             _beatmap.ReadFile();
             _manager = new BeatmapManager(_beatmap);
             _manager.SliderCalculations();
+            _manager.CalculateStacking();
+            var stacked = _manager.GetHitObjects().Where(h => h.StackCount != 0).ToArray();
             var diff = _manager.CalculateDifficlty();
             Assert.AreEqual(5.64, Math.Round(diff, 2));
         }

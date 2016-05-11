@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using osuElements;
-using osuElements.Api.Repositories;
 using osuElements.Beatmaps;
-using osuElements.Helpers;
 
 namespace SampleCode
 {

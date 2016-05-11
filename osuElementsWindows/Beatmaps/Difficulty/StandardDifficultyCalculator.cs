@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using osuElements.Api;
+using osuElements.Helpers;
 using static System.Math;
 
 namespace osuElements.Beatmaps.Difficulty
@@ -14,7 +15,8 @@ namespace osuElements.Beatmaps.Difficulty
         private const double STRAIN_STEP = 400;
         private const double DECAY_WEIGHT = 0.9;
 
-        public StandardDifficultyCalculator(BeatmapManager manager) : base(manager) {
+        public StandardDifficultyCalculator(BeatmapManager manager) : base(manager)
+        {
             RedoHitObjects();
         }
         public override GameMode GameMode => GameMode.Standard;
@@ -23,24 +25,35 @@ namespace osuElements.Beatmaps.Difficulty
         public double AimDifficulty { get; set; }
         public double SpeedDifficulty { get; set; }
         public static bool UseScoreV2 { get; set; }
+        private const float CIRCLESIZE_BUFF_TRESHOLD = 30f;
 
-        private void RedoHitObjects() {
+        private void RedoHitObjects()
+        {
             var radius = (float)(54.4 - Manager.AdjustDifficulty(Manager.GetBeatmap().DifficultyCircleSize) * 4.48);
-            _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius))
+            var scalingFactor = 52f / radius;
+            if (radius < CIRCLESIZE_BUFF_TRESHOLD) //CS ~5.5 -> ~6.5, up to 10% increase
+                scalingFactor *= Min(1.1f, 1f + (CIRCLESIZE_BUFF_TRESHOLD - radius) * 0.02f);
+            if (!Manager.Stacked) Manager.CalculateStacking();
+            var offset = new Position(Manager.StackOffset);
+
+            _tpHitObjects = Manager.GetHitObjects().Select(ho => new StandardDifficultyHitObject(ho, radius, scalingFactor, offset * ho.StackCount))
                 .OrderBy(tp => tp.BaseHitObject.StartTime)
                 .ToList();
             CurrentMods = Manager.Mods;
         }
 
-        public bool CalculateStrainValues() {
+        public bool CalculateStrainValues()
+        {
             var hitObjectsEnumerator = _tpHitObjects.GetEnumerator();
-            if (hitObjectsEnumerator.MoveNext() == false) {
+            if (hitObjectsEnumerator.MoveNext() == false)
+            {
                 return false;
             }
 
             var currentHitObject = hitObjectsEnumerator.Current;
 
-            while (hitObjectsEnumerator.MoveNext()) {
+            while (hitObjectsEnumerator.MoveNext())
+            {
                 var nextHitObject = hitObjectsEnumerator.Current;
                 nextHitObject.CalculateStrains(currentHitObject, ModSpeed);
                 currentHitObject = nextHitObject;
@@ -49,20 +62,25 @@ namespace osuElements.Beatmaps.Difficulty
             return true;
         }
 
-        public double CalculateDifficulty(DifficultyType type) {
+        public double CalculateDifficulty(DifficultyType type)
+        {
             var highestStrains = new List<double>();
             var intervalEndTime = STRAIN_STEP * ModSpeed;
 
             var maximumStrain = 0.0;
             StandardDifficultyHitObject previousHitObject = null;
-            foreach (var hitObject in _tpHitObjects) {
-                while (hitObject.BaseHitObject.StartTime > intervalEndTime) {
+            foreach (var hitObject in _tpHitObjects)
+            {
+                while (hitObject.BaseHitObject.StartTime > intervalEndTime)
+                {
                     highestStrains.Add(maximumStrain);
 
-                    if (previousHitObject == null) {
+                    if (previousHitObject == null)
+                    {
                         maximumStrain = .0;
                     }
-                    else {
+                    else
+                    {
                         var decay = Pow(StandardDifficultyHitObject.DECAY_BASE[(int)type],
                             (intervalEndTime - previousHitObject.BaseHitObject.StartTime) / 1000d);
                         maximumStrain = previousHitObject.Strains[(int)type] * decay;
@@ -79,7 +97,8 @@ namespace osuElements.Beatmaps.Difficulty
             var weight = 1.0;
             highestStrains.Sort((a, b) => b.CompareTo(a));
 
-            foreach (var strain in highestStrains) {
+            foreach (var strain in highestStrains)
+            {
                 difficulty += weight * strain;
                 weight *= DECAY_WEIGHT;
             }
@@ -87,7 +106,8 @@ namespace osuElements.Beatmaps.Difficulty
             return difficulty;
         }
 
-        public override void Calculate(Mods mods) {
+        public override void Calculate(Mods mods)
+        {
             if ((mods & Mods.HardRock) != (CurrentMods & Mods.HardRock) ||
                 (mods & Mods.Easy) != (CurrentMods & Mods.Easy))
                 RedoHitObjects();
@@ -105,7 +125,8 @@ namespace osuElements.Beatmaps.Difficulty
         }
 
         public static double PerformancePoints(Mods mods, double aimdifficulty, double speeddifficulty, double hit300, double preempt,
-             int maxCombo, int count300, int count100, int count50, int countMiss, int hitcirlcecount, bool scorev2) {
+             int maxCombo, int count300, int count100, int count50, int countMiss, int hitcirlcecount, bool scorev2)
+        {
             if (mods.HasFlag(Mods.Relax | Mods.Relax2 | Mods.Autoplay)) return 0;
             var total = count300 + count100 + count50 + countMiss;
             var acc = (count300 * 6 + count100 * 2 + count50) / (total * 6d);
@@ -121,7 +142,8 @@ namespace osuElements.Beatmaps.Difficulty
             aimvalue *= lengthbonus;
             var arfactor = 1.0;
             if (ar > 10.33) arfactor += 0.45 * (ar - 10.33);
-            else if (ar < 8.0) {
+            else if (ar < 8.0)
+            {
                 if (mods.HasFlag(Mods.Hidden)) arfactor += 0.02 * (8.0 - ar);
                 else arfactor += 0.01 * (8 - ar);
             }
@@ -129,7 +151,8 @@ namespace osuElements.Beatmaps.Difficulty
             //speed
             var speedvalue = Pow(5d * Max(1.0, speeddifficulty / STAR_SCALING_FACTOR) - 4d, 3d) * 0.00001;
             speedvalue *= lengthbonus;
-            if (maxCombo > 0d) {
+            if (maxCombo > 0d)
+            {
                 var pow = Pow(maxCombo, 0.8);
                 var m = Min(pow / pow, 1d);
                 aimvalue *= m;
@@ -138,9 +161,11 @@ namespace osuElements.Beatmaps.Difficulty
             //acc
             var betteraccpercent = acc;
             var amountobjectsacc = total;
-            if (!scorev2) {
+            if (!scorev2)
+            {
                 amountobjectsacc = hitcirlcecount;
-                if (amountobjectsacc > 0d) {
+                if (amountobjectsacc > 0d)
+                {
                     betteraccpercent = ((count300 - (total - amountobjectsacc)) * 6 + count100 * 2 +
                                         count50) / (amountobjectsacc * 6d);
                     if (betteraccpercent < 0d) betteraccpercent = 0d;
@@ -153,11 +178,13 @@ namespace osuElements.Beatmaps.Difficulty
             var multiplier = 1.12;
             if ((mods & Mods.NoFail) > 0) multiplier *= 0.9;
             if ((mods & Mods.SpunOut) > 0) multiplier *= 0.95;
-            if (mods.HasFlag(Mods.Hidden)) {
+            if (mods.HasFlag(Mods.Hidden))
+            {
                 accvalue *= 1.02;
                 aimvalue *= 1.18;
             }
-            if (mods.HasFlag(Mods.Flashlight)) {
+            if (mods.HasFlag(Mods.Flashlight))
+            {
                 accvalue *= 1.02;
                 aimvalue *= 1.45 * lengthbonus;
             }
@@ -172,7 +199,8 @@ namespace osuElements.Beatmaps.Difficulty
         /// <summary>
         /// Make sure to Calculate(Mods) before this
         /// </summary>
-        public override double PerformancePoints(ApiScore score) {
+        public override double PerformancePoints(ApiScore score)
+        {
             return PerformancePoints(Manager.Mods, AimDifficulty, SpeedDifficulty, Manager.HitWindow300,
                 Manager.PreEmpt, score.MaxCombo, score.Count300, score.Count100, score.Count50,
                 score.CountMiss, Manager.GetHitObjects().OfType<HitCircle>().Count(), UseScoreV2);

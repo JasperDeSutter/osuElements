@@ -31,12 +31,13 @@ namespace osuElements.Beatmaps.Curves
         }
 
         private static Position GetCenterFrom3Vectors(Position a, Position b, Position c) {
-            var ma = Gradient(a, b);
-            var mb = Gradient(b, c);
-            var x0 = (ma * mb * (a.Y - c.Y) + mb * (a.X + b.X) - ma * (b.X + c.X)) / (2 * (mb - ma));
-            var y0 = (-2 * x0 + a.X + b.X) / (2 * ma) + (a.Y + b.Y) / 2.0;
+            var ga = Gradient(a, b);
+            var gb = Gradient(b, c);
+            if (ga == gb) ga += Increment;
+            var x = (ga * gb * (a.Y - c.Y) + gb * (a.X + b.X) - ga * (b.X + c.X)) / (2 * (gb - ga));
+            var y = (-2 * x + a.X + b.X) / (2 * ga) + (a.Y + b.Y) / 2.0;
             //Todo check for very small gradient difference and make a special curve
-            return new Position((float)x0, (float)y0);
+            return new Position((float)x, (float)y);
         }
 
         private void CalculateAngles() { //used for calculating points

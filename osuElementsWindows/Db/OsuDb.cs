@@ -53,7 +53,7 @@ namespace osuElements.Db
                 new BinaryFileLine<OsuDb, DateTime>(s => s.DateTime),
                 new BinaryFileLine<OsuDb, string>(s => s.UserName),
                 new BinaryCollection<OsuDb, DbBeatmap>(s => s.Beatmaps,
-                    new BinaryFileLine<DbBeatmap, int>(b => b.New),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.ByteLength),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Artist),
                     new BinaryFileLine<DbBeatmap, string>(b => b.ArtistUnicode),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Title),

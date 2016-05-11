@@ -53,11 +53,11 @@ namespace osuElements.Db
         public DateTime LastPlayTime { get; set; }
         public bool Unplayed { get; set; }
         public bool Osz2 { get; set; } 
-        public byte ManiaScrollSpeed { get; set; } 
+        public byte ManiaScrollSpeed { get; set; }
+        public int ByteLength { get; set; } //the length in bytes of this data in the database
 
         //Unsure
         public int Int { get; set; } //nearly always 0
         public bool Bool2 { get; set; } //nearly always false
-        public int New { get; set; } // between 400 and 30000, not sure what it is yet
     }
 }

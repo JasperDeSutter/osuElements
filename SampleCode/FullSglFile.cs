@@ -1,11 +1,9 @@
 ﻿using System;
 using osuElements;
-using osuElements.Helpers;
 using osuElements.Storyboards;
 //this makes our life easier, no need to be typing these in anymore!
 using static osuElements.Storyboards.Easing;
 using static osuElements.Storyboards.EventLayer;
-using static osuElements.Storyboards.Looptypes;
 using static osuElements.Storyboards.Origin;
 
 namespace SampleCode

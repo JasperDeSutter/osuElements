@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace osuElements.Beatmaps.Curves
 {
@@ -88,12 +89,16 @@ namespace osuElements.Beatmaps.Curves
         public Position GetPointOnCurve(double t) {
             if (t > 1 || t < 0)
                 throw new Exception("You are trying to get a point out of the range(0-1) of the _curve");
+            Position result;
             if (Math.Abs(t - 1) < double.Epsilon) {
-                return EndPosition;
+                result = EndPosition;
             }
-            if (DesiredLength < 1 || DesiredLength > TotalLength) DesiredLength = TotalLength;
-            t *= ModT;
-            return t <= 0 ? Points[0] : CalculatePoint(t);
+            else {
+                if (DesiredLength < 1 || DesiredLength > TotalLength) DesiredLength = TotalLength;
+                t *= ModT;
+                result = t <= 0 ? Points[0] : CalculatePoint(t);
+            }
+            return result;
         }
 
         public virtual List<CurveSegment> GetPointsBeforeTOnCurve(double t) {
