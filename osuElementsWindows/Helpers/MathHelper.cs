@@ -5,23 +5,33 @@ namespace osuElements.Helpers
 {
     internal static class MathHelper
     {
-        public static double Lerp(double t, double a, double b) {
+        public static double Lerp(double t, double a, double b)
+        {
             return a + t * (b - a);
         }
-        public static float Lerp(float t, float a, float b) {
+        public static float Lerp(float t, float a, float b)
+        {
             return a + t * (b - a);
         }
-        public static float Clamp(float f, float min = 0f, float max = 1f) {
+        public static int Clamp(this int i, int min, int max)
+        {
+            return Math.Min(max, Math.Max(min, i));
+        }
+        public static float Clamp(float f, float min = 0f, float max = 1f)
+        {
             return Math.Min(max, Math.Max(min, f));
         }
-        public static bool Between(float value, float min, float max) {
+        public static bool Between(float value, float min, float max)
+        {
             return value < max && value > min;
         }
 
-        internal static bool TestNanInfinite(params float[] values) {
+        internal static bool TestNanInfinite(params float[] values)
+        {
             return values.Any(value => float.IsNaN(value) || float.IsInfinity(value));
         }
-        internal static bool TestNanInfinite(params double[] values) {
+        internal static bool TestNanInfinite(params double[] values)
+        {
             return values.Any(value => double.IsNaN(value) || double.IsInfinity(value));
         }
 

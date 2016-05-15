@@ -176,6 +176,24 @@ namespace osuElements.Beatmaps.Curves
                 return 1;
             }
 
+            public double GetTangent(double t)
+            {
+                int count = Points.Length;
+                var ii = Math.Pow(1d - t, count - 2);
+                var tt = 1d;
+                var tangent = Position.Zero;
+                var prev = Points[0];
+                for (int j = 1; j < count; j++)
+                {
+                    var a = Points[j];
+                    tangent += (a - prev) * (float)(ii * tt);
+                    ii /= (1d - t);
+                    tt *= t;
+                    prev = a;
+                }
+                return tangent.GetAngle();
+            }
+
             private Position GetBezierPoint(double t)
             {
                 var result = new Position();

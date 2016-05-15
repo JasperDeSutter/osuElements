@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using osuElements;
 
 namespace osuElements.Api
 {
@@ -154,12 +157,67 @@ namespace osuElements.Api
         /// String containing HTML code to show on website
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true, Name = "display_html", Order = 0)]
-        public string DisplayHtml { get; set; }
+        [JsonConverter(typeof(EventConverter))]
+        public ApiEventInformation DisplayHtml { get; set; }
 
         /// <summary>
         /// Describes the epicness of the event a scale of 1 to 32
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true, Name = "epicfactor", Order = 4)]
         public int Epicfactor { get; set; }
+    }
+
+    public class ApiEventInformation
+    {
+        public enum Type
+        {
+            Unknown,
+            RankAchieved,
+            RankLost,
+            MapSetDelete,
+            MapSetRevive,
+            MapSetUpdate,
+            MapSetUpload,
+            Achievement,
+            UsernameChange,
+            SupportedAgain,
+            SupportedFirst,
+            SupportedGift,
+        }
+
+        public string Html { get; set; }
+        public string Image { get; set; }
+        public GameMode? GameMode { get; set; }
+        public int? Rank { get; set; }
+        public Type EventType { get; set; }
+
+        public ApiEventInformation(string html)
+        {
+            Html = html;
+            if (html.StartsWith("<b>")) { }
+            else if (html.StartsWith("<img"))
+            {
+                EventType = Type.RankAchieved;
+                var i = html.IndexOf("#", StringComparison.InvariantCulture);
+                var intstring = Regex.Match(html.Substring(i + 1, 4), @"\d+").Value;
+                Rank = int.Parse(intstring);
+                var mode = html[html.Length - 2];
+                switch (mode)
+                {
+                    case '!':
+                        GameMode = global::osuElements.GameMode.Standard;
+                        break;
+                    case 'a':
+                        GameMode = global::osuElements.GameMode.Mania;
+                        break;
+                    case 'o':
+                        GameMode = global::osuElements.GameMode.Taiko;
+                        break;
+                    default:
+                        GameMode = global::osuElements.GameMode.CatchTheBeat;
+                        break;
+                }
+            }
+        }
     }
 }

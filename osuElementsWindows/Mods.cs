@@ -41,9 +41,36 @@ namespace osuElements
     }
     public static class ModsExtensions
     {
-        public static double SpeedMultiplier(this Mods mods) {
+        public static double SpeedMultiplier(this Mods mods)
+        {
             if ((mods & Mods.DoubleTime) > 0) return 1.5;
             return (mods & Mods.HalfTime) > 0 ? 0.75 : 1;
+        }
+        public static string TwoCharacterString(this Mods mods)
+        {
+            var result = "";
+            if (mods.HasFlag(Mods.NoFail)) result += "NF";
+            if (mods.HasFlag(Mods.Easy)) result += "EZ";
+            if (mods.HasFlag(Mods.Hidden)) result += "HD";
+            if (mods.HasFlag(Mods.HardRock)) result += "HR";
+            if (mods.HasFlag(Mods.SuddenDeath)) result += "SD";
+            if (mods.HasFlag(Mods.DoubleTime)) result += "DT";
+            if (mods.HasFlag(Mods.HalfTime)) result += "HT";
+            if (mods.HasFlag(Mods.Nightcore)) result += "NC";
+            if (mods.HasFlag(Mods.Flashlight)) result += "FL";
+            if (mods.HasFlag(Mods.Perfect)) result += "PF";
+            if (mods.HasFlag(Mods.Key1)) result += "1K";
+            if (mods.HasFlag(Mods.Key2)) result += "2K";
+            if (mods.HasFlag(Mods.Key3)) result += "3K";
+            if (mods.HasFlag(Mods.Key4)) result += "4K";
+            if (mods.HasFlag(Mods.Key5)) result += "5K";
+            if (mods.HasFlag(Mods.Key6)) result += "6K";
+            if (mods.HasFlag(Mods.Key7)) result += "7K";
+            if (mods.HasFlag(Mods.Key8)) result += "8K";
+            if (mods.HasFlag(Mods.Key9)) result += "9K";
+            if (mods.HasFlag(Mods.KeyCoop)) result += ("CO");
+            if (mods.HasFlag(Mods.FadeIn)) result += "FI";
+            return result;
         }
     }
 }

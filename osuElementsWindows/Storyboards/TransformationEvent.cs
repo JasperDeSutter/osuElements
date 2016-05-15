@@ -74,13 +74,13 @@ namespace osuElements.Storyboards
                         break;
                 }
 
-                result.Append("," + startValues[i].ToString(Constants.CULTUREINFO));
+                result.Append("," + startValues[i].ToString(Constants.Cultureinfo));
                 if (startValues[i] != EndValues[i]) issame = false;
             }
             if (issame) return result.ToString();
 
             foreach (var b in EndValues) {
-                result.Append("," + b.ToString(Constants.CULTUREINFO));
+                result.Append("," + b.ToString(Constants.Cultureinfo));
             }
             return result.ToString();
         }
@@ -117,7 +117,7 @@ namespace osuElements.Storyboards
             //Magic number 4: the first four default elements of every transformation
             var valuecount = type == TransformTypes.C ? 3 : type == TransformTypes.M || type == TransformTypes.V ? 2 : 1;
             var sv =
-                Enumerable.Range(0, valuecount).Select(i => float.Parse(values[i], Constants.CULTUREINFO)).ToArray();
+                Enumerable.Range(0, valuecount).Select(i => float.Parse(values[i], Constants.Cultureinfo)).ToArray();
 
             var count = values.Length / valuecount;
 
@@ -130,7 +130,7 @@ namespace osuElements.Storyboards
             for (var i = 0; i < count; i++) {
                 var ev =
                     Enumerable.Range((i + 1) * valuecount, valuecount)
-                        .Select(j => float.Parse(values[j], Constants.CULTUREINFO))
+                        .Select(j => float.Parse(values[j], Constants.Cultureinfo))
                         .ToArray();
                 result[i] = new TransformationEvent(type, easing, start, end, sv, ev);
                 sv = ev;

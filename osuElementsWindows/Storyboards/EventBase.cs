@@ -37,15 +37,15 @@ namespace osuElements.Storyboards
                     case EventTypes.Sprite:
                         result = new SpriteEvent(parts[3].Trim('\"'),
                             (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
-                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),
-                            float.Parse(parts[5], Constants.CULTUREINFO));
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.Cultureinfo),
+                            float.Parse(parts[5], Constants.Cultureinfo));
                         break;
                     case EventTypes.Animation:
                         result = new AnimationEvent(parts[3].Trim('\"'),
                             int.Parse(parts[6]), int.Parse(parts[7]),
                             (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
-                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.CULTUREINFO),
-                            float.Parse(parts[5], Constants.CULTUREINFO),
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.Cultureinfo),
+                            float.Parse(parts[5], Constants.Cultureinfo),
                             parts.Length > 8 ? (Looptypes)Enum.Parse(typeof(Looptypes), parts[8]) : Looptypes.LoopForever);
                         break;
                     case EventTypes.Sample:

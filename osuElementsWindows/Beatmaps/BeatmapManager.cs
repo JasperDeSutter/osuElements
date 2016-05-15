@@ -39,12 +39,12 @@ namespace osuElements.Beatmaps
         public Mods Mods { get; private set; }
 
         private float DifficultyModMultiplier =>
-            (Mods.IsType(Mods.HardRock) ? Constants.HARD_ROCK_MULTIPLIER : 1) * (Mods.IsType(Mods.Easy) ? Constants.EASY_MULTIPLIER : 1);
+            (Mods.IsType(Mods.HardRock) ? Constants.HardRockMultiplier : 1) * (Mods.IsType(Mods.Easy) ? Constants.EasyMultiplier : 1);
 
         //Circle size uses this one
         private float CircleSizeModMultiplier =>
-            (Mods.IsType(Mods.HardRock) ? Constants.CIRCLE_SIZE_MOD_MULTIPLIER : 1) *
-            (Mods.IsType(Mods.Easy) ? Constants.EASY_MULTIPLIER : 1);
+            (Mods.IsType(Mods.HardRock) ? Constants.CircleSizeModMultiplier : 1) *
+            (Mods.IsType(Mods.Easy) ? Constants.EasyMultiplier : 1);
 
         #endregion
 
@@ -63,8 +63,8 @@ namespace osuElements.Beatmaps
 
         public override double AdjustDifficulty(double difficulty)
         {
-            if ((Mods & Mods.Easy) > 0) return Math.Max(0d, difficulty * Constants.EASY_MULTIPLIER);
-            if ((Mods & Mods.HardRock) > 0) return Math.Min(10d, difficulty * Constants.CIRCLE_SIZE_MOD_MULTIPLIER);
+            if ((Mods & Mods.Easy) > 0) return Math.Max(0d, difficulty * Constants.EasyMultiplier);
+            if ((Mods & Mods.HardRock) > 0) return Math.Min(10d, difficulty * Constants.CircleSizeModMultiplier);
             return difficulty;
         }
 
@@ -278,7 +278,7 @@ namespace osuElements.Beatmaps
 
         public Position AutoCursorPosition(float timing)
         {
-            var result = Constants.CENTER_OF_SCREEN;
+            var result = Constants.CenterOfScreen;
             var hitobjects = GetHitObjects();
             for (var i = 0; i < hitobjects.Count; i++)
             {

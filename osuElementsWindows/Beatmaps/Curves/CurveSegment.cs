@@ -24,6 +24,9 @@
                 SetBetween(value - _startPosition);
             }
         }
+
+        public float StartAngle { get; set; }
+        public float EndAngle { get; set; }
         public CurveSegment(Position start, Position end) {
             _startPosition = start;
             EndPosition = end;

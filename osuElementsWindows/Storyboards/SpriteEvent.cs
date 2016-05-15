@@ -63,7 +63,7 @@ namespace osuElements.Storyboards
 
         public override string ToString() {
             if (!Filepath.Contains(".")) Filepath += "." + DefaultFileExtension;
-            return $"{Type},{Layer},{Origin},\"{Filepath.Replace('\\', '/')}\",{StartPosition.X.ToString(Constants.CULTUREINFO)},{StartPosition.Y.ToString(Constants.CULTUREINFO)}";
+            return $"{Type},{Layer},{Origin},\"{Filepath.Replace('\\', '/')}\",{StartPosition.X.ToString(Constants.Cultureinfo)},{StartPosition.Y.ToString(Constants.Cultureinfo)}";
         }
     }
 }

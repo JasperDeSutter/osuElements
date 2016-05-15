@@ -101,7 +101,7 @@ namespace osuElements.Beatmaps
             set
             {
                 if (_newCombo == value) return;
-                _newCombo = Math.Max(1, Math.Min(Constants.MAXIMUM_NEW_COMBO, value));
+                _newCombo = Math.Max(1, Math.Min(Constants.MaximumNewCombo, value));
             }
         }
 
@@ -224,7 +224,7 @@ namespace osuElements.Beatmaps
             s.SegmentCount = int.Parse(parts[6]);
             var pointcount = s.SegmentCount + 1;
             //length
-            if (parts.Length > 7) s.Length = Convert.ToDouble(parts[7], Constants.CULTUREINFO);
+            if (parts.Length > 7) s.Length = Convert.ToDouble(parts[7], Constants.Cultureinfo);
             //hitsounds
             var pointHitsounds = Enumerable.Range(1, pointcount).Select(i => new Slider.PointHitsound()).ToList();
             if (parts.Length < 9) return s;

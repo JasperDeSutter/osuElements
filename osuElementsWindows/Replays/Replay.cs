@@ -28,7 +28,7 @@ namespace osuElements.Replays
                 LifebarFrameString.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries)
                     .Select(part => part.Split('|'.AsArray(), StringSplitOptions.RemoveEmptyEntries))
                     .Where(parts2 => parts2.Length >= 2)
-                    .Select(t => new LifebarFrame(int.Parse(t[0]), float.Parse(t[1], Constants.CULTUREINFO)))
+                    .Select(t => new LifebarFrame(int.Parse(t[0]), float.Parse(t[1], Constants.Cultureinfo)))
                     .ToList();
         }
 
@@ -148,8 +148,8 @@ namespace osuElements.Replays
                 ReplayFrames.Add(new ReplayFrame() {
                     TimeOffset = offset,
                     Time = lasttime,
-                    Position = Position.FromHitobject(float.Parse(parts[1], Constants.CULTUREINFO),
-                        float.Parse(parts[2], Constants.CULTUREINFO)),
+                    Position = Position.FromHitobject(float.Parse(parts[1], Constants.Cultureinfo),
+                        float.Parse(parts[2], Constants.Cultureinfo)),
                     Keys = (ReplayKeys)Enum.Parse(typeof(ReplayKeys), parts[3])
                 });
             }

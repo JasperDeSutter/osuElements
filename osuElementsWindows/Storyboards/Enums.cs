@@ -36,7 +36,7 @@
         In = 1,
         Out = 2,
     }
-    public enum Looptypes//print as string
+    public enum Looptypes : byte //print as string
     {
         LoopForever,
         LoopOnce,
@@ -56,16 +56,17 @@
         L, //loop
         T, //trigger
     }
-    public enum ParameterTypes
+    public enum ParameterTypes : byte
     {
         A, //Additive color blending
         H, //Horizontal flip
         V, //Vertical flip
     }
-    public enum TriggerTypes
+    public enum TriggerTypes : byte
     {
         HitSound,
         Passing,
         Failing,
+        HitObjectHit,
     }
 }

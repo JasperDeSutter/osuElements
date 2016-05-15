@@ -85,7 +85,7 @@ namespace osuElements.Beatmaps
 
         public override string ToString() {
             return
-                $"{(int)Offset},{Value.ToString(Constants.CULTUREINFO)},{(int)TimeSignature},{(int)SampleSet}" +
+                $"{(int)Offset},{Value.ToString(Constants.Cultureinfo)},{(int)TimeSignature},{(int)SampleSet}" +
                 $",{(int)Custom},{Volume},{(IsTiming ? 1 : 0)},{(int)Options}";
         }
 
@@ -105,8 +105,8 @@ namespace osuElements.Beatmaps
         public static TimingPoint Parse(string line) {
             TimingPoint result;
             var parts = line.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries);
-            var offset = double.Parse(parts[0], Constants.CULTUREINFO);
-            var bpm = double.Parse(parts[1], Constants.CULTUREINFO);
+            var offset = double.Parse(parts[0], Constants.Cultureinfo);
+            var bpm = double.Parse(parts[1], Constants.Cultureinfo);
             if (parts.Length > 2) {
                 var signature = (TimeSignature)int.Parse(parts[2]);
                 var sampleSet = (SampleSet)int.Parse(parts[3]);

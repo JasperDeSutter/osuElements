@@ -91,7 +91,7 @@ namespace osuElements.Beatmaps
             sb.Append(",");
             sb.Append(SegmentCount);
             sb.Append(",");
-            sb.Append(Length.ToString(Constants.CULTUREINFO));
+            sb.Append(Length.ToString(Constants.Cultureinfo));
 
             //TODO check if additions should be added
             if (PointHitsounds.All(p => p.IsDefault())) return sb.ToString();

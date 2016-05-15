@@ -4,13 +4,17 @@ namespace osuElements.Helpers
 {
     internal class Constants
     {
-        public static readonly Position CENTER_OF_SCREEN = new Position(256, 192);
-        internal const int MAXIMUM_NEW_COMBO = 7;
-        public static readonly CultureInfo CULTUREINFO = new CultureInfo("en-US");
-        public const float HARD_ROCK_MULTIPLIER = 1.4f;
-        public const float EASY_MULTIPLIER = 0.5f;
-        public const float DT_MULTIPLIER = 3.0f / 2;
-        public const float HT_MULTIPLIER = 3.0f / 4;
-        public const float CIRCLE_SIZE_MOD_MULTIPLIER = 1.3f;
+        public static readonly Position CenterOfScreen = new Position(256, 192);
+        public const int MaximumNewCombo = 7;
+        public static readonly CultureInfo Cultureinfo = new CultureInfo("en-US");
+        public const float HardRockMultiplier = 1.4f;
+        public const float EasyMultiplier = 0.5f;
+        public const float DtMultiplier = 3.0f / 2;
+        public const float HtMultiplier = 3.0f / 4;
+        public const float CircleSizeModMultiplier = 1.3f;
+
+        public const int MaxApiScoreResults = 100;
+        public const int MaxApiEventDays = 31;
+        public const int MaxApiBeatmapResults = 500;
     }
 }

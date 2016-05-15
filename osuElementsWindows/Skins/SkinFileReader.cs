@@ -11,7 +11,7 @@ namespace osuElements.Skins
             var general = new FileSection<Skin>("General",
                 new FileLine<Skin, string>(s => s.Name, "") { WriteIfDefault = true },
                 new FileLine<Skin, string>(s => s.Author, "") { WriteIfDefault = true },
-                new FileLine<Skin, float>(s => s.Version, osuElements.LatestSkinVersion) { ReadFunc = s => s == "latest" ? osuElements.LatestSkinVersion : Single.Parse(s, Constants.CULTUREINFO), WriteIfDefault = true },
+                new FileLine<Skin, float>(s => s.Version, osuElements.LatestSkinVersion) { ReadFunc = s => s == "latest" ? osuElements.LatestSkinVersion : Single.Parse(s, Constants.Cultureinfo), WriteIfDefault = true },
                 new FileLine<Skin, bool>(s => s.SliderBallFlip, true),
                 new FileLine<Skin, bool>(s => s.CursorRotate, true),
                 new FileLine<Skin, bool>(s => s.CursorExpand, true),

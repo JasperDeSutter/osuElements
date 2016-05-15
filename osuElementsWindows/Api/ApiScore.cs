@@ -136,7 +136,8 @@ namespace osuElements.Api
         {
             get
             {
-                switch (GameMode) {
+                switch (GameMode)
+                {
                     case Mania:
                         return Count300 + Count100 + Count50 + CountMiss + CountGeki + CountKatu;
                     case CatchTheBeat:
@@ -147,10 +148,12 @@ namespace osuElements.Api
             }
         }
 
-        public double CalculateAccuracy() {
-            switch (GameMode) {
+        public double CalculateAccuracy()
+        {
+            switch (GameMode)
+            {
                 case Standard:
-                    return (Count300 * 300 + Count100 * 100 + Count50 * 50.0) / MaxHitCount;
+                    return (Count300 * 300 + Count100 * 100 + Count50 * 50.0) / (MaxHitCount * 300.0);
                 case Taiko:
                     return (Count100 * 150.0 + Count300 * 300) / (MaxHitCount * 300);
                 case Mania:
@@ -161,10 +164,12 @@ namespace osuElements.Api
             return 1;
         }
 
-        public ScoreRank CalculateScoreRank() {
+        public ScoreRank CalculateScoreRank()
+        {
             var accuracy = CalculateAccuracy();
             if (accuracy == 0) return D;
-            switch (GameMode) {
+            switch (GameMode)
+            {
                 default:
                     var count300 = 1f * Count300 / MaxHitCount;
                     var count50 = 1f * Count50 / MaxHitCount;
@@ -207,7 +212,8 @@ namespace osuElements.Api
             return D;
         }
 
-        public void CloneTo(ApiScore result) {
+        public void CloneTo(ApiScore result)
+        {
             result.BeatmapId = BeatmapId;
             result.Score = Score;
             result.MaxCombo = MaxCombo;
