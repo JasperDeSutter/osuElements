@@ -8,15 +8,18 @@ namespace osuElements.Beatmaps
 {
     public class BeatmapFileReader
     {
-        private static bool TryParseVersion(string line, out int result) {
+        private static bool TryParseVersion(string line, out int result)
+        {
             result = 0;
             if (line.IndexOf('v') < 1) return false;
             result = int.Parse(line.Remove(0, line.LastIndexOf('v') + 1));
             return true;
         }
-        public static FileReader<Beatmap> BeatmapReader() {
+        public static FileReader<Beatmap> BeatmapReader()
+        {
             var fileFormat = new FileSection<Beatmap>(null,
-                new FileLine<Beatmap, int>(b => b.FormatVersion, osuElements.LatestBeatmapVersion) {
+                new FileLine<Beatmap, int>(b => b.FormatVersion, osuElements.LatestBeatmapVersion)
+                {
                     WriteIfDefault = true,
                     TryParse = TryParseVersion,
                     WriteFunc = i => "osu file format v" + i
@@ -63,50 +66,69 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, int>(b => b.BeatmapSetId) { Key = "BeatmapSetID", Format = "{0}:{1}" }
                 );
             var difficulty = new FileSection<Beatmap>("Difficulty",
-                new FileLine<Beatmap, float>(b => b.DifficultyHpDrainRate, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyHpDrainRate, 5)
+                {
                     WriteIfDefault = true,
                     Key = "HPDrainRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.DifficultyCircleSize, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyCircleSize, 5)
+                {
                     WriteIfDefault = true,
                     Key = "CircleSize",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.DifficultyOverall, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyOverall, 5)
+                {
                     WriteIfDefault = true,
                     Key = "OverallDifficulty",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.DifficultyApproachRate, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyApproachRate, 5)
+                {
                     WriteIfDefault = true,
                     Key = "ApproachRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, double>(b => b.DifficultySliderMultiplier, 1.4) { WriteIfDefault = true, Format = "{0}:{1}" },
-                new FileLine<Beatmap, float>(b => b.DifficultySliderTickRate, 1) { WriteIfDefault = true, Format = "{0}:{1}" }
+                new FileLine<Beatmap, double>(b => b.DifficultySliderMultiplier, 1.4)
+                {
+                    Key = "SliderMultiplier",
+                    WriteIfDefault = true,
+                    Format = "{0}:{1}"
+                },
+                new FileLine<Beatmap, float>(b => b.DifficultySliderTickRate, 1)
+                {
+                    Key = "SliderTickRate",
+                    WriteIfDefault = true,
+                    Format = "{0}:{1}"
+                }
                 );
             var events = new StoryboardSection<Beatmap>("Events",
-                new FileLine<Beatmap, BackgroundEvent>(b => b.Background) {
+                new FileLine<Beatmap, BackgroundEvent>(b => b.Background)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
-                new FileLine<Beatmap, VideoEvent>(b => b.Video) {
+                new FileLine<Beatmap, VideoEvent>(b => b.Video)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
                 new WriteLine<Beatmap>("//Background Colour Transformations"),
-                new MultiFileLine<Beatmap, BackgroundColorEvent>(b => b.BackgroundColorTransformations, null) {
+                new MultiFileLine<Beatmap, BackgroundColorEvent>(b => b.BackgroundColorTransformations, null)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
                 new WriteLine<Beatmap>("//Break Periods"),
                 //new FileLine<Beatmap, object>(b=>b.Artist)) { Key = "ZZZZZZZZZZ", WriteFunc = o => "//Break Periods", WriteIfDefault = true },
-                new MultiFileLine<Beatmap, BreakEvent>(b => b.BreakPeriods, null) {
+                new MultiFileLine<Beatmap, BreakEvent>(b => b.BreakPeriods, null)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 }
-                ) { UseVariables = false };
+                )
+            { UseVariables = false };
             var timingpoints = new CollectionFileSection<TimingPoint, Beatmap>(b => b.TimingPoints,
                 "TimingPoints",
                 TimingPoint.Parse, t => t.ToString());

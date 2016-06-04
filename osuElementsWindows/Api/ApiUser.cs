@@ -186,7 +186,6 @@ namespace osuElements.Api
         }
 
         public string Html { get; set; }
-        public string Image { get; set; }
         public GameMode? GameMode { get; set; }
         public int? Rank { get; set; }
         public Type EventType { get; set; }

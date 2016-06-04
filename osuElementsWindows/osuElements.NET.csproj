@@ -114,6 +114,7 @@
     <Compile Include="Beatmaps\Enums.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Helpers\IHitsound.cs" />
+    <Compile Include="IO\Binary\IBinaryFileLine.cs" />
     <Compile Include="Mods.cs" />
     <Compile Include="Replays\Enums.cs" />
     <Compile Include="Storyboards\Enums.cs" />
@@ -128,7 +129,6 @@
     <Compile Include="IO\Binary\BinaryFile.cs" />
     <Compile Include="IO\Binary\BinaryFileLine.cs" />
     <Compile Include="IO\Binary\BinaryFileList.cs" />
-    <Compile Include="IO\Binary\IBinaryFileLine.cs" />
     <Compile Include="IO\File\CollectionFileSection.cs" />
     <Compile Include="IO\File\FileLine.cs" />
     <Compile Include="IO\File\FileReader.cs" />
