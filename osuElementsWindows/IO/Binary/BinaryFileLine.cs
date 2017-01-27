@@ -43,10 +43,13 @@ namespace osuElements.IO.Binary
                 writer.WriteNullableString((string)t);
             }
             else if (Type == typeof(DateTime)) {
-                writer.Write((long)t);
+                writer.Write(((DateTime)t).Ticks);
             }
             else if (Type == typeof(byte[])) {
                 writer.WriteByteArray((byte[])t);
+            }
+            else if (Type == typeof(byte)){
+                writer.Write((byte)t);
             }
             else
                 _writer.GetRuntimeMethod("Write", Type.AsArray())
