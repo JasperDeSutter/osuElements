@@ -48,7 +48,7 @@ namespace osuElements.IO.Binary
             else if (Type == typeof(byte[])) {
                 writer.WriteByteArray((byte[])t);
             }
-            else if (Type == typeof(byte)){
+            else if (Type == typeof(byte)){ //for GameMode
                 writer.Write((byte)t);
             }
             else
