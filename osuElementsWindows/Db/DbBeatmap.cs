@@ -6,7 +6,7 @@ using osuElements.Helpers;
 
 namespace osuElements.Db
 {
-    public enum DbBeatmapState
+    public enum DbBeatmapState : byte
     {
         None,
         Unsubmitted,
