@@ -39,7 +39,7 @@ namespace osuElements.Helpers
         Custom1,
         Custom2,
     }
-    public enum ScoreRank
+    public enum ScoreRank : byte
     {
         /// <summary>
         /// SS Hidden/Flashlight
