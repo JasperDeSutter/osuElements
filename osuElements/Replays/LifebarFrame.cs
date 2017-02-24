@@ -1,4 +1,5 @@
 ﻿using System;
+using osuElements.Helpers;
 
 namespace osuElements.Replays
 {
@@ -19,7 +20,7 @@ namespace osuElements.Replays
                 Life.CompareTo(other.Life) : Time.CompareTo(other.Time);
         }
         public override string ToString() {
-            return $"{Time}|{Life}";
+            return $"{Time}|{Life.ToString(Constants.Cultureinfo)}";
         }
     }
 }
