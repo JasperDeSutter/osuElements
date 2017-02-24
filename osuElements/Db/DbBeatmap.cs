@@ -15,19 +15,9 @@ namespace osuElements.Db
         Approved,
         Qualified,
     }
-    public enum DbScoreRank
-    {
-        XH,
-        SH,
-        X,
-        S,
-        A,
-        B,
-        C,
-        D,
-        Fail,
-        NoRank,
-    }
+    /// <summary>
+    /// The database-driven approach to the beatmap object
+    /// </summary>
     public class DbBeatmap : Beatmap
     {
         public DbBeatmap() {
@@ -42,14 +32,14 @@ namespace osuElements.Db
         public ushort HitCircleAmount { get; set; }
         public ushort SliderAmount { get; set; }
         public ushort SpinnerAmount { get; set; }
-        public ICollection<KeyValuePair<Mods, double>> StandardDifficulties { get; set; }
-        public ICollection<KeyValuePair<Mods, double>> TaikoDifficulties { get; set; }
-        public ICollection<KeyValuePair<Mods, double>> CtbDifficulties { get; set; }
-        public ICollection<KeyValuePair<Mods, double>> ManiaDifficulties { get; set; }
-        public DbScoreRank HighestTaikoRank { get; set; }
-        public DbScoreRank HighestStandardRank { get; set; }
-        public DbScoreRank HighestCtbRank { get; set; }
-        public DbScoreRank HighestManiaRank { get; set; }
+        public Dictionary<Mods, double> StandardDifficulties { get; set; }
+        public Dictionary<Mods, double> TaikoDifficulties { get; set; }
+        public Dictionary<Mods, double> CtbDifficulties { get; set; }
+        public Dictionary<Mods, double> ManiaDifficulties { get; set; }
+        public ScoreRank HighestTaikoRank { get; set; }
+        public ScoreRank HighestStandardRank { get; set; }
+        public ScoreRank HighestCtbRank { get; set; }
+        public ScoreRank HighestManiaRank { get; set; }
         public short UserOffset { get; set; }
         public short OnlineOffset { get; set; }
         public string TitleMarkdown { get; set; }
@@ -61,11 +51,12 @@ namespace osuElements.Db
         public DateTime LastRead { get; set; }
         public DateTime LastPlayTime { get; set; }
         public bool Unplayed { get; set; }
+        public bool Osz2 { get; set; } 
+        public byte ManiaScrollSpeed { get; set; }
+        public int ByteLength { get; set; } //the length in bytes of this data in the database
 
         //Unsure
         public int Int { get; set; } //nearly always 0
-        public bool Bool1 { get; set; } //always false
-        public bool Bool2 { get; set; } //always false
-        public byte Byte { get; set; } //always 0
+        public bool Bool2 { get; set; } //nearly always false
     }
 }

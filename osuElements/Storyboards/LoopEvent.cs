@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using osuElements.Helpers;
 
 namespace osuElements.Storyboards
 {
-    public class LoopEvent : ITransformable
+    public class LoopEvent : ITransformable, IComparable<LoopEvent>
     {
         #region Properties
+
+        public void RemoveTransformation(params TransformationEvent[] transforms) {
+            foreach (var transformationEvent in transforms) {
+                Transformations.Remove(transformationEvent);
+            }
+            StartTime = Transformations.Min(t => t.StartTime);
+            EndTime = Transformations.Max(t => t.EndTime);
+        }
+
         public List<TransformationEvent> Transformations { get; set; }
         public int LoopDuration
         {
@@ -16,7 +24,7 @@ namespace osuElements.Storyboards
                 return Transformations.Count < 1 ? 0 : Transformations.Max(t => t.EndTime) - Transformations.Min(t => t.StartTime);
             }
         }
-        public virtual TransformTypes TransformType { get; } = TransformTypes.L;
+        public virtual TransformTypes TransformType { get; } = TransformTypes.Loop;
         public int StartTime { get; set; }
         public int Loopcount { get; set; }
 
@@ -45,6 +53,10 @@ namespace osuElements.Storyboards
         public static LoopEvent Parse(string line) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             return new LoopEvent(int.Parse(parts[1]), int.Parse(parts[2]));
+        }
+
+        public int CompareTo(LoopEvent other) {
+            return StartTime.CompareTo(other.StartTime);
         }
 
         public override string ToString() {

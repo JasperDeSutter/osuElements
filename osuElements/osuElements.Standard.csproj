@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <AssemblyName>osuElements.Standard</AssemblyName>
+    <RootNamespace>osuElements</RootNamespace>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DefineConstants>TRACE;DEBUG;STANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="osu!framework\**" />
+    <EmbeddedResource Remove="osu!framework\**" />
+    <None Remove="osu!framework\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Beatmaps\BeatmapFileRepository.cs" />
+    <Compile Remove="Skins\SkinFileRepository.cs" />
+    <Compile Remove="Storyboards\StoryboardFileRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+</Project>

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using osuElements.Helpers;
 
 namespace osuElements.Storyboards
 {
     public class AnimationEvent : SpriteEvent
     {
         public int Framecount { get; set; }
-        public int FrameDuration { get; set; }
+        public double FrameDuration { get; set; }
         public Looptypes Looptype { get; set; }
+        public static bool Verbose;
 
-        public AnimationEvent(string filepath, int frameCount, int frameDuration, EventLayer layer = EventLayer.Background,
+        public AnimationEvent(string filepath, int frameCount, double frameDuration, EventLayer layer = EventLayer.Background,
             Origin origin = Origin.Centre, float x = 320, float y = 240, Looptypes looptype = Looptypes.LoopForever)
             : base(filepath, layer, origin, x, y) {
             Type = EventTypes.Animation;
@@ -31,16 +30,16 @@ namespace osuElements.Storyboards
         }
 
         public int FrameAt(float time) {
-            var relative = time - StartTime;
+            double relative = time - StartTime;
             if (relative < 0) return 0;
             if (Looptype == Looptypes.LoopOnce && relative > Framecount * FrameDuration) return Framecount - 1; //last one
             relative %= Framecount * FrameDuration;
-            var result = (int)Math.Floor(relative / (FrameDuration * 1.0));
+            var result = (int)Math.Floor(relative / FrameDuration);
             return result;
         }
 
         public override string ToString() {
-            return $"{base.ToString()},{Framecount},{FrameDuration}" + (Looptype == Looptypes.LoopForever ? "" : "," + Looptype);
+            return $"{base.ToString()},{Framecount},{FrameDuration}" + (Verbose || Looptype == Looptypes.LoopOnce ? "," + Looptype : "" );
         }
     }
 }

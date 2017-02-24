@@ -1,36 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.File;
 
 namespace osuElements.Skins
 {
-    public class Skin
+    public class Skin : IFileModel
     {
-        #region File
-        public bool IsRead { get; private set; }
-        public string FileName { get; set; } = "skin.ini";
-        public string Directory { get; set; }
-        public string FullPath
-        {
-            get { return Path.Combine(Directory, FileName); }
-            set
-            {
-                Directory = Path.GetDirectoryName(value);
-                FileName = Path.GetFileName(value);
-            }
-        }
-        public void ReadFile(ILogger logger = null) {
-            SkinFileRepository.ReadFile(osuElements.FileReaderFunc(FullPath), this, logger);
-            IsRead = true;
-        }
-        public void WriteFile() {
-            SkinFileRepository.WriteFile(osuElements.FileWriterFunc(FullPath), this);
-        }
-        #endregion
-
-        
 
         public Skin(string directory) : this() {
             Directory = directory;
@@ -39,15 +15,37 @@ namespace osuElements.Skins
 
         public Skin() {
             Version = osuElements.LatestSkinVersion;
-            Combo = new List<Colour?>(8);
-            for (int i = 0; i < 8; i++) {
-                Combo[i] = null;
-            }
+            ComboColours = new List<Colour>(8);
             ManiaSkins = new List<ManiaSkin>();
-            SkinFileRepository = osuElements.SkinFileRepository;
         }
+        #region File
+        public bool IsRead { get; private set; }
+        public string FileName { get; set; } = "skin.ini";
+        public string Directory { get; set; }
 
-        public static IFileRepository<Skin> SkinFileRepository { private get; set; }
+        public string RootedDirectory
+            => Path.IsPathRooted(Directory) ? Directory : Path.Combine(osuElements.OsuSkinsDirectory, Directory);
+        public string FullPath
+        {
+            get
+            {
+                return Path.Combine(RootedDirectory, FileName);
+            }
+            set
+            {
+                Directory = Path.GetDirectoryName(value);
+                FileName = Path.GetFileName(value);
+            }
+        }
+        public void ReadFile(ILogger logger = null) {
+            osuElements.SkinFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            IsRead = true;
+        }
+        public void WriteFile() {
+            osuElements.SkinFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+        }
+        #endregion
+
 
         #region Properties
         //General
@@ -59,19 +57,19 @@ namespace osuElements.Skins
         public bool CursorCentre { get; set; } = true;
         public int SliderBallFrames { get; set; } = 10;
         public bool HitCircleOverlayAboveNumber { get; set; } = true;
-        public bool SpinnerFrequencyModulate { get; set; } = true; //
-        public bool LayeredHitsounds { get; set; } = true; //
+        public bool SpinnerFrequencyModulate { get; set; } = true;
+        public bool LayeredHitsounds { get; set; } = true;
         public bool SpinnerFadePlayField { get; set; } = true;
         public bool SpinnerNoBlink { get; set; } = false;
         public bool AllowSliderBallTint { get; set; } = false;
         public int AnimationFramerate { get; set; } = -1;
         public bool CursorTrailRotate { get; set; } = true;
-        public List<int> CustomComboBurstSounds { get; set; } = new List<int>(new[] { 50, 75, 100, 200, 300 });
+        public List<int> CustomComboBurstSounds { get; set; } = new List<int> { 50, 75, 100, 200, 300 };
         public bool ComboBurstRandom { get; set; } = true;
         public SliderStyle SliderStyle { get; set; } = SliderStyle.Transparent;
         public float Version { get; set; }
         //Colours
-        public List<Colour?> Combo { get; set; }
+        public List<Colour> ComboColours { get; set; }
         public List<Colour> Triangle { get; set; }
         public Colour MenuGlow { get; set; } = new Colour(0, 78, 255);
         public Colour SliderBall { get; set; } = new Colour(2, 170, 255);

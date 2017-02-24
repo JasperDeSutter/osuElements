@@ -2,7 +2,7 @@
 
 namespace osuElements.Storyboards.Triggers
 {
-    public class HitSoundTrigger : TriggerBase, IHitsound
+    public class HitSoundTrigger : TriggerBase
     {
         private SampleSet _sampleSet;
         private SampleSet _additionSampleSet;

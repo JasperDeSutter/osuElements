@@ -6,10 +6,11 @@ namespace osuElements.Beatmaps
     {
         public HoldCircle(Position position, int starttime, int endtime, bool isNewCombo = false,
             HitObjectType type = HitObjectType.HoldCircle, HitObjectSoundType soundType = HitObjectSoundType.Normal)
-            : base(position, starttime, isNewCombo, type, soundType) {
+            : base(position, starttime, isNewCombo, type | HitObjectType.HoldCircle, soundType) {
             EndTime = endtime;
         }
 
-        public override string ToString() => $"{base.ToString()},{EndTime},{AdditionsForString}";
+        public override string ToString() =>
+            $"{HitobjectToString},{EndTime}:{AdditionsForString}"; //theres a : between endtime and additions. Thanks peppy!
     }
 }

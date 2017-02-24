@@ -23,7 +23,7 @@ namespace osuElements.IO.File
         public char ListSeparator { get; set; } = ',';
         public override object GetValue(string value) {
             return value.Split(new[] { ListSeparator }, StringSplitOptions.RemoveEmptyEntries).
-                Select(p => (TValue)Convert.ChangeType(p.Trim(), typeof(TValue), Constants.IO.CULTUREINFO)).ToList();
+                Select(p => (TValue)Convert.ChangeType(p.Trim(), typeof(TValue), Constants.Cultureinfo)).ToList();
         }
 
         public override bool IsDefault(TModel model) {

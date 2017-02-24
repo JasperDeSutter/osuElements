@@ -1,7 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using Microsoft.Win32;
 using osuElements.Api.Repositories;
 using osuElements.Beatmaps;
+using osuElements.Db;
 using osuElements.IO;
 using osuElements.Replays;
 using osuElements.Skins;
@@ -11,103 +12,82 @@ namespace osuElements
 {
     public static class osuElements
     {
-        #region Fields
+        private static string _osuDirectory;
 
-        private static Func<string, Stream> _fileReaderFunc;
-        private static Func<string, Stream> _fileWriterFunc;
-        private static Func<byte[], byte[]> _decompressLzmaFunc1;
-        private static Func<string, string> _md5Func;
-
-        #endregion
+        public static Stream WriteStream(string path) {
+            if (File.Exists(path)) File.Delete(path);
+            return new FileStream(path, FileMode.Create);
+        }
 
         static osuElements() {
             StoryboardFileRepository = Storyboard.FileReader();
             SkinFileRepository = SkinFileReader.SkinReader();
             BeatmapFileRepository = BeatmapFileReader.BeatmapReader();
             ReplayFileRepository = Replay.FileReader();
-            //using (RegistryKey osureg = Registry.ClassesRoot.OpenSubKey("osu\\DefaultIcon")) {
-            //    if (osureg != null) {
-            //        string osukey = osureg.GetValue(null).ToString();
-            //        string osupath;
-            //        osupath = osukey.Remove(0, 1);
-            //        osuDirectory = osupath.Remove(osupath.Length - 11);
-            //    }
-            //}
+            CollectionDbRepository = CollectionDb.FileReader();
+            OsuDbRepository = OsuDb.FileReader();
+            ScoresDbRepository = ScoresDb.FileReader();
 
+            ApiReplayRepository = new ApiReplayRepository();
+            ApiBeatmapRepository = new ApiBeatmapRepository();
+            ApiReplayRepository = new ApiReplayRepository();
+            ApiUserRepository = new ApiUserRepository();
+
+#if !STANDARD
+
+            using (var osureg = Registry.ClassesRoot.OpenSubKey("osu\\DefaultIcon")) {
+                if (osureg == null) return;
+                var osukey = osureg.GetValue(null).ToString();
+                var osupath = osukey.Remove(0, 1);
+                OsuDirectory = osupath.Remove(osupath.Length - 11);
+            }
+#endif
         }
 
         #region Properties
 
-        public static string osuDirectory { get; set; }
 
-        public static Func<string, Stream> FileReaderFunc
+        public static string OsuDirectory
         {
-            get
+            get { return _osuDirectory; }
+            set
             {
-                if (_fileReaderFunc == null)
-                    throw new NullReferenceException("Supply a osuElements.FileReaderFunc function before tring to read a file");
-                return _fileReaderFunc;
+                _osuDirectory = value;
+                OsuSongDirectory = Path.Combine(value, "Songs");
+                OsuSkinsDirectory = Path.Combine(value, "Skins");
+                OsuReplaysDirectory = Path.Combine(value, "Replays");
             }
-            set { _fileReaderFunc = value; }
         }
 
-        public static Func<string, Stream> FileWriterFunc
-        {
-            get
-            {
-                if (_fileWriterFunc == null)
-                    throw new NullReferenceException("Supply an osuElements.FileWriterFunc before tring to write to a file");
-                return _fileWriterFunc;
-            }
-            set { _fileWriterFunc = value; }
-        }
-        /// <summary>
-        /// IN: a compressed byte[], OUT: the decompressed byte[]
-        /// </summary>
-        public static Func<byte[], byte[]> DecompressLzmaFunc
-        {
-            get
-            {
-                if (_decompressLzmaFunc1 == null)
-                    throw new NullReferenceException("Supply a osuElements.DecompressLzmaFunc function before tring to decompress a replay");
-                return _decompressLzmaFunc1;
-            }
-            set { _decompressLzmaFunc1 = value; }
-        }
-
-        /// <summary>
-        /// IN: a filepath, OUT: the hash for that file
-        /// </summary>
-        public static Func<string, string> Md5Func {
-            get
-            {
-                if (_md5Func == null)
-                    throw new NullReferenceException("Supply a osuElements.Md5Func function before tring to decompress a replay");
-                return _md5Func; }
-            set { _md5Func = value; }
-        }
-
+        public static string OsuSongDirectory { get; set; }
+        public static string OsuSkinsDirectory { get; set; }
+        public static string OsuReplaysDirectory { get; set; }
 
         //Custom kind of dependency injection (DI)
         public static IFileRepository<Beatmap> BeatmapFileRepository { get; set; }
         public static IFileRepository<Storyboard> StoryboardFileRepository { get; set; }
         public static IFileRepository<Replay> ReplayFileRepository { get; set; }
         public static IFileRepository<Skin> SkinFileRepository { get; set; }
+        public static IFileRepository<CollectionDb> CollectionDbRepository { get; set; }
+        public static IFileRepository<OsuDb> OsuDbRepository { get; set; }
+        public static IFileRepository<ScoresDb> ScoresDbRepository { get; set; }
 
         //Not necessary right now
-        //public static IApiBeatmapRepository ApiBeatmapRepository { get; set; }
-        //public static IApiReplayRepository ApiReplayRepository { get; set; }
-        //public static IApiUserRepository ApiUserRepository { get; set; }
-        //public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
+        public static IApiBeatmapRepository ApiBeatmapRepository { get; set; }
+        public static IApiReplayRepository ApiReplayRepository { get; set; }
+        public static IApiUserRepository ApiUserRepository { get; set; }
+        public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
         public static string ApiKey
         {
             set { ApiRepositoryBase.Key = value; }
         }
-
         public static int LatestBeatmapVersion { get; set; } = 14;
         public static float LatestSkinVersion { get; set; } = 2.5f;
 
         #endregion
 
+        public static Stream ReadStream(string path) {
+            return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
     }
 }

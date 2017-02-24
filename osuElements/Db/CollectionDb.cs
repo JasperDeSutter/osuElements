@@ -5,11 +5,10 @@ using osuElements.Beatmaps;
 using osuElements.IO;
 using osuElements.IO.Binary;
 using osuElements.IO.File;
-using osuElements.Replays;
 
 namespace osuElements.Db
 {
-    public class CollectionDb
+    public class CollectionDb : IFileModel
     {
         public static BinaryFile<CollectionDb> FileReader() {
             return new BinaryFile<CollectionDb>(
@@ -19,8 +18,6 @@ namespace osuElements.Db
                     new BinaryFileList<Collection, string>(c => c.Beatmaps)
                     ));
         }
-
-        
 
         public int FileVersion { get; set; }
 
@@ -34,7 +31,10 @@ namespace osuElements.Db
             AddColection(name, beatmaps.Select(b => b.GetHash()));
         }
         public void AddColection(string name, IEnumerable<string> beatmapHashes) {
-            Collections.Add(new Collection(name) { Beatmaps = beatmapHashes.ToList() });
+            AddColection(new Collection(name) { Beatmaps = beatmapHashes.ToList() });
+        }
+        public void AddColection(Collection collection) {
+            Collections.Add(collection);
         }
         public void AddToCollection(string name, IEnumerable<Beatmap> beatmaps) {
             Collections.FirstOrDefault(c => c.Name == name)?.Beatmaps.AddRange(beatmaps.Select(b => b.GetHash()));
@@ -48,6 +48,30 @@ namespace osuElements.Db
         public int RemoveEmpty() {
             return Collections.RemoveAll(c => c.Beatmaps.Count < 1);
         }
+
+
+        #region File
+        public bool IsRead { get; private set; }
+        public string Directory { get; set; } = osuElements.OsuDirectory;
+        public string FileName { get; set; } = "collection.db";
+        public string FullPath
+        {
+            get { return Path.Combine(Directory, FileName); }
+            set
+            {
+                Directory = Path.GetDirectoryName(value);
+                FileName = Path.GetFileName(value);
+            }
+        }
+        public void ReadFile(ILogger logger = null) {
+            osuElements.CollectionDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            IsRead = true;
+        }
+
+        public void WriteFile() {
+            osuElements.CollectionDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+        }
+        #endregion
 
     }
 }

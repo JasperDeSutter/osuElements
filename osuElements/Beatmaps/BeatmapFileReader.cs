@@ -1,4 +1,3 @@
-using System;
 using osuElements.Beatmaps.Events;
 using osuElements.Helpers;
 using osuElements.IO.File;
@@ -6,17 +5,21 @@ using osuElements.Storyboards;
 
 namespace osuElements.Beatmaps
 {
-    public class BeatmapFileReader
+    public static class BeatmapFileReader
     {
-        private static bool TryParseVersion(string line, out int result) {
+        private static bool TryParseVersion(string line, out int result)
+        {
             result = 0;
-            if (line.IndexOf('v') < 1) return false;
-            result = Int32.Parse(line.Remove(0, line.LastIndexOf('v') + 1));
+            var i = line.LastIndexOf('v');
+            if (i < 1) return false;
+            result = int.Parse(line.Remove(0, i + 1));
             return true;
         }
-        public static FileReader<Beatmap> BeatmapReader() {
+        public static FileReader<Beatmap> BeatmapReader()
+        {
             var fileFormat = new FileSection<Beatmap>(null,
-                new FileLine<Beatmap, int>(b => b.FormatVersion, osuElements.LatestBeatmapVersion) {
+                new FileLine<Beatmap, int>(b => b.FormatVersion, osuElements.LatestBeatmapVersion)
+                {
                     WriteIfDefault = true,
                     TryParse = TryParseVersion,
                     WriteFunc = i => "osu file format v" + i
@@ -27,7 +30,7 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, string>(b => b.AudioHash, ""),
                 new FileLine<Beatmap, int>(b => b.AudioLeadIn) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.PreviewTime) { WriteIfDefault = true },
-                new FileLine<Beatmap, bool>(b => b.Countdown, true) { WriteIfDefault = true },
+                new FileLine<Beatmap, CountDown>(b => b.Countdown) { WriteIfDefault = true, WriteEnumAsInt = true },
                 new FileLine<Beatmap, SampleSet>(b => b.SampleSet) { WriteIfDefault = true },
                 new FileLine<Beatmap, float>(b => b.StackLeniency, 1) { WriteIfDefault = true },
                 new FileLine<Beatmap, GameMode>(b => b.Mode) { WriteIfDefault = true, WriteEnumAsInt = true },
@@ -45,7 +48,7 @@ namespace osuElements.Beatmaps
                 );
             var editor = new FileSection<Beatmap>("Editor",
                 new ListFileLine<Beatmap, int>(b => b.Bookmarks, 0) { WriteIfDefault = true },
-                new FileLine<Beatmap, float>(b => b.DistanceSpacing, 1) { WriteIfDefault = true },
+                new FileLine<Beatmap, double>(b => b.DistanceSpacing, 1) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.BeatDivisor, 4) { WriteIfDefault = true },
                 new FileLine<Beatmap, int>(b => b.GridSize, 4) { WriteIfDefault = true },
                 new FileLine<Beatmap, float>(b => b.TimelineZoom, 1) { WriteIfDefault = true }
@@ -59,58 +62,78 @@ namespace osuElements.Beatmaps
                 new FileLine<Beatmap, string>(b => b.Version, "") { WriteIfDefault = true, Format = "{0}:{1}" },
                 new FileLine<Beatmap, string>(b => b.Source, "") { WriteIfDefault = true, Format = "{0}:{1}" },
                 new FileLine<Beatmap, string>(b => b.Tags, "") { WriteIfDefault = true, Format = "{0}:{1}" },
-                new FileLine<Beatmap, int>(b => b.Beatmap_Id) { Key = "BeatmapID", Format = "{0}:{1}" },
-                new FileLine<Beatmap, int>(b => b.BeatmapSet_Id) { Key = "BeatmapSetID", Format = "{0}:{1}" }
+                new FileLine<Beatmap, int>(b => b.BeatmapId) { Key = "BeatmapID", Format = "{0}:{1}" },
+                new FileLine<Beatmap, int>(b => b.BeatmapSetId) { Key = "BeatmapSetID", Format = "{0}:{1}" }
                 );
             var difficulty = new FileSection<Beatmap>("Difficulty",
-                new FileLine<Beatmap, float>(b => b.Diff_Drain, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyHpDrainRate, 5)
+                {
                     WriteIfDefault = true,
                     Key = "HPDrainRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Size, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyCircleSize, 5)
+                {
                     WriteIfDefault = true,
                     Key = "CircleSize",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Overall, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyOverall, 5)
+                {
                     WriteIfDefault = true,
                     Key = "OverallDifficulty",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, float>(b => b.Diff_Approach, 5) {
+                new FileLine<Beatmap, float>(b => b.DifficultyApproachRate, 5)
+                {
                     WriteIfDefault = true,
                     Key = "ApproachRate",
                     Format = "{0}:{1}"
                 },
-                new FileLine<Beatmap, double>(b => b.SliderMultiplier, 1.4) { WriteIfDefault = true, Format = "{0}:{1}" },
-                new FileLine<Beatmap, float>(b => b.SliderTickRate, 1) { WriteIfDefault = true, Format = "{0}:{1}" }
+                new FileLine<Beatmap, double>(b => b.DifficultySliderMultiplier, 1.4)
+                {
+                    Key = "SliderMultiplier",
+                    WriteIfDefault = true,
+                    Format = "{0}:{1}"
+                },
+                new FileLine<Beatmap, float>(b => b.DifficultySliderTickRate, 1)
+                {
+                    Key = "SliderTickRate",
+                    WriteIfDefault = true,
+                    Format = "{0}:{1}"
+                }
                 );
             var events = new StoryboardSection<Beatmap>("Events",
-                new FileLine<Beatmap, BackgroundEvent>(b => b.Background) {
+                new FileLine<Beatmap, BackgroundEvent>(b => b.Background)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
-                new FileLine<Beatmap, VideoEvent>(b => b.Video) {
+                new FileLine<Beatmap, VideoEvent>(b => b.Video)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
-                new MultiFileLine<Beatmap, BackgroundColorEvent>(b => b.BackgroundColorTransformations, null) {
+                new WriteLine<Beatmap>("//Background Colour Transformations"),
+                new MultiFileLine<Beatmap, BackgroundColorEvent>(b => b.BackgroundColorTransformations, null)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 },
                 new WriteLine<Beatmap>("//Break Periods"),
                 //new FileLine<Beatmap, object>(b=>b.Artist)) { Key = "ZZZZZZZZZZ", WriteFunc = o => "//Break Periods", WriteIfDefault = true },
-                new MultiFileLine<Beatmap, BreakEvent>(b => b.BreakPeriods, null) {
+                new MultiFileLine<Beatmap, BreakEvent>(b => b.BreakPeriods, null)
+                {
                     TryParse = EventBase.TryParse,
                     WriteFunc = b => b.ToString()
                 }
-                ) { UseVariables = false };
+                )
+            { UseVariables = false };
             var timingpoints = new CollectionFileSection<TimingPoint, Beatmap>(b => b.TimingPoints,
                 "TimingPoints",
                 TimingPoint.Parse, t => t.ToString());
             var colours = new FileSection<Beatmap>("Colours",
-                new MultiFileLine<Beatmap, Colour>(b => b.ComboColours, null) { Key = "Combo" },
+                new MultiFileLine<Beatmap, Colour>(b => b.ComboColours, null) { Key = "Combo", Format = "{0} : {1}" },
                 new FileLine<Beatmap, Colour?>(b => b.SliderBorder),
                 new FileLine<Beatmap, Colour?>(b => b.SliderTrackOverride)
                 );

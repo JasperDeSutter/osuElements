@@ -50,7 +50,7 @@ namespace osuElements.IO.File
             else if (WriteEnumAsInt && DefaultValue is Enum) result = "" + (int)value;
             else {
                 var formattable = value as IFormattable;
-                result = formattable?.ToString(null, Constants.IO.CULTUREINFO) ?? value.ToString();
+                result = formattable?.ToString(null, Constants.Cultureinfo) ?? value.ToString();
             }
             return string.Format(Format, Key, result);
         }
@@ -74,7 +74,7 @@ namespace osuElements.IO.File
             if (DefaultValue is Enum)
                 return Enum.Parse(typeof(TValue), value);
 
-            return Convert.ChangeType(value, _type, Constants.IO.CULTUREINFO);
+            return Convert.ChangeType(value, _type, Constants.Cultureinfo);
         }
 
         public void SetActualValue(TModel model, object value) {

@@ -9,13 +9,12 @@ namespace osuElements.IO.File
     {
         private readonly PropertyInfo _listProperty;
 
-        public string Section { get; }
-        string IFileSection<TModel>.Section { get; set; }
+        public string Section { get; set; }
 
         public bool ReadLine(string line) {
-           return _fileSection.ReadLine(line);
+            return _fileSection.ReadLine(line);
         }
-        
+
         public void SetModel(TModel model) {
             _model = model;
             var item = new TValue();
@@ -24,7 +23,7 @@ namespace osuElements.IO.File
             _fileSection.SetModel(item);
         }
 
-        private TModel _model ;
+        private TModel _model;
 
         public List<string> AllLines() {
             var list = _listProperty.GetValue(_model) as List<TValue>;
@@ -38,7 +37,7 @@ namespace osuElements.IO.File
         }
 
         public IFileSection<TModel> GetCopy() {
-            return (IFileSection<TModel>) MemberwiseClone();
+            return (IFileSection<TModel>)MemberwiseClone();
         }
 
         private readonly FileSection<TValue> _fileSection;
@@ -46,7 +45,9 @@ namespace osuElements.IO.File
         public MultipleFileSection(Expression<Func<TModel, List<TValue>>> propertySelector, string section, params IFileLine<TValue>[] fileLines) {
             Section = section;
             _fileSection = new FileSection<TValue>(section, fileLines);
-            _listProperty =(propertySelector.Body as MemberExpression).Member as PropertyInfo;
+            var memberExpression = propertySelector.Body as MemberExpression;
+            if (memberExpression != null)
+                _listProperty = memberExpression.Member as PropertyInfo;
         }
     }
 }

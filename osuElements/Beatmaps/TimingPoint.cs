@@ -3,71 +3,111 @@ using osuElements.Helpers;
 
 namespace osuElements.Beatmaps
 {
-    public class TimingPoint : IEquatable<TimingPoint>, IComparable<TimingPoint>
+    public class TimingPoint : IEquatable<TimingPoint>, IComparable<TimingPoint>, IHitsound
     {
         public double Offset { get; set; }
 
         public double Value { get; set; }
-
-        public double MillisecondsPerBeat => IsTiming ? Value : -1;
-
-        public double Bpm   //BPM value in editor
+        /// <summary>
+        /// The length in ms of one whole beat
+        /// Timing-only
+        /// </summary>
+        public double BeatLength => IsTiming ? Value : -1;
+        /// <summary>
+        /// The amount of beats that occur within one minute
+        /// Timing-only
+        /// </summary>
+        public double Bpm
         {
-            get { return 60000 / MillisecondsPerBeat; }
+            get { return 60000 / BeatLength; }
             set { Value = 60000 / value; }
         }
-
-        public double SliderSpeed => IsTiming ? 0 : Value;
-
+        /// <summary>
+        /// The multiplier for slider speed
+        /// To be multiplied with the Beatmap multiplier
+        /// </summary>
         public double SliderVelocityMultiplier //the value you see in editor
         {
-            get { return -100 / SliderSpeed; }
+            get { return -100 / Value; }
             set { Value = value / -100; }
         }
-
-        public int TimeSignature { get; set; }//values Between 4 and 7
+        /// <summary>
+        /// The amount of beats in a bar.
+        /// Values between 4 and 7
+        /// </summary>
+        public TimeSignature TimeSignature { get; set; }
         public SampleSet SampleSet { get; set; }
-        public int CustomSampleSet { get; set; } // 0 is not custom
-        public int VolumePercentage { get; set; } // 0 -> 100
-        public bool IsTiming { get; set; } //TimingPoint Type
-        public TimingPointOption Option { get; set; }
-
-        public TimingPoint() {
-
+        public Custom Custom { get; set; }
+        /// <summary>
+        /// Get-only, for IHitsound purposes
+        /// </summary>
+        public SampleSet AdditionSampleSet
+        {
+            get { return SampleSet.None; }
+            set { throw new InvalidOperationException("A TimingPoint's AdditionSampleSet can't be set."); }
         }
+        /// <summary>
+        /// Get-only, for IHitsound purposes
+        /// </summary>
+        public HitObjectSoundType SoundType
+        {
+            get { return HitObjectSoundType.Normal; }
+            set { throw new InvalidOperationException("A TimingPoint's SoundType can't be set"); }
+        }
+        public int Volume { get; set; }
+        /// <summary>
+        /// If true, Timingpoint is used for Timing (BPM)
+        /// If false, Timingpoint is used for sliderspeed
+        /// </summary>
+        public bool IsTiming { get; set; }
+        public TimingPointOptions Options { get; set; }
 
-        public TimingPoint(double offset, double bpm) : this(offset, bpm, 4, SampleSet.None, 0, 0, true, TimingPointOption.None) { }
-        public TimingPoint(double offset, double bpm, int signature, SampleSet sampleSet, int customSet, int volume, bool isTiming, TimingPointOption option) {
+
+        public TimingPoint(double offset, double value, TimeSignature signature = TimeSignature.CommonTime, SampleSet sampleSet = SampleSet.None, Custom custom = 0, int volume = 0,
+            bool isTiming = true, TimingPointOptions options = TimingPointOptions.None) {
             Offset = offset;
-            Value = bpm;
+            Value = value;
             TimeSignature = signature;
             SampleSet = sampleSet;
-            CustomSampleSet = customSet;
-            VolumePercentage = volume;
+            Custom = custom;
+            Volume = volume;
             IsTiming = isTiming;
-            Option = option;
+            Options = options;
         }
+
+        public TimingPoint() { }
+
         public override string ToString() {
-            return Offset + "," + (IsTiming ? MillisecondsPerBeat : SliderSpeed) + "," + TimeSignature + "," + (int)SampleSet + "," + CustomSampleSet + "," + VolumePercentage + "," + Convert.ToInt32(IsTiming) + "," + (int)Option;
+            return
+                $"{(int)Offset},{Value.ToString(Constants.Cultureinfo)},{(int)TimeSignature},{(int)SampleSet}" +
+                $",{(int)Custom},{Volume},{(IsTiming ? 1 : 0)},{(int)Options}";
         }
+
         public bool Equals(TimingPoint other) {
             return CompareTo(other) == 0;
         }
+
+        /// <summary>
+        /// Compares by offset, and then by timing
+        /// </summary>
         public int CompareTo(TimingPoint other) {
-            return Offset.CompareTo(other.Offset);
+            return Offset == other.Offset ?
+                other.IsTiming.CompareTo(IsTiming) :
+                Offset.CompareTo(other.Offset);
         }
+
         public static TimingPoint Parse(string line) {
             TimingPoint result;
-            var parts = line.Split(Constants.Splitter.Comma, StringSplitOptions.RemoveEmptyEntries);
-            var offset = double.Parse(parts[0], Constants.IO.CULTUREINFO);
-            var bpm = double.Parse(parts[1], Constants.IO.CULTUREINFO);
+            var parts = line.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries);
+            var offset = double.Parse(parts[0], Constants.Cultureinfo);
+            var bpm = double.Parse(parts[1], Constants.Cultureinfo);
             if (parts.Length > 2) {
-                var signature = Convert.ToInt32(parts[2]);
-                var sampleSet = (SampleSet)Convert.ToInt32(parts[3]);
-                var customSet = Convert.ToInt32(parts[4]);
-                var volume = parts.Length > 6 ? Convert.ToInt32(parts[5]) : 100;
-                var isTiming = parts.Length <= 6 || Convert.ToBoolean(Convert.ToInt32(parts[6]));
-                var option = parts.Length > 7 ? (TimingPointOption)Convert.ToInt32(parts[7]) : TimingPointOption.None;
+                var signature = (TimeSignature)int.Parse(parts[2]);
+                var sampleSet = (SampleSet)int.Parse(parts[3]);
+                var customSet = (Custom)int.Parse(parts[4]);
+                var volume = parts.Length > 5 ? int.Parse(parts[5]) : 100;
+                var isTiming = parts.Length < 7 || Convert.ToBoolean(int.Parse(parts[6]));
+                var option = parts.Length > 7 ? (TimingPointOptions)int.Parse(parts[7]) : TimingPointOptions.None;
 
                 result = new TimingPoint(offset, bpm, signature, sampleSet, customSet, volume, isTiming, option);
             }

@@ -54,7 +54,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\osuElementsWindows\osuElements.NET.csproj">
+    <ProjectReference Include="..\osuElements\osuElements.NET.csproj">
       <Project>{29a2568e-5ea2-4de8-bd85-363c636e7947}</Project>
       <Name>osuElements.NET</Name>
     </ProjectReference>

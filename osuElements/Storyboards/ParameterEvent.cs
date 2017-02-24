@@ -1,13 +1,11 @@
-﻿using System;
-using System.Text;
-using osuElements.Helpers;
+﻿using System.Text;
 
 namespace osuElements.Storyboards
 {
     public class ParameterEvent : TransformationEvent
     {
         public ParameterTypes Parameter;
-        public ParameterEvent(int starttime, int endtime, ParameterTypes parameter) : base(TransformTypes.P, Easing.None, starttime, endtime, null)
+        public ParameterEvent(int starttime, int endtime, ParameterTypes parameter) : base(TransformTypes.Parameter, Easing.None, starttime, endtime, null)
         {
             Parameter = parameter;
             StartTime = starttime;

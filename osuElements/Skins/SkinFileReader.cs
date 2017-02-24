@@ -11,7 +11,7 @@ namespace osuElements.Skins
             var general = new FileSection<Skin>("General",
                 new FileLine<Skin, string>(s => s.Name, "") { WriteIfDefault = true },
                 new FileLine<Skin, string>(s => s.Author, "") { WriteIfDefault = true },
-                new FileLine<Skin, float>(s => s.Version, osuElements.LatestSkinVersion) { ReadFunc = s => s == "latest" ? osuElements.LatestSkinVersion : Single.Parse(s, Constants.IO.CULTUREINFO), WriteIfDefault = true },
+                new FileLine<Skin, float>(s => s.Version, osuElements.LatestSkinVersion) { ReadFunc = s => s == "latest" ? osuElements.LatestSkinVersion : Single.Parse(s, Constants.Cultureinfo), WriteIfDefault = true },
                 new FileLine<Skin, bool>(s => s.SliderBallFlip, true),
                 new FileLine<Skin, bool>(s => s.CursorRotate, true),
                 new FileLine<Skin, bool>(s => s.CursorExpand, true),
@@ -30,6 +30,7 @@ namespace osuElements.Skins
                 new FileLine<Skin, SliderStyle>(s => s.SliderStyle, SliderStyle.Transparent)
                 );
             var colours = new FileSection<Skin>("Colours",
+                new MultiFileLine<Skin, Colour>(s => s.ComboColours, null) { Key = "Combo"},
                 new FileLine<Skin, Colour>(s => s.SongSelectActiveText, new Colour(0, 0, 0)),
                 new FileLine<Skin, Colour>(s => s.SongSelectInactiveText, new Colour(255, 255, 255)),
                 new FileLine<Skin, Colour>(s => s.StarBreakAdditive, new Colour(255, 182, 193)),

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using osuElements.Helpers;
 
 namespace osuElements.Skins
 {
@@ -55,8 +54,14 @@ namespace osuElements.Skins
             get { return _keys; }
             set
             {
+                if (_keys == value) return;
                 _keys = value;
-                for (int i = 0; i < _keys; i++) {
+                ColumnWidth = new List<float>(_keys-1);
+                ColumnLineWidth = new List<float>(_keys-1);
+                ColumnSpacing = new List<float>(_keys-1);
+                LightingNWidth = new List<float>(_keys-1);
+                ColumnWidth = new List<float>(_keys-1);
+                for (var i = 0; i < _keys; i++) {
                     if (i > 0) ColumnSpacing.Add(0);
                     ColumnLineWidth.Add(2);
                     ColumnWidth.Add(30);
@@ -65,7 +70,7 @@ namespace osuElements.Skins
                     foreach (var flip in NoteFlipWhenUpsideDown.Values) {
                         flip.Add(true);
                     }
-                    NoteBodyStyle.Add(Helpers.NoteBodyStyle.RepeatBottom);
+                    NoteBodyStyle.Add(Skins.NoteBodyStyle.RepeatBottom);
                     KeyFlipWhenUpsideDown.Add(true);
                 }
                 ColumnLineWidth.Add(2);
@@ -81,7 +86,7 @@ namespace osuElements.Skins
         public int LightFramePerSecond { get; set; } = 60;
         public List<NoteBodyStyle> NoteBodyStyle { get; set; }
         public List<bool> KeyFlipWhenUpsideDown { get; set; }
-        public Dictionary<NoteType, List<bool>> NoteFlipWhenUpsideDown { get; }
+        public Dictionary<NoteType, List<bool>> NoteFlipWhenUpsideDown { get; } //not sure about this being a good solution
 
         public override string ToString() {
             return $"{Keys} Keys";

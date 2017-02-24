@@ -28,20 +28,20 @@ namespace osuElements.Replays
             if (!beatmap.CompareHash(Replay.BeatmapHash)) throw new Exception("The beatmap does not have the hash the replay requires.");
             Beatmap = beatmap;
             _bManager = new BeatmapManager(beatmap);
-            _bManager.SetMods(Replay.Enabled_Mods);
+            _bManager.SetMods(Replay.EnabledMods);
             _bManager.DifficultyCalculations();
         }
-        
+
         private float _timing50;
         private float _timing100;
         private float _timing300;
-        private List<KeyPress> KeyPressesList;
+        private List<KeyPress> _keyPresses;
         private bool ForceRecalculation { get; set; }
         private void CalculateKeyPresses() {
-            if (KeyPressesList != null && !ForceRecalculation) return;
-            KeyPressesList = CalculateKeyPresses(Replay.ReplayFrames, ReplayKeys.K1);
-            KeyPressesList.AddRange(CalculateKeyPresses(Replay.ReplayFrames, ReplayKeys.K2));
-            KeyPressesList.Sort();
+            if (_keyPresses != null && !ForceRecalculation) return;
+            _keyPresses = CalculateKeyPresses(Replay.ReplayFrames, ReplayKeys.K1);
+            _keyPresses.AddRange(CalculateKeyPresses(Replay.ReplayFrames, ReplayKeys.K2));
+            _keyPresses.Sort();
             ForceRecalculation = false;
         }
         private static List<KeyPress> CalculateKeyPresses(IEnumerable<ReplayFrame> rframes, ReplayKeys k) {
@@ -62,26 +62,26 @@ namespace osuElements.Replays
             return result;
         }
 
-        public List<HitobjectTiming> CalculateHitTimings() {
+        public List<HitobjectTiming> CalculateHitTimings() { //WIP
             var hitobjects = Beatmap.HitObjects?
                 .Where(h => h.Type.IsType(HitObjectType.HitCircle | HitObjectType.Slider));
             if (hitobjects == null) return null;
             var result = new List<HitobjectTiming>();
-
-            _timing50 = _bManager.HitWindow50 * _bManager.ModSpeedMultiplier;
-            _timing100 = _bManager.HitWindow100 * _bManager.ModSpeedMultiplier;
-            _timing300 = _bManager.HitWindow300 * _bManager.ModSpeedMultiplier;
+            var speed = (float)_bManager.Mods.SpeedMultiplier();
+            _timing50 = _bManager.HitWindow50 * speed;
+            _timing100 = _bManager.HitWindow100 * speed;
+            _timing300 = _bManager.HitWindow300 * speed;
             CalculateKeyPresses();
 
             var frames = new List<ReplayFrame>(Replay.ReplayFrames);
-            var keypresses = KeyPressesList;
-            
+            var keypresses = _keyPresses;
+
             foreach (var ho in hitobjects) {
                 float time = ho.StartTime;
-                KeyPressesList.RemoveAll(k => k.Start < time - _bManager.PreEmpt);
+                _keyPresses.RemoveAll(k => k.Start < time - _bManager.PreEmpt);
                 KeyPress match;
                 try {
-                    match = KeyPressesList.FirstOrDefault(t =>
+                    match = _keyPresses.FirstOrDefault(t =>
                 t.Start < time + _bManager.HitWindow50 &&
                 t.Position.Distance(ho.StartPosition) <= _bManager.HitObjectRadius);
                 }
@@ -136,7 +136,7 @@ namespace osuElements.Replays
         public KeyPress GetFirstHitBetween(float starttime, float endtime, Position pos, float distance, IEnumerable<KeyPress> keyPresses = null) {
             if (keyPresses == null) {
                 CalculateKeyPresses();
-                keyPresses = KeyPressesList;
+                keyPresses = _keyPresses;
             }
             return keyPresses.FirstOrDefault(frame => frame.Start <= starttime && frame.Start >= endtime && frame.Position.Distance(pos) <= distance);
         }

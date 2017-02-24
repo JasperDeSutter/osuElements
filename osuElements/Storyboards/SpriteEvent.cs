@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using osuElements.Helpers;
-using osuElements.Storyboards.Triggers;
 
 namespace osuElements.Storyboards
 {
@@ -26,6 +24,12 @@ namespace osuElements.Storyboards
             Triggerevents = new List<TriggerEvent>();
             StartTime = int.MaxValue;
             EndTime = int.MinValue;
+        }
+
+        public LoopEvent CreateLoop(int start, int count = 1) {
+            var result = new LoopEvent(start, count);
+            AddLoop(result);
+            return result;
         }
 
         public void AddLoop(LoopEvent l) {
@@ -59,7 +63,7 @@ namespace osuElements.Storyboards
 
         public override string ToString() {
             if (!Filepath.Contains(".")) Filepath += "." + DefaultFileExtension;
-            return $"{Type},{Layer},{Origin},\"{Filepath}\",{StartPosition.X.ToString(Constants.IO.CULTUREINFO)},{StartPosition.Y.ToString(Constants.IO.CULTUREINFO)}";
+            return $"{Type},{Layer},{Origin},\"{Filepath.Replace('\\', '/')}\",{StartPosition.X.ToString(Constants.Cultureinfo)},{StartPosition.Y.ToString(Constants.Cultureinfo)}";
         }
     }
 }

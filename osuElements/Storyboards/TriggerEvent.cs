@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osuElements.Helpers;
 using osuElements.Storyboards.Triggers;
 
 namespace osuElements.Storyboards
@@ -19,7 +16,7 @@ namespace osuElements.Storyboards
 
         public TriggerTypes TriggerType => Trigger.TriggerType;
         public TriggerBase Trigger { get; set; }
-        public override TransformTypes TransformType { get; } = TransformTypes.T;
+        public override TransformTypes TransformType { get; } = TransformTypes.Trigger;
         public int Group { get; set; }
 
         public override void OptimizeLoop() { }
@@ -32,7 +29,7 @@ namespace osuElements.Storyboards
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             triggerEvent = null;
 
-            if (parts.Length < 4 || parts[0].Trim() != TransformTypes.T.ToString()) return false;
+            if (parts.Length < 4 || parts[0].Trim() != TransformTypes.Trigger.ToString()) return false;
             TriggerBase trigger;
             if (!TriggerBase.TryParse(parts[1].TrimStart(), out trigger)) return false;
             int starttime, endtime;
@@ -51,9 +48,9 @@ namespace osuElements.Storyboards
         public new static TriggerEvent Parse(string line) {
             var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             TriggerBase trigger;
-            TriggerBase.TryParse(line, out trigger);
-            var result = new TriggerEvent(trigger, int.Parse(parts[1]), int.Parse(parts[2]));
-            if (parts.Length > 3) result.Group = int.Parse(parts[3]);
+            TriggerBase.TryParse(parts[1], out trigger);
+            var result = new TriggerEvent(trigger, int.Parse(parts[2]), int.Parse(parts[3]));
+            if (parts.Length > 4) result.Group = int.Parse(parts[4]);
             return result;
         }
     }

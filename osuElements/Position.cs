@@ -4,14 +4,17 @@ namespace osuElements
 {
     public struct Position
     {
-        #region props
-        public static readonly double CANVAS_PROPORTION = 4.0 / 3;
-        public static readonly int OSU_RESOLUTION_HEIGHT = 480;
-        public static readonly int OSU_RESOLUTION_WIDTH = 640;
-        public static readonly int HITOBJECTS_RESOLUTION_HEIGHT = 376;
-        public static readonly int HITOBJECTS_RESOLUTION_WIDTH = 512;
-        public static readonly int HITOBJECTS_LEFT_OFFSET = 64;
-        public static readonly int HITOBJECTS_TOP_OFFSET = 56;
+        public const double CANVAS_PROPORTION = 4.0 / 3;
+        public const int OSU_RESOLUTION_HEIGHT = 480;
+        public const int OSU_RESOLUTION_WIDTH = 640;
+        public const int HITOBJECTS_RESOLUTION_HEIGHT = 376;
+        public const int HITOBJECTS_RESOLUTION_WIDTH = 512;
+        public const int HITOBJECTS_LEFT_OFFSET = 64;
+        public const int HITOBJECTS_RIGHT_OFFSET = 64;
+        public const int HITOBJECTS_TOP_OFFSET = 56;
+        public const int HITOBJECTS_BOTTOM_OFFSET = 48;
+
+        #region properties
         public float X { get; set; }
         public float Y { get; set; }
         public static Position Zero { get; } = new Position(0, 0);
@@ -28,14 +31,14 @@ namespace osuElements
             Y = y;
         }
         public Position(Position copy) : this(copy.X, copy.Y) { }
-        public static Position FromHitobject(float x, float y)
+        public static Position FromHitobject(float x, float y, bool clamp = true)
         {
-            var result = new Position
+            if (!clamp) return new Position { XForHitobject = x, YForHitobject = y };
+            return new Position
             {
-                XForHitobject = x,
-                YForHitobject = y
+                XForHitobject = MathHelper.Clamp(x, 0, 512),
+                YForHitobject = MathHelper.Clamp(y, 0, 384),
             };
-            return result;
         }
         public float XForHitobject
         {
@@ -65,37 +68,43 @@ namespace osuElements
             !(a == b);
 
         #region Methods
-        public float Distance() =>
-            (float)Sqrt(X * X + Y * Y);
+        public double Length =>
+            Sqrt((double)X * X + (double)Y * Y);
 
-        public float Length =>
-            (float)Sqrt(X * X + Y * Y);
+        public double LengthSquared =>
+           (double)X * X + (double)Y * Y;
 
-        public float Distance(Position b) =>
-            (this - b).Length;
 
-        public static float Distance(Position a, Position b) =>
-            (b - a).Length;
-
-        public float GetAngle(bool normalize = true)
+        public double Distance(Position b)
         {
-            if (normalize) return ((float)Atan2(Y, X)).NormalizeAngle();
-            return ((float)Atan2(Y, X));
+            double y = b.Y - Y;
+            double x = b.X - X;
+            return Sqrt(y * y + x * x);
         }
-        public static float GetAngle(Position a, bool normalize = true) =>
-            a.GetAngle(normalize);
 
-        public static Position SecondaryPoint(Position from, float length, float angle) =>
-            from.SecondaryPoint(length, angle);
+        public double DistanceSquared(Position b)
+        {
+            double y = b.Y - Y;
+            double x = b.X - X;
+            return y * y + x * x;
+        }
 
-
-        public Position SecondaryPoint(float length, float angle)
+        public Position SecondaryPoint(double length, double angle)
         {
             var result = new Position(this);
-            result.X += (float)(length * Sin(angle));
-            result.Y += (float)(length * Cos(angle));
+            result.X += (float)(length * Cos(angle));
+            result.Y -= (float)(length * Sin(angle));
             return result;
         }
+
+        public double GetAngle(bool normalize = true)
+        {
+            return normalize ? Atan2(-Y, X).NormalizeAngle() : Atan2(-Y, X);
+        }
+
+        public static double GetAngle(Position a, bool normalize = true) =>
+            a.GetAngle(normalize);
+
         public static Position operator -(Position p1)
         {
             p1.X = -p1.X;
@@ -126,6 +135,10 @@ namespace osuElements
             p.Y *= f;
             return p;
         }
+        public static Position operator *(Position p, double d)
+        {
+            return p * (float)d;
+        }
         public static Position operator /(Position p1, Position p2)
         {
             p1.X /= p2.X;
@@ -139,13 +152,19 @@ namespace osuElements
             return p;
         }
         public Position Normalize() =>
-            new Position(this / Length);
+            new Position(this / (float)Length);
 
         #endregion
 
-        public static Position Lerp(Position a, Position b, float t) {
-            return a + (b - a)*t;
+        public static Position Lerp(Position a, Position b, float t)
+        {
+            return a + (b - a) * t;
         }
 
+        public static Position Flip(Position pos)
+        {
+            pos.YForHitobject = HITOBJECTS_RESOLUTION_HEIGHT - pos.YForHitobject;
+            return pos;
+        }
     }
 }

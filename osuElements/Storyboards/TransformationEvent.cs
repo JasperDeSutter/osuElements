@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using osuElements.Helpers;
@@ -8,33 +7,26 @@ namespace osuElements.Storyboards
 {
     public class TransformationEvent : IComparable<TransformationEvent>
     {
-        public virtual int EndTime { get; set; }
-        public int Duration => EndTime - Starttime;
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+        public int Duration => EndTime - StartTime;
 
         public float[] StartValues { get; set; }
         public float[] EndValues { get; set; }
+        public int ValueCount => StartValues.Length;
+        public bool Tweening => !StartValues.SequenceEqual(EndValues);
         public TransformTypes Transformtype { get; set; }
         public Easing Easing { get; set; }
 
-        protected int Starttime;
-
-        public virtual int StartTime
-        {
-            get { return Starttime; }
-            set { Starttime = value; }
-        }
 
         public float[] ValuesAt(float time) {
-            var t = MathHelper.Clamp(time/Duration);
+            var t = MathHelper.Clamp(time / Duration);
             var result = new float[ValueCount];
-            for (int i = 0; i < ValueCount; i++) {
-                var startValue = StartValues[i];
+            for (var i = 0; i < ValueCount; i++) {
                 result[i] = MathHelper.Lerp(t, StartValues[i], EndValues[i]);
             }
             return result;
         }
-
-        public int ValueCount => StartValues.Length;
 
         public TransformationEvent(TransformTypes type, Easing easing, int starttime, int endtime, float[] startvalues)
             : this(type, easing, starttime, endtime, startvalues, startvalues) { }
@@ -72,42 +64,42 @@ namespace osuElements.Storyboards
 
             for (var i = 0; i < ValueCount; i++) {
                 switch (Transformtype) {
-                    case TransformTypes.C:
+                    case TransformTypes.Color:
                         startValues[i] = Math.Max(0, Math.Min(255, (int)startValues[i]));
                         endValues[i] = Math.Max(0, Math.Min(255, (int)endValues[i]));
                         break;
-                    case TransformTypes.F:
+                    case TransformTypes.Fade:
                         startValues[i] = Math.Max(0, Math.Min(1, startValues[i]));
                         endValues[i] = Math.Max(0, Math.Min(1, endValues[i]));
                         break;
                 }
 
-                result.Append("," + startValues[i].ToString(Constants.IO.CULTUREINFO));
+                result.Append("," + startValues[i].ToString(Constants.Cultureinfo));
                 if (startValues[i] != EndValues[i]) issame = false;
             }
             if (issame) return result.ToString();
 
             foreach (var b in EndValues) {
-                result.Append("," + b.ToString(Constants.IO.CULTUREINFO));
+                result.Append("," + b.ToString(Constants.Cultureinfo));
             }
             return result.ToString();
         }
 
         public static bool TryParse(string s, out TransformationEvent[] t) {
             t = null;
-            var parts = s.Trim().Split(Constants.Splitter.Comma);
+            var parts = s.Trim().Split(',');
             var valuescount = parts.Length - 4; // type, easing, start and end not inculded
 
             if (valuescount < 0) return false;
             TransformTypes type;
             if (!Enum.TryParse(parts[0], out type)) return false;
-            if (type == TransformTypes.T || type == TransformTypes.L) return false;
+            if (type == TransformTypes.Trigger || type == TransformTypes.Loop) return false;
             t = Parse(s);
             return true;
         }
 
         public static TransformationEvent[] Parse(string s) {
-            var parts = s.Trim().Split(Constants.Splitter.Comma);
+            var parts = s.Trim().Split(',');
 
             var type = (TransformTypes)Enum.Parse(typeof(TransformTypes), parts[0]);
             var easing = (Easing)int.Parse(parts[1]);
@@ -115,7 +107,7 @@ namespace osuElements.Storyboards
             int end;
             if (!int.TryParse(parts[3], out end)) end = start;
 
-            if (type == TransformTypes.P) {
+            if (type == TransformTypes.Parameter) {
                 return
                     new ParameterEvent(start, end, (ParameterTypes)Enum.Parse(typeof(ParameterTypes), parts[4]))
                         .AsArray<TransformationEvent>();
@@ -123,9 +115,9 @@ namespace osuElements.Storyboards
 
             var values = parts.Skip(4).ToArray();
             //Magic number 4: the first four default elements of every transformation
-            var valuecount = type == TransformTypes.C ? 3 : type == TransformTypes.M || type == TransformTypes.V ? 2 : 1;
+            var valuecount = type == TransformTypes.Color ? 3 : type == TransformTypes.Move || type == TransformTypes.VectorScale ? 2 : 1;
             var sv =
-                Enumerable.Range(0, valuecount).Select(i => float.Parse(values[i], Constants.IO.CULTUREINFO)).ToArray();
+                Enumerable.Range(0, valuecount).Select(i => float.Parse(values[i], Constants.Cultureinfo)).ToArray();
 
             var count = values.Length / valuecount;
 
@@ -135,10 +127,10 @@ namespace osuElements.Storyboards
 
             var result = new TransformationEvent[--count];
 
-            for (int i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 var ev =
-                    Enumerable.Range((i + 1) * valuecount, (i + 2) * valuecount)
-                        .Select(j => float.Parse(values[j], Constants.IO.CULTUREINFO))
+                    Enumerable.Range((i + 1) * valuecount, valuecount)
+                        .Select(j => float.Parse(values[j], Constants.Cultureinfo))
                         .ToArray();
                 result[i] = new TransformationEvent(type, easing, start, end, sv, ev);
                 sv = ev;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using osuElements.Beatmaps.Events;
 using osuElements.Helpers;
 
@@ -7,66 +6,61 @@ namespace osuElements.Storyboards
 {
     public abstract class EventBase : IComparable<EventBase>
     {
-
         public EventLayer Layer = EventLayer.Undefined;
         public EventTypes Type;
-        
-
         public int StartTime { get; set; }
-
         public int EndTime { get; set; }
         public int Duration => EndTime - StartTime;
         
-
         public static bool TryParse(string s, out EventBase e) {
             e = null;
-            var s2 = s.Trim();
-            if (s2 == "") return false;
-            var s3 = s2.Split(Constants.Splitter.Comma);
-            int a;
+            string s2;
+            if (string.IsNullOrEmpty(s2 = s?.Trim())) return false;
+            var s3 = s2.Split(',');
             EventTypes t;
-            if (!int.TryParse(s3[0], out a) && !Enum.TryParse(s3[0], out t)) return false;
-            var result = Parse(s2);
-            if (result == null) return false;
-            e = result;
-            return true;
+            if (!Enum.TryParse(s3[0], out t)) return false;
+            e = Parse(s2);
+            return e != null;
         }
 
         public static EventBase Parse(string s) {
-            var parts = s.Split(Constants.Splitter.Comma);
+            var parts = s.Split(',');
             EventTypes etype;
             EventBase result;
             if (Enum.TryParse(parts[0], out etype)) {
-                var path = "";
-                if (parts.Length > 3) path = parts[3].Trim('\"');
                 switch (etype) {
-                    case (EventTypes.Sprite):
-                        result = new SpriteEvent(path,
-                            (EventLayer) Enum.Parse(typeof (EventLayer), parts[1]),
-                            (Origin) Enum.Parse(typeof (Origin), parts[2]), float.Parse(parts[4], Constants.IO.CULTUREINFO), float.Parse(parts[5], Constants.IO.CULTUREINFO));
+                    case EventTypes.Sprite:
+                        result = new SpriteEvent(parts[3].Trim('\"'),
+                            (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.Cultureinfo),
+                            float.Parse(parts[5], Constants.Cultureinfo));
                         break;
-                    case (EventTypes.Animation):
-                        Looptypes lt;
-                        result = new AnimationEvent(path,
-                            int.Parse(parts[6]), int.Parse(parts[7]), (EventLayer) Enum.Parse(typeof (EventLayer), parts[1]), (Origin) Enum.Parse(typeof (Origin), parts[2]), float.Parse(parts[4], Constants.IO.CULTUREINFO), float.Parse(parts[5], Constants.IO.CULTUREINFO), Enum.TryParse(parts[8], out lt) ? lt : Looptypes.LoopForever);
+                    case EventTypes.Animation:
+                        result = new AnimationEvent(parts[3].Trim('\"'),
+                            int.Parse(parts[6]), double.Parse(parts[7]),
+                            (EventLayer)Enum.Parse(typeof(EventLayer), parts[1]),
+                            (Origin)Enum.Parse(typeof(Origin), parts[2]), float.Parse(parts[4], Constants.Cultureinfo),
+                            float.Parse(parts[5], Constants.Cultureinfo),
+                            parts.Length > 8 ? (Looptypes)Enum.Parse(typeof(Looptypes), parts[8]) : Looptypes.LoopForever);
                         break;
-                    case (EventTypes.Sample):
+                    case EventTypes.Sample:
                         result = new SampleEvent(parts[3], int.Parse(parts[1]),
-                            int.Parse(parts[4]), (EventLayer) int.Parse(parts[2]));
+                            parts.Length > 4 ? int.Parse(parts[4]) : 100, (EventLayer)int.Parse(parts[2]));
                         break;
-                    case (EventTypes.Background): 
+                    case EventTypes.Background:
                         result = new BackgroundEvent(int.Parse(parts[1]), parts[2].Trim('"'),
                             parts.Length > 3 ? int.Parse(parts[3]) : 0, parts.Length > 4 ? int.Parse(parts[4]) : 0);
                         break;
-                    case (EventTypes.Video):
+                    case EventTypes.Video:
                         result = new VideoEvent(int.Parse(parts[1]), parts[2].Trim('"'));
                         break;
-                    case (EventTypes.Break): 
+                    case EventTypes.Break:
                         result = new BreakEvent(int.Parse(parts[1]), int.Parse(parts[2]));
                         break;
-                    case (EventTypes.Backgroundcolor): 
-                        result = new BackgroundColorEvent(int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]),
-                            int.Parse(parts[4]));
+                    case EventTypes.Backgroundcolor:
+                        result = new BackgroundColorEvent(int.Parse(parts[1]), byte.Parse(parts[2]),
+                            byte.Parse(parts[3]),
+                            byte.Parse(parts[4]));
                         break;
                     default:
                         result = new UndefinedEvent(parts);
@@ -86,6 +80,7 @@ namespace osuElements.Storyboards
         public int CompareTo(EventBase other) {
             return Type.CompareTo(other.Type);
         }
+
         public static bool TryParse<T>(string line, out T result) where T : EventBase {
             EventBase e;
             if (TryParse(line, out e)) {
@@ -95,7 +90,18 @@ namespace osuElements.Storyboards
             result = null;
             return false;
         }
-        
 
+        public class UndefinedEvent : EventBase
+        {
+            public string[] Lineparts;
+
+            public UndefinedEvent(string[] lineparts) {
+                Lineparts = lineparts;
+            }
+
+            public override string ToString() {
+                return string.Join(",", Lineparts);
+            }
+        }
     }
 }

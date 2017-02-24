@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.File;
 
@@ -12,7 +9,6 @@ namespace osuElements.Storyboards
     public class Storyboard : IStoryboardEvents, IFileModel
     {
         public Storyboard() {
-            StoryboardFileRepository = osuElements.StoryboardFileRepository;
             BackgroundEvents = new List<SpriteEvent>();
             ForegroundEvents = new List<SpriteEvent>();
             FailEvents = new List<SpriteEvent>();
@@ -52,13 +48,16 @@ namespace osuElements.Storyboards
         }
 
         #region File
-        public static IFileRepository<Storyboard> StoryboardFileRepository { get; set; }
         public bool IsRead { get; private set; }
         public string FileName { get; set; }
         public string Directory { get; set; }
         public string FullPath
         {
-            get { return Path.Combine(Directory, FileName); }
+            get
+            {
+                var result = Path.Combine(Directory, FileName);
+                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuSongDirectory, result);
+            }
             set
             {
                 Directory = Path.GetDirectoryName(value);
@@ -66,21 +65,21 @@ namespace osuElements.Storyboards
             }
         }
         public void ReadFile(ILogger logger = null) {
-            StoryboardFileRepository.ReadFile(osuElements.FileReaderFunc(FullPath), this, logger);
+            osuElements.StoryboardFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
         public void WriteFile() {
-            StoryboardFileRepository.WriteFile(osuElements.FileWriterFunc(FullPath), this);
+            osuElements.StoryboardFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
         }
         public static FileReader<Storyboard> FileReader() {
-            var variables = new CollectionFileSection<KeyValuePair<string, string>, Storyboard>(s => s.VariablesDictionary, "Variables",
-                s => {
-                    var parts = s.Split('=');
-                    return new KeyValuePair<string, string>(parts[0], parts[1]);
-                },
-                pair => $"{pair.Key}={pair.Value}");
-
-            return new FileReader<Storyboard>(variables, new StoryboardSection<Storyboard>("Events"));
+            return new FileReader<Storyboard>(
+                new CollectionFileSection<KeyValuePair<string, string>, Storyboard>(s => s.VariablesDictionary, "Variables",
+                    s => {
+                        var parts1 = s.Split('=');
+                        return new KeyValuePair<string, string>(parts1[0], parts1[1]);
+                    },
+                    pair => $"{pair.Key}={pair.Value}"), 
+                new StoryboardSection<Storyboard>("Events"));
         }
         #endregion
     }

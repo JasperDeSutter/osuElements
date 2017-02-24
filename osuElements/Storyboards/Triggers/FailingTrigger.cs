@@ -1,5 +1,3 @@
-using osuElements.Helpers;
-
 namespace osuElements.Storyboards.Triggers
 {
     public class FailingTrigger : TriggerBase

@@ -20,7 +20,7 @@ namespace osuElements.IO.Binary
 
         public void ReadFile(Stream inStream, T instance, ILogger logger = null) {
             using (var binaryReader = new BinaryReader(inStream)) {
-                for (int line = 0; line < _fileLines.Count; line++) {
+                for (var line = 0; line < _fileLines.Count; line++) {
                     var fileLine = _fileLines[line];
                     try {
                         fileLine.ReadValue(binaryReader, ref instance);

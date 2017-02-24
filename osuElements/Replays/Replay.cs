@@ -6,28 +6,29 @@ using osuElements.Api;
 using osuElements.Helpers;
 using osuElements.IO;
 using osuElements.IO.Binary;
+using osuElements.IO.File;
 
 namespace osuElements.Replays
 {
-    public class Replay : ApiScore //most properties are shared, no need for common base class
+    /// <summary>
+    /// The file-driven approach of a user's score on a beatmap
+    /// </summary>
+    public class Replay : ApiScore, IFileModel //most properties are shared, no need for common base class
     {
         public Replay() {
-            LifebarFames = new List<LifebarFrame>();
+            LifebarFrames = new List<LifebarFrame>();
             ReplayFrames = new List<ReplayFrame>();
-            ReplayFileRepository = osuElements.ReplayFileRepository;
         }
 
-        public Replay(string fileName, bool readData) : this() {
-            FileName = fileName;
-            var stream = osuElements.FileReaderFunc(fileName);
-            ReplayFileRepository.ReadFile(stream, this);
+        public Replay(string filePath, bool readData) : this() {
+            FullPath = filePath;
+            ReadFile();
             if (readData) ReadData();
-
-            LifebarFames =
-                LifebarFrameString.Split(Constants.Splitter.Comma, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(part => part.Split(Constants.Splitter.Pipe, StringSplitOptions.RemoveEmptyEntries))
+            LifebarFrames =
+                LifebarFrameString.Split(','.AsArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Select(part => part.Split('|'.AsArray(), StringSplitOptions.RemoveEmptyEntries))
                     .Where(parts2 => parts2.Length >= 2)
-                    .Select(t => new LifebarFrame(int.Parse(t[0]), float.Parse(t[1], Constants.IO.CULTUREINFO)))
+                    .Select(t => new LifebarFrame(int.Parse(t[0]), float.Parse(t[1], Constants.Cultureinfo)))
                     .ToList();
         }
 
@@ -39,38 +40,58 @@ namespace osuElements.Replays
         /// <param name="readData">uncomress and read the compressed replay data</param>
         public Replay(ApiScore score, ApiReplay replay, bool readData = true) : this() {
             score.CloneTo(this);
-            ReplayData = Convert.FromBase64String(replay.Content);
+            ReplayData = Convert.FromBase64String(replay.Content.Replace("\\/", "/")); // doesn't work yet
             if (readData) ReadData();
             FileFormat = 0; //?
             BeatmapHash = ""; // use api-call for this
+            //LifebarFrames aren't available
             ReplayHash = ""; //?
         }
 
-
-        public static IFileRepository<Replay> ReplayFileRepository { get; set; }
-
+        #region File
+        public bool IsRead { get; private set; }
+        public string Directory { get; set; }
         public string FileName { get; set; }
+        public string FullPath
+        {
+            get
+            {
+                var result = Path.Combine(Directory, FileName);
+                return Path.IsPathRooted(result) ? result : Path.Combine(osuElements.OsuReplaysDirectory, result);
+            }
+            set
+            {
+                Directory = Path.GetDirectoryName(value);
+                FileName = Path.GetFileName(value);
+            }
+        }
+        public void ReadFile(ILogger logger = null) {
+            osuElements.ReplayFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            IsRead = true;
+        }
+        public void WriteFile() {
+            osuElements.ReplayFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+        }
+        #endregion
+
+
         public int FileFormat { get; set; }
         public string BeatmapHash { get; set; }
         public string ReplayHash { get; set; }
         public string LifebarFrameString { get; set; }
-        public List<LifebarFrame> LifebarFames { get; }
+        public List<LifebarFrame> LifebarFrames { get; }
         public byte[] ReplayData { get; set; }
-        public List<ReplayFrame> ReplayFrames { get; private set; }
-        public int Seed { get; set; }//?
-        public long SomeLong { get; set; }//?
+        public List<ReplayFrame> ReplayFrames { get; }
+        public int Seed { get; set; }
+        public long SomeLong { get; set; }
 
-        internal static object ReadSomeLong(BinaryReader reader, Replay replay) {
-            if (replay.FileFormat > 20140720)
-                return reader.ReadInt64();
-            return reader.ReadInt32();
+        private static object ReadSomeLong(BinaryReader reader, Replay replay) {
+            return replay.FileFormat > 20140720 ? reader.ReadInt64() : reader.ReadInt32();
         }
 
-        internal static void WriteSomeLong(BinaryWriter writer, Replay replay) {
-            if (replay.FileFormat > 20140720)
-                writer.Write(replay.SomeLong);
-            if (replay.FileFormat > 20121007)
-                writer.Write((int)replay.SomeLong);
+        private static void WriteSomeLong(BinaryWriter writer, Replay replay) {
+            if (replay.FileFormat > 20140720) writer.Write(replay.SomeLong);
+            else writer.Write((int) replay.SomeLong);
         }
 
         public static BinaryFile<Replay> FileReader() {
@@ -83,7 +104,7 @@ namespace osuElements.Replays
                 new BinaryFileLine<Replay, GameMode>(r => r.GameMode){Type = typeof (byte)},
                 new BinaryFileLine<Replay, int>(r => r.FileFormat),
                 new BinaryFileLine<Replay, string>(r => r.BeatmapHash),
-                new BinaryFileLine<Replay, string>(r => r.UserName),
+                new BinaryFileLine<Replay, string>(r => r.Username),
                 new BinaryFileLine<Replay, string>(r => r.ReplayHash),
                 new BinaryFileLine<Replay, ushort>(r => r.Count300),
                 new BinaryFileLine<Replay, ushort>(r => r.Count100),
@@ -93,8 +114,8 @@ namespace osuElements.Replays
                 new BinaryFileLine<Replay, ushort>(r => r.CountMiss),
                 new BinaryFileLine<Replay, int>(r => r.Score),
                 new BinaryFileLine<Replay, ushort>(r => r.MaxCombo),
-                new BinaryFileLine<Replay, bool>(r => r.IsPerfect),
-                new BinaryFileLine<Replay, Mods>(r => r.Enabled_Mods){Type = typeof (int)},
+                new BinaryFileLine<Replay, bool>(r => r.Perfect),
+                new BinaryFileLine<Replay, Mods>(r => r.EnabledMods){Type = typeof (int)},
                 new BinaryFileLine<Replay, string>(r => r.LifebarFrameString),
                 new BinaryFileLine<Replay, DateTime>(r => r.Date),
                 new BinaryFileLine<Replay, byte[]>(r => r.ReplayData),
@@ -103,16 +124,16 @@ namespace osuElements.Replays
         }
 
         public void ReadData() {
-            var uncompressed = osuElements.DecompressLzmaFunc.Invoke(ReplayData);
+            var uncompressed = LzmaCoder.Decompress(ReplayData);
             var a = new System.Text.UTF8Encoding().GetString(uncompressed, 0, uncompressed.Length);
             ReadReplayCompressedData(a);
         }
 
         private void ReadReplayCompressedData(string data) {
-            int lasttime = 0;
+            var lasttime = 0;
             foreach (var parts in data.Split(','). //split resulting string in parts
                 Where(frame => !string.IsNullOrEmpty(frame)). //check for null
-                Select(frame => frame.Split(Constants.Splitter.Pipe))
+                Select(frame => frame.Split('|'))
                 . //split the part into actual variables (into string[])
                 Where(parts => parts.Length >= 4)) {
                 //check for correct length of the string[]
@@ -122,13 +143,13 @@ namespace osuElements.Replays
                     continue;
                 }
 
-                int offset = int.Parse(parts[0]);
+                var offset = int.Parse(parts[0]);
                 lasttime += offset;
                 ReplayFrames.Add(new ReplayFrame() {
                     TimeOffset = offset,
                     Time = lasttime,
-                    Position = Position.FromHitobject(float.Parse(parts[1], Constants.IO.CULTUREINFO),
-                        float.Parse(parts[2], Constants.IO.CULTUREINFO)),
+                    Position = Position.FromHitobject(float.Parse(parts[1], Constants.Cultureinfo),
+                        float.Parse(parts[2], Constants.Cultureinfo)),
                     Keys = (ReplayKeys)Enum.Parse(typeof(ReplayKeys), parts[3])
                 });
             }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using osuElements.Helpers;
 
 namespace osuElements.Api.Repositories
 {
@@ -27,23 +27,22 @@ namespace osuElements.Api.Repositories
 
                     var json = await client.GetStringAsync(url);
 
-
                     var list = JsonConvert.DeserializeObject<List<T>>(json);
 
                     return list;
                 }
-           }
+            }
             catch {
                 return null;
             }
         }
         protected static async Task<ApiReplay> GetReplay(string query) {
-            if (string.IsNullOrEmpty(ApiReplayRepository.Key)) throw new NullReferenceException("Please supply an api key (ApiReplayRepository.Key)");
+            if (string.IsNullOrEmpty(Key)) throw new NullReferenceException("Please supply an api key (ApiReplayRepository.Key)");
             var result = new ApiReplay();
             using (var client = new HttpClient()) {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var url = Url + query + $"&k={ApiReplayRepository.Key}";
+                var url = Url + query + $"&k={Key}";
                 var json = await client.GetStringAsync(url);
                 if ("{\"error\":\"Replay not available.\"}" == json) return null;
                 json = json.Remove(0, 12).TrimEnd('"', '}');
@@ -53,11 +52,13 @@ namespace osuElements.Api.Repositories
             }
             return result;
         }
-        
-        protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode) {
-            var scores = await GetList<ApiScore>(query + $"&m={(int) mode}");
-            foreach (var score in scores) {
+
+        protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode, Action<ApiScore> action) {
+            var scores = await GetList<ApiScore>(query + $"&m={(int)mode}");
+            if (scores == null) return null;
+            foreach (var score in scores.Where(score => score != null)) {
                 score.GameMode = mode;
+                action?.Invoke(score);
             }
             return scores;
         }

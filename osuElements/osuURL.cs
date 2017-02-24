@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using osuElements.Helpers;
 
 namespace osuElements
@@ -7,6 +6,9 @@ namespace osuElements
     public static class osuURL
     {
         public static Action<string> OsuAction { get; set; }
+#if !STANDARD
+            = s => System.Diagnostics.Process.Start(s);
+#endif
         public static string JoinMultiplayerRoom(int multiId, string password = null) {
             var result = $"osu://mp/{multiId}" + (password == null ? "" : $"/{password}");
             OsuAction?.Invoke(result);

@@ -7,10 +7,7 @@ namespace osuElements.IO.Binary
 {
     public class BinaryFileList<TClass, TValue> : BinaryFileLine<TClass, ICollection<TValue>>
     {
-        private Type _listType;
-
         public BinaryFileList(Expression<Func<TClass, ICollection<TValue>>> propertySelector) : base(propertySelector) {
-            _listType = _property?.GetType();
             Type = typeof (TValue);
         }
 

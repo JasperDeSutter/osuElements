@@ -1,5 +1,4 @@
-﻿using osuElements.Helpers;
-using osuElements.Storyboards;
+﻿using osuElements.Storyboards;
 
 namespace osuElements.Beatmaps.Events
 {

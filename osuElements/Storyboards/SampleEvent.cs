@@ -1,8 +1,6 @@
-﻿using osuElements.Helpers;
-
-namespace osuElements.Storyboards
+﻿namespace osuElements.Storyboards
 {
-    public class SampleEvent:EventBase
+    public class SampleEvent: EventBase
     {
         public string FilePath { get; set; }
         public int Volume { get; set; }
