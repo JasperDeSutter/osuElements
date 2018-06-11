@@ -34,12 +34,11 @@ namespace osuElements.Api.Repositories
         }
 
         public async Task<ApiBeatmap> Get(int mapId, GameMode? mode = null) {
-            var maps = await GetMaps($"get_beatmaps?b={mapId}", mode);
-            return maps.FirstOrDefault();
+            return (await GetMaps($"get_beatmaps?b={mapId}", mode))?.FirstOrDefault();
         }
 
         public async Task<ApiBeatmap> Get(string mapHash, GameMode? mode = null) {
-            return (await GetMaps($"get_beatmaps?h={mapHash}", mode)).FirstOrDefault();
+            return (await GetMaps($"get_beatmaps?h={mapHash}", mode))?.FirstOrDefault();
         }
 
         public async Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null,

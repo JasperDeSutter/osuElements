@@ -14,7 +14,7 @@ namespace osuElements.Api.Repositories
         {
             var result = (await GetList<ApiUser>(
                 $"get_user?u={name}&m={(int)mode}&type=string&event_days={eventDays.Clamp(1, MaxApiEventDays)}"
-                )).FirstOrDefault();
+                ))?.FirstOrDefault();
             if (result != null)
             {
                 result.GameMode = mode;
@@ -26,7 +26,7 @@ namespace osuElements.Api.Repositories
         {
             var result = (await GetList<ApiUser>(
                 $"get_user?u={id}&m={(int)mode}&type=id&event_days={eventDays.Clamp(1, MaxApiEventDays)}"
-                )).FirstOrDefault();
+                ))?.FirstOrDefault();
             if (result != null)
             {
                 result.GameMode = mode;
