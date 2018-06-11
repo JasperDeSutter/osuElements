@@ -9,6 +9,18 @@ namespace osuElements.Api.Repositories
 {
     public class ApiBeatmapRepository : ApiRepositoryBase, IApiBeatmapRepository
     {
+        Lazy<IApiScoreRepository> _apiScoreRepository;
+
+        public ApiBeatmapRepository()
+        {
+            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => new ApiScoreRepository(), true);
+        }
+
+        public ApiBeatmapRepository(IApiScoreRepository apiScoreRepository)
+        {
+            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => apiScoreRepository, true);
+        }
+
         public async Task<List<ApiBeatmap>> GetSince(DateTime time, GameMode? mode = null, int limit = MaxApiBeatmapResults) {
             return await GetMaps(
                 $"get_beatmaps?since={time:yyyy MM dd}&limit={limit.Clamp(1, MaxApiBeatmapResults)}"
@@ -41,15 +53,19 @@ namespace osuElements.Api.Repositories
             return (await GetMaps($"get_beatmaps?h={mapHash}", mode))?.FirstOrDefault();
         }
 
+        // Left for backward compatibility
         public async Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null,
-            GameMode mode = 0, Mods? mods = null, int limit = 100) {
-            var userstring = userid.HasValue
-                ? $"&u={userid.Value}&type=id"
-                : string.IsNullOrEmpty(username) 
-                    ? "" : $"&u={username}&type=string";
-            var modstring = mods.HasValue ? $"&mods={(int)mods.Value}" : "";
-            return await GetScoreList($"get_scores?b={mapId}{userstring}{modstring}&limit={limit}", mode,
-                s => s.BeatmapId = mapId);
+            GameMode mode = 0, Mods? mods = null, int limit = MaxApiBeatmapResults) {
+
+            if (userid.HasValue) {
+                return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                    repo.GetMapScores(mapId, userid.Value, mode, mods, limit));
+            }
+            else { 
+                return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                    repo.GetMapScores(mapId, username, mode, mods, limit));
+            }
+
         }
 
         private async Task<List<ApiBeatmap>> GetMaps(string query, GameMode? mode) {

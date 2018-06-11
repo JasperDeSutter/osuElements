@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,18 @@ namespace osuElements.Api.Repositories
 {
     public class ApiUserRepository : ApiRepositoryBase, IApiUserRepository
     {
+        Lazy<IApiScoreRepository> _apiScoreRepository;
+
+        public ApiUserRepository()
+        {
+            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => new ApiScoreRepository(), true);
+        }
+
+        public ApiUserRepository(IApiScoreRepository apiScoreRepository)
+        {
+            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => apiScoreRepository, true);
+        }
+
         public async Task<ApiUser> Get(string name, GameMode mode = 0, int eventDays = MaxApiEventDays)
         {
             var result = (await GetList<ApiUser>(
@@ -34,32 +47,30 @@ namespace osuElements.Api.Repositories
             return result;
         }
 
+        // Methods below left for backward compatibility
+
         public async Task<List<ApiScore>> GetBest(int id, GameMode mode = Standard, int limit = MaxApiScoreResults)
         {
-            return await GetScoreList(
-                $"get_user_best?u={id}&type=id&limit={limit.Clamp(1, MaxApiScoreResults)}"
-                , mode, null);
+            return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                repo.GetUserBest(id, mode, limit));
         }
 
         public async Task<List<ApiScore>> GetBest(string name, GameMode mode = Standard, int limit = MaxApiScoreResults)
         {
-            return await GetScoreList(
-                $"get_user_best?u={name}&type=string&limit={limit.Clamp(1, MaxApiScoreResults)}"
-                , mode, s => s.Username = name);
+            return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                repo.GetUserBest(name, mode, limit));
         }
 
         public async Task<List<ApiScore>> GetRecent(int id, GameMode mode = Standard, int limit = MaxApiScoreResults)
         {
-            return await GetScoreList(
-                $"get_user_recent?u={id}&type=id&limit={limit.Clamp(1, MaxApiScoreResults)}"
-                , mode, null);
+            return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                repo.GetUserBest(id, mode, limit));
         }
 
         public async Task<List<ApiScore>> GetRecent(string name, GameMode mode = Standard, int limit = MaxApiScoreResults)
         {
-            return await GetScoreList(
-                $"get_user_recent?u={name}&type=string&limit={limit.Clamp(1, MaxApiScoreResults)}"
-                , mode, s => s.Username = name);
+            return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
+                repo.GetUserBest(name, mode, limit));
         }
     }
 }

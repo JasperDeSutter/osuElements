@@ -28,6 +28,7 @@ namespace osuElements
             ApiBeatmapRepository = new ApiBeatmapRepository();
             ApiReplayRepository = new ApiReplayRepository();
             ApiUserRepository = new ApiUserRepository();
+            ApiScoreRepository = new ApiScoreRepository();
 
             StreamIOStrategy = new StreamIOStrategy();
 
@@ -77,9 +78,14 @@ namespace osuElements
         public static IApiReplayRepository ApiReplayRepository { get; set; }
         public static IApiUserRepository ApiUserRepository { get; set; }
         public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
+        public static IApiScoreRepository ApiScoreRepository { get; set; }
         public static string ApiKey
         {
             set { ApiRepositoryBase.Key = value; }
+        }
+        public static bool ApiRepositoryThrowExceptions
+        {
+            set { ApiRepositoryBase.ThrowExceptions = value; }
         }
         public static int LatestBeatmapVersion { get; set; } = 14;
         public static float LatestSkinVersion { get; set; } = 2.5f;

@@ -44,7 +44,9 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiError.cs" />
     <Compile Include="Api\EventConverter.cs" />
+    <Compile Include="Api\Repositories\ApiScoreRepository.cs" />
     <Compile Include="Beatmaps\Difficulty\DifficultyCalculatorBase.cs" />
     <Compile Include="Beatmaps\Difficulty\CtbDifficultyCalculator.cs" />
     <Compile Include="Beatmaps\Difficulty\Enums.cs" />
