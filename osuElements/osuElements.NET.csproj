@@ -115,6 +115,8 @@
     <Compile Include="GameMode.cs" />
     <Compile Include="Helpers\IHitsound.cs" />
     <Compile Include="IO\Binary\IBinaryFileLine.cs" />
+    <Compile Include="IO\File\IStreamIOStrategy.cs" />
+    <Compile Include="IO\File\StreamIOStrategy.cs" />
     <Compile Include="Mods.cs" />
     <Compile Include="Replays\Enums.cs" />
     <Compile Include="Storyboards\Enums.cs" />

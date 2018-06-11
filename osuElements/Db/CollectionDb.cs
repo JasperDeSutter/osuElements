@@ -64,12 +64,12 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.CollectionDbRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.CollectionDbRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
 
         public void WriteFile() {
-            osuElements.CollectionDbRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.CollectionDbRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
         }
         #endregion
 
