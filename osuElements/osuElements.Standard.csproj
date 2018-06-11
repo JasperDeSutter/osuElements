@@ -11,6 +11,10 @@
     <DefineConstants>TRACE;DEBUG;STANDARD</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;STANDARD</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="osu!framework\**" />
     <EmbeddedResource Remove="osu!framework\**" />
@@ -19,12 +23,17 @@
 
   <ItemGroup>
     <Compile Remove="Beatmaps\BeatmapFileRepository.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="Skins\SkinFileRepository.cs" />
     <Compile Remove="Storyboards\StoryboardFileRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
