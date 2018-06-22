@@ -7,18 +7,14 @@ using osuElements.IO;
 using osuElements.Replays;
 using osuElements.Skins;
 using osuElements.Storyboards;
+using osuElements.IO.File;
 
 namespace osuElements
 {
     public static class osuElements
     {
         private static string _osuDirectory;
-
-        public static Stream WriteStream(string path) {
-            if (File.Exists(path)) File.Delete(path);
-            return new FileStream(path, FileMode.Create);
-        }
-
+        
         static osuElements() {
             StoryboardFileRepository = Storyboard.FileReader();
             SkinFileRepository = SkinFileReader.SkinReader();
@@ -32,6 +28,9 @@ namespace osuElements
             ApiBeatmapRepository = new ApiBeatmapRepository();
             ApiReplayRepository = new ApiReplayRepository();
             ApiUserRepository = new ApiUserRepository();
+            ApiScoreRepository = new ApiScoreRepository();
+
+            StreamIOStrategy = new StreamIOStrategy();
 
 #if !STANDARD
 
@@ -72,22 +71,26 @@ namespace osuElements
         public static IFileRepository<OsuDb> OsuDbRepository { get; set; }
         public static IFileRepository<ScoresDb> ScoresDbRepository { get; set; }
 
+        public static IStreamIOStrategy StreamIOStrategy { get; set; }
+
         //Not necessary right now
         public static IApiBeatmapRepository ApiBeatmapRepository { get; set; }
         public static IApiReplayRepository ApiReplayRepository { get; set; }
         public static IApiUserRepository ApiUserRepository { get; set; }
         public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
+        public static IApiScoreRepository ApiScoreRepository { get; set; }
         public static string ApiKey
         {
             set { ApiRepositoryBase.Key = value; }
+        }
+        public static bool ApiRepositoryThrowExceptions
+        {
+            set { ApiRepositoryBase.ThrowExceptions = value; }
         }
         public static int LatestBeatmapVersion { get; set; } = 14;
         public static float LatestSkinVersion { get; set; } = 2.5f;
 
         #endregion
-
-        public static Stream ReadStream(string path) {
-            return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        }
+        
     }
 }

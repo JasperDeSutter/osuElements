@@ -38,11 +38,11 @@ namespace osuElements.Skins
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.SkinFileRepository.ReadFile(osuElements.ReadStream(FullPath), this, logger);
+            osuElements.SkinFileRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
             IsRead = true;
         }
         public void WriteFile() {
-            osuElements.SkinFileRepository.WriteFile(osuElements.WriteStream(FullPath), this);
+            osuElements.SkinFileRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
         }
         #endregion
 

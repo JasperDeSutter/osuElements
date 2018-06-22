@@ -1,67 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace osuElements.Api.Repositories
 {
-    public abstract class ApiRepositoryBase
+    public abstract class ApiRepositoryBase : IApiRepository
     {
         #region Properties
         public static string Url { get; } = "https://osu.ppy.sh/api/";
-        public static string Key { private get; set; }
+        public static string Key { protected get; set; }
+
+        public static bool ThrowExceptionsDefault { get; set; } = false;
+
+        public static bool ThrowExceptions { get; set; } = ThrowExceptionsDefault;
+
+        public bool IsError { get; protected set; }
+
+        public ApiError ApiError { get; protected set; }
         #endregion
 
-        #region Methods
+
+
+        #region GetList
         protected async Task<List<T>> GetList<T>(string query) {
-            if (string.IsNullOrEmpty(Key)) throw new NullReferenceException("Please supply an api key (RepositoryBase.Key)");
+            return await GetData<List<T>>(query);
+        }
+
+        protected async Task<T> GetData<T>(string query) {
+
+            if (string.IsNullOrEmpty(Key)) {
+                SetError(true, null);                
+                throw new ArgumentNullException($"{this.GetType().Name}.{nameof(Key)}", $"Please supply an api key.");
+            }
+
+            SetError(false, null);
+
             try {
+
+                var url = Url + query + $"&k={Key}";
+
+                string jsonResult = null;
+
                 using (var client = new HttpClient()) {
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    
+                    var response = await client.GetAsync(url);
 
-                    var url = Url + query + $"&k={Key}";
+                    jsonResult = await response.Content.ReadAsStringAsync();
+                }
 
-                    var json = await client.GetStringAsync(url);
+                SetError(jsonResult);
 
-                    var list = JsonConvert.DeserializeObject<List<T>>(json);
-
-                    return list;
+                if (IsError) {
+                    return default(T);
+                }
+                else {
+                    return JsonConvert.DeserializeObject<T>(jsonResult);
                 }
             }
             catch {
-                return null;
+                SetError(true, null);
+
+                if (ThrowExceptions)
+                    throw;
+                else
+                    return default(T);
             }
-        }
-        protected static async Task<ApiReplay> GetReplay(string query) {
-            if (string.IsNullOrEmpty(Key)) throw new NullReferenceException("Please supply an api key (ApiReplayRepository.Key)");
-            var result = new ApiReplay();
-            using (var client = new HttpClient()) {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var url = Url + query + $"&k={Key}";
-                var json = await client.GetStringAsync(url);
-                if ("{\"error\":\"Replay not available.\"}" == json) return null;
-                json = json.Remove(0, 12).TrimEnd('"', '}');
-                var last = json.LastIndexOf('"') + 1;
-                result.Encoding = json.Substring(last, json.Length - last);
-                result.Content = json.Remove(json.Length - result.Encoding.Length - 14);
-            }
-            return result;
         }
 
-        protected async Task<List<ApiScore>> GetScoreList(string query, GameMode mode, Action<ApiScore> action) {
-            var scores = await GetList<ApiScore>(query + $"&m={(int)mode}");
-            if (scores == null) return null;
-            foreach (var score in scores.Where(score => score != null)) {
-                score.GameMode = mode;
-                action?.Invoke(score);
+        #endregion
+
+        #region CallNestedRepository
+
+        protected TResult CallNestedRepository<TRepository, TResult>(TRepository repo, Func<TRepository, TResult> callFunc)
+            where TRepository : IApiRepository
+        {
+            try {
+                return callFunc(repo);
             }
-            return scores;
+            catch {
+                throw;
+            }
+            finally {
+                SetError(repo.IsError, repo.ApiError);
+            }
         }
+
+        #endregion
+
+
+
+        #region SetError
+
+        protected virtual void SetError(string jsonResult) {
+            if (jsonResult == null) {
+                SetError(false, null);
+            }
+            else
+            {
+                // assuming there are no valid results with "error" field in it.
+                // maybe additional "other fields absence check" will be required in future.
+
+                JToken errorJtoken = JToken.Parse(jsonResult);
+
+                if (errorJtoken.Type == JTokenType.Object && errorJtoken["error"] != null) {
+                    var error = JsonConvert.DeserializeObject<ApiError>(jsonResult);
+                    SetError(true, error);
+                }
+                else {
+                    SetError(false, null);
+                }
+            }
+        }
+
+        #endregion
+
+        #region SetError
+
+        protected virtual void SetError(bool isError, ApiError apiError) {
+            IsError = isError;
+            ApiError = apiError;
+        }
+
         #endregion
 
     }

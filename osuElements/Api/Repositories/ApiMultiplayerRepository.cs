@@ -6,7 +6,7 @@ namespace osuElements.Api.Repositories
     public class ApiMultiplayerRepository : ApiRepositoryBase, IApiMultiplayerRepository
     {
         public async Task<ApiMatchResult> Get(int matchId) {
-            var result = (await GetList<ApiMatchResult>($"get_match?id={matchId}")).FirstOrDefault();
+            var result = (await GetList<ApiMatchResult>($"get_match?id={matchId}"))?.FirstOrDefault();
             if (result == null) return null;
             if (result.Games == null) return result;
             foreach (var apiMultiGame in result.Games) {

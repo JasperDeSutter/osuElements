@@ -6,7 +6,23 @@ using static osuElements.Helpers.Constants;
 
 namespace osuElements.Api.Repositories
 {
-    public interface IApiUserRepository
+
+    public interface IApiRepository
+    {
+        /// <summary>
+        /// Indicates that there was any error during download, parse or processing data.
+        /// </summary>
+        bool IsError { get; }
+
+        /// <summary>
+        /// Error object provided by osu api service. 
+        /// May be null if error occured not on osu api side or if no osu api format error message was provided
+        /// </summary>
+        ApiError ApiError { get; }
+
+    }
+
+    public interface IApiUserRepository : IApiRepository
     {
         /// <summary>
         /// Returns user data from the osu api.
@@ -55,7 +71,7 @@ namespace osuElements.Api.Repositories
         Task<List<ApiScore>> GetRecent(int id, GameMode mode = Standard, int limit = MaxApiScoreResults);
     }
 
-    public interface IApiBeatmapRepository
+    public interface IApiBeatmapRepository : IApiRepository
     {
         /// <summary>
         /// Returns all maps ranked since the supplied date.
@@ -108,7 +124,8 @@ namespace osuElements.Api.Repositories
         /// <param name="limit">max amount of results, between 1 and 100</param>
         Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
     }
-    public interface IApiReplayRepository
+
+    public interface IApiReplayRepository : IApiRepository
     {
         /// <summary>
         /// Returns the replay data for a given map, user and gamemode.
@@ -116,22 +133,37 @@ namespace osuElements.Api.Repositories
         /// <param name="mapId">the beatmap ID</param>
         /// <param name="userId">the user ID</param>
         /// <param name="mode">the gamemode</param>
-        Task<ApiReplay> Get(int mapId, int userId, GameMode mode);
+        Task<ApiReplay> Get(int mapId, int userId, GameMode mode = Standard);
         /// <summary>
         /// Returns the replay data for a given map, user and gamemode.
         /// </summary>
         /// <param name="mapId">the beatmap ID</param>
         /// <param name="userName">the username</param>
         /// <param name="mode">the gamemode</param>
-        Task<ApiReplay> Get(int mapId, string userName, GameMode mode);
+        Task<ApiReplay> Get(int mapId, string userName, GameMode mode = Standard);
     }
 
-    public interface IApiMultiplayerRepository
+    public interface IApiMultiplayerRepository : IApiRepository
     {
         /// <summary>
         /// Returns all multiplayer and match history data for a lobby.
         /// </summary>
         /// <param name="matchId">the ID of the multiplayer lobby</param>
         Task<ApiMatchResult> Get(int matchId);
+    }
+
+    public interface IApiScoreRepository : IApiRepository
+    {
+        Task<List<ApiScore>> GetUserBest(int userId, GameMode mode = Standard, int limit = MaxApiScoreResults);
+
+        Task<List<ApiScore>> GetUserBest(string userName, GameMode mode = Standard, int limit = MaxApiScoreResults);
+
+        Task<List<ApiScore>> GetUserRecent(int userId, GameMode mode = Standard, int limit = MaxApiScoreResults);
+
+        Task<List<ApiScore>> GetUserRecent(string userName, GameMode mode = Standard, int limit = MaxApiScoreResults);
+
+        Task<List<ApiScore>> GetMapScores(int mapId, string username = null, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
+
+        Task<List<ApiScore>> GetMapScores(int mapId, int userid, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
     }
 }
