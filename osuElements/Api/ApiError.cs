@@ -15,5 +15,10 @@ namespace osuElements.Api
         [DataMember(Name = "error", Order = 0)]
         public string Error { get; set; }
 
+        public override string ToString()
+        {
+            return Error;
+        }
+
     }
 }

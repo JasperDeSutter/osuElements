@@ -47,12 +47,16 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.ScoresDbRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                osuElements.ScoresDbRepository.ReadFile(stream, this, logger);
+            }
             IsRead = true;
         }
 
         public void WriteFile() {
-            osuElements.ScoresDbRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
+            using (var stream = osuElements.StreamIOStrategy.WriteStream(FullPath)) {
+                osuElements.ScoresDbRepository.WriteFile(stream, this);
+            }
         }
         #endregion
     }

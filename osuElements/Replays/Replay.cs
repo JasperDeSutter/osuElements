@@ -66,11 +66,15 @@ namespace osuElements.Replays
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.ReplayFileRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                osuElements.ReplayFileRepository.ReadFile(stream, this, logger);
+            }
             IsRead = true;
         }
         public void WriteFile() {
-            osuElements.ReplayFileRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
+            using (var stream = osuElements.StreamIOStrategy.WriteStream(FullPath)) {
+                osuElements.ReplayFileRepository.WriteFile(stream, this);
+            }
         }
         #endregion
 

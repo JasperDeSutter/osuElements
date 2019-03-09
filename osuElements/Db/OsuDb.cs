@@ -38,12 +38,16 @@ namespace osuElements.Db
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.OsuDbRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                osuElements.OsuDbRepository.ReadFile(stream, this, logger);
+            }
             IsRead = true;
         }
 
         public void WriteFile() {
-            osuElements.OsuDbRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
+            using (var stream = osuElements.StreamIOStrategy.WriteStream(FullPath)) {
+                osuElements.OsuDbRepository.WriteFile(stream, this);
+            }
         }
         public static BinaryFile<OsuDb> FileReader() {
             var result = new BinaryFile<OsuDb>(

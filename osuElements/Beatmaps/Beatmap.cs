@@ -89,12 +89,16 @@ namespace osuElements.Beatmaps
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.BeatmapFileRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                osuElements.BeatmapFileRepository.ReadFile(stream, this, logger);
+            }
             if (FormatVersion < 8) DifficultyApproachRate = DifficultyHpDrainRate;
             IsRead = true;
         }
         public void WriteFile() {
-            osuElements.BeatmapFileRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
+            using (var stream = osuElements.StreamIOStrategy.WriteStream(FullPath)) {
+                osuElements.BeatmapFileRepository.WriteFile(stream, this);
+            }
         }
         #endregion
 
@@ -127,8 +131,9 @@ namespace osuElements.Beatmaps
         public string GetHash(bool forceRenew = false) {
             if (!forceRenew && !string.IsNullOrWhiteSpace(BeatmapHash)) return BeatmapHash;
             var md5 = MD5.Create();
-            BeatmapHash = md5.ComputeHash(osuElements.StreamIOStrategy.ReadStream(FullPath)).
-                Aggregate("", (current, b) => current + b.ToString("x2"));
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                BeatmapHash = md5.ComputeHash(stream).Aggregate("", (current, b) => current + b.ToString("x2"));
+            }
             return BeatmapHash;
         }
 
