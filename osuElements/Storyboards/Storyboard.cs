@@ -65,11 +65,15 @@ namespace osuElements.Storyboards
             }
         }
         public void ReadFile(ILogger logger = null) {
-            osuElements.StoryboardFileRepository.ReadFile(osuElements.StreamIOStrategy.ReadStream(FullPath), this, logger);
+            using (var stream = osuElements.StreamIOStrategy.ReadStream(FullPath)) {
+                osuElements.StoryboardFileRepository.ReadFile(stream, this, logger);
+            }
             IsRead = true;
         }
         public void WriteFile() {
-            osuElements.StoryboardFileRepository.WriteFile(osuElements.StreamIOStrategy.WriteStream(FullPath), this);
+            using (var stream = osuElements.StreamIOStrategy.WriteStream(FullPath)) {
+                osuElements.StoryboardFileRepository.WriteFile(stream, this);
+            }
         }
         public static FileReader<Storyboard> FileReader() {
             return new FileReader<Storyboard>(
