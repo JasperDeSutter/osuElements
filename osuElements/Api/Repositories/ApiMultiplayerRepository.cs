@@ -1,10 +1,18 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using osuElements.Api.Throttling;
 
 namespace osuElements.Api.Repositories
 {
     public class ApiMultiplayerRepository : ApiRepositoryBase, IApiMultiplayerRepository
     {
+
+        public ApiMultiplayerRepository() : base() { }
+
+        public ApiMultiplayerRepository(string apiKey, bool throwExceptions, IThrottler throttler) : base(apiKey, throwExceptions, throttler) { }
+
+
+
         public async Task<ApiMatchResult> Get(int matchId) {
             var result = (await GetList<ApiMatchResult>($"get_match?id={matchId}"))?.FirstOrDefault();
             if (result == null) return null;

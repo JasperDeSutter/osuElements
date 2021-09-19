@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Win32;
 using osuElements.Api.Repositories;
+using osuElements.Api.Throttling;
 using osuElements.Beatmaps;
 using osuElements.Db;
 using osuElements.IO;
@@ -24,11 +26,15 @@ namespace osuElements
             OsuDbRepository = OsuDb.FileReader();
             ScoresDbRepository = ScoresDb.FileReader();
 
-            ApiReplayRepository = new ApiReplayRepository();
+            // ApiRepositoryThrottler = new TimerThrottler(60, TimeSpan.FromMinutes(1));
+            ApiRepositoryThrottler = null;
+
+            ApiMultiplayerRepository = new ApiMultiplayerRepository();
             ApiBeatmapRepository = new ApiBeatmapRepository();
             ApiReplayRepository = new ApiReplayRepository();
             ApiUserRepository = new ApiUserRepository();
             ApiScoreRepository = new ApiScoreRepository();
+
 
             StreamIOStrategy = new StreamIOStrategy();
 
@@ -79,14 +85,9 @@ namespace osuElements
         public static IApiUserRepository ApiUserRepository { get; set; }
         public static IApiMultiplayerRepository ApiMultiplayerRepository { get; set; }
         public static IApiScoreRepository ApiScoreRepository { get; set; }
-        public static string ApiKey
-        {
-            set { ApiRepositoryBase.Key = value; }
-        }
-        public static bool ApiRepositoryThrowExceptions
-        {
-            set { ApiRepositoryBase.ThrowExceptions = value; }
-        }
+        public static string ApiKey { get; set; }
+        public static bool ApiRepositoryThrowExceptions { get; set; } = false;
+        public static IThrottler ApiRepositoryThrottler { get; set; }
         public static int LatestBeatmapVersion { get; set; } = 14;
         public static float LatestSkinVersion { get; set; } = 2.5f;
 
