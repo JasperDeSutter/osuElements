@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using osuElements.Api.Throttling;
 using osuElements.Helpers;
 using static osuElements.Helpers.Constants;
 
@@ -9,17 +10,12 @@ namespace osuElements.Api.Repositories
 {
     public class ApiBeatmapRepository : ApiRepositoryBase, IApiBeatmapRepository
     {
-        Lazy<IApiScoreRepository> _apiScoreRepository;
 
-        public ApiBeatmapRepository()
-        {
-            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => new ApiScoreRepository(), true);
-        }
+        public ApiBeatmapRepository() : base() { }
 
-        public ApiBeatmapRepository(IApiScoreRepository apiScoreRepository)
-        {
-            _apiScoreRepository = new Lazy<IApiScoreRepository>(() => apiScoreRepository, true);
-        }
+        public ApiBeatmapRepository(string apiKey, bool throwExceptions, IThrottler throttler) : base(apiKey, throwExceptions, throttler) { }
+
+
 
         public async Task<List<ApiBeatmap>> GetSince(DateTime time, GameMode? mode = null, int limit = MaxApiBeatmapResults) {
             return await GetMaps(
@@ -53,20 +49,6 @@ namespace osuElements.Api.Repositories
             return (await GetMaps($"get_beatmaps?h={mapHash}", mode))?.FirstOrDefault();
         }
 
-        // Left for backward compatibility
-        public async Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null,
-            GameMode mode = 0, Mods? mods = null, int limit = MaxApiBeatmapResults) {
-
-            if (userid.HasValue) {
-                return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
-                    repo.GetMapScores(mapId, userid.Value, mode, mods, limit));
-            }
-            else { 
-                return await CallNestedRepository(_apiScoreRepository.Value, async (repo) => await
-                    repo.GetMapScores(mapId, username, mode, mods, limit));
-            }
-
-        }
 
         private async Task<List<ApiBeatmap>> GetMaps(string query, GameMode? mode) {
             var modestring = mode.HasValue && mode.Value != GameMode.Standard ? $"&m={(int)mode.Value}&a=1" : "";

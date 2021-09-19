@@ -53,7 +53,7 @@ namespace osuElements.IO.Binary
         }
 
         public override void WriteValue(BinaryWriter writer, TClass instance) {
-            //NYI
+            throw new NotImplementedException("Binary dictionary writing is not implemented yet.");
         }
     }
 }

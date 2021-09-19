@@ -47,6 +47,9 @@
     <Compile Include="Api\ApiError.cs" />
     <Compile Include="Api\EventConverter.cs" />
     <Compile Include="Api\Repositories\ApiScoreRepository.cs" />
+    <Compile Include="Api\Throttling\IThrottler.cs" />
+    <Compile Include="Api\Throttling\NoThrottler.cs" />
+    <Compile Include="Api\Throttling\TimerThrottler.cs" />
     <Compile Include="Beatmaps\Difficulty\DifficultyCalculatorBase.cs" />
     <Compile Include="Beatmaps\Difficulty\CtbDifficultyCalculator.cs" />
     <Compile Include="Beatmaps\Difficulty\Enums.cs" />

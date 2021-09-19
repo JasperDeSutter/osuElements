@@ -9,24 +9,38 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using osuElements.Api.Throttling;
 
 namespace osuElements.Api.Repositories
 {
     public abstract class ApiRepositoryBase : IApiRepository
     {
+        private readonly IThrottler _throttler;
+
         #region Properties
         public static string Url { get; } = "https://osu.ppy.sh/api/";
-        public static string Key { protected get; set; }
+        public string Key { get; set; }
 
-        public static bool ThrowExceptionsDefault { get; set; } = false;
-
-        public static bool ThrowExceptions { get; set; } = ThrowExceptionsDefault;
+        public bool ThrowExceptions { get; set; }
 
         public bool IsError { get; protected set; }
 
         public ApiError ApiError { get; protected set; }
         #endregion
 
+        public ApiRepositoryBase(string apiKey, bool throwExceptions, IThrottler throttler)
+        {
+            Key = apiKey;
+            ThrowExceptions = throwExceptions;
+            _throttler = throttler;
+        }
+
+        public ApiRepositoryBase()
+        {
+            Key = osuElements.ApiKey;
+            ThrowExceptions = osuElements.ApiRepositoryThrowExceptions;
+            _throttler = osuElements.ApiRepositoryThrottler;
+        }
 
 
         #region GetList
@@ -50,7 +64,10 @@ namespace osuElements.Api.Repositories
                 string jsonResult = null;
 
                 using (var client = new HttpClient()) {
-                    
+
+                    if (_throttler != null)
+                        await _throttler.WaitAsync();
+
                     var response = await client.GetAsync(url);
 
                     jsonResult = await response.Content.ReadAsStringAsync();
@@ -72,24 +89,6 @@ namespace osuElements.Api.Repositories
                     throw;
                 else
                     return default(T);
-            }
-        }
-
-        #endregion
-
-        #region CallNestedRepository
-
-        protected TResult CallNestedRepository<TRepository, TResult>(TRepository repo, Func<TRepository, TResult> callFunc)
-            where TRepository : IApiRepository
-        {
-            try {
-                return callFunc(repo);
-            }
-            catch {
-                throw;
-            }
-            finally {
-                SetError(repo.IsError, repo.ApiError);
             }
         }
 
@@ -119,10 +118,6 @@ namespace osuElements.Api.Repositories
                 }
             }
         }
-
-        #endregion
-
-        #region SetError
 
         protected virtual void SetError(bool isError, ApiError apiError) {
             IsError = isError;

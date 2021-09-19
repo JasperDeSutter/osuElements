@@ -7,14 +7,15 @@ namespace osuElements.Db
 {
     public enum DbBeatmapState
     {
-        None,
-        Unsubmitted,
-        Graveyard,
-        WorkInProgress,
-        Ranked,
-        Approved,
-        Qualified,
+        None = 0,
+        Unsubmitted = 1,
+        Pending = 2, WorkInProgress = 2, Graveyard = 2,
+        Ranked = 4,
+        Approved = 5,
+        Qualified = 6,
+        Loved = 7
     }
+
     /// <summary>
     /// The database-driven approach to the beatmap object
     /// </summary>
@@ -53,10 +54,7 @@ namespace osuElements.Db
         public bool Unplayed { get; set; }
         public bool Osz2 { get; set; } 
         public byte ManiaScrollSpeed { get; set; }
-        public int ByteLength { get; set; } //the length in bytes of this data in the database
-
-        //Unsure
-        public int Int { get; set; } //nearly always 0
-        public bool Bool2 { get; set; } //nearly always false
+        public int LastModificationTime { get; set; }
+        public bool VisualOverride { get; set; }
     }
 }

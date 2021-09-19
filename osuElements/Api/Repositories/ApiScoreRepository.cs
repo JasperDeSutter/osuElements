@@ -1,15 +1,23 @@
-﻿using osuElements.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static osuElements.Helpers.Constants;
+using osuElements.Api.Throttling;
+using osuElements.Helpers;
 
 namespace osuElements.Api.Repositories
 {
     public class ApiScoreRepository : ApiRepositoryBase, IApiScoreRepository
     {
+
+        public ApiScoreRepository() : base() { }
+
+        public ApiScoreRepository(string apiKey, bool throwExceptions, IThrottler throttler) : base(apiKey, throwExceptions, throttler) { }
+
+
+
         public async Task<List<ApiScore>> GetMapScores(int mapId, int userid, GameMode mode = GameMode.Standard, Mods? mods = null, int limit = MaxApiScoreResults)
         {
             var modstring = mods.HasValue ? $"&mods={(int)mods.Value}" : "";

@@ -38,37 +38,6 @@ namespace osuElements.Api.Repositories
         /// <param name="mode">the gamemode for the data</param>
         /// <param name="eventDays">max amount of days for the event data, between 1 and 31</param>
         Task<ApiUser> Get(int id, GameMode mode = Standard, int eventDays = MaxApiEventDays);
-
-        /// <summary>
-        /// Returns the top scores for the specified user.
-        /// </summary>
-        /// <param name="name">username, cannot be ID</param>
-        /// <param name="mode">the gamemode for the data</param>
-        /// <param name="limit">max amount of results, between 1 and 100</param>
-        Task<List<ApiScore>> GetBest(string name, GameMode mode = Standard, int limit = MaxApiScoreResults);
-        /// <summary>
-        /// Returns the top scores for the specified user.
-        /// </summary>
-        /// <param name="id">user ID, cannot be name</param>
-        /// <param name="mode">the gamemode for the data</param>
-        /// <param name="limit">max amount of results, between 1 and 100</param>
-        Task<List<ApiScore>> GetBest(int id, GameMode mode = Standard, int limit = MaxApiScoreResults);
-
-        /// <summary>
-        /// Returns most recent scores for the specified user.
-        /// </summary>
-        /// <param name="name">username, cannot be ID</param>
-        /// <param name="mode">the gamemode for the data</param>
-        /// <param name="limit">max amount of results, between 1 and 100</param>
-        Task<List<ApiScore>> GetRecent(string name, GameMode mode = Standard, int limit = MaxApiScoreResults);
-
-        /// <summary>
-        /// Returns most recent scores for the specified user.
-        /// </summary>
-        /// <param name="id">user ID, cannot be name</param>
-        /// <param name="mode">the gamemode for the data</param>
-        /// <param name="limit">max amount of results, between 1 and 100</param>
-        Task<List<ApiScore>> GetRecent(int id, GameMode mode = Standard, int limit = MaxApiScoreResults);
     }
 
     public interface IApiBeatmapRepository : IApiRepository
@@ -113,16 +82,6 @@ namespace osuElements.Api.Repositories
         /// <param name="mapHash">the beatmap hash</param>
         /// <param name="mode">optional, only gamemode to return results from</param>
         Task<ApiBeatmap> Get(string mapHash, GameMode? mode = null);
-        /// <summary>
-        /// Returns the top scores for the specified beatmap.
-        /// </summary>
-        /// <param name="mapId">beatmap ID</param>
-        /// <param name="userid">optional, specify a user's ID to get a score for</param>
-        /// <param name="username">optional, specify a user's username to get a score for</param>
-        /// <param name="mode">optional, specify a gamemode to get scores for</param>
-        /// <param name="mods">optional, specify mods to get scores for</param>
-        /// <param name="limit">max amount of results, between 1 and 100</param>
-        Task<List<ApiScore>> GetScores(int mapId, int? userid = null, string username = null, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
     }
 
     public interface IApiReplayRepository : IApiRepository
@@ -154,16 +113,56 @@ namespace osuElements.Api.Repositories
 
     public interface IApiScoreRepository : IApiRepository
     {
+        /// <summary>
+        /// Returns the top scores for the specified user.
+        /// </summary>
+        /// <param name="id">user ID, cannot be name</param>
+        /// <param name="mode">the gamemode for the data</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
         Task<List<ApiScore>> GetUserBest(int userId, GameMode mode = Standard, int limit = MaxApiScoreResults);
 
+        /// <summary>
+        /// Returns the top scores for the specified user.
+        /// </summary>
+        /// <param name="userName">username, cannot be ID</param>
+        /// <param name="mode">the gamemode for the data</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
         Task<List<ApiScore>> GetUserBest(string userName, GameMode mode = Standard, int limit = MaxApiScoreResults);
 
+        /// <summary>
+        /// Returns most recent scores for the specified user.
+        /// </summary>
+        /// <param name="userId">user ID, cannot be name</param>
+        /// <param name="mode">the gamemode for the data</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
         Task<List<ApiScore>> GetUserRecent(int userId, GameMode mode = Standard, int limit = MaxApiScoreResults);
 
+        /// <summary>
+        /// Returns most recent scores for the specified user.
+        /// </summary>
+        /// <param name="userName">username, cannot be ID</param>
+        /// <param name="mode">the gamemode for the data</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
         Task<List<ApiScore>> GetUserRecent(string userName, GameMode mode = Standard, int limit = MaxApiScoreResults);
 
-        Task<List<ApiScore>> GetMapScores(int mapId, string username = null, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
+        /// <summary>
+        /// Returns the top scores for the specified beatmap.
+        /// </summary>
+        /// <param name="mapId">beatmap ID</param>
+        /// <param name="userName">optional, specify a user's username to get a score for</param>
+        /// <param name="mode">optional, specify a gamemode to get scores for</param>
+        /// <param name="mods">optional, specify mods to get scores for</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
+        Task<List<ApiScore>> GetMapScores(int mapId, string userName = null, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
 
-        Task<List<ApiScore>> GetMapScores(int mapId, int userid, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
+        /// <summary>
+        /// Returns the top scores for the specified beatmap.
+        /// </summary>
+        /// <param name="mapId">beatmap ID</param>
+        /// <param name="userId">optional, specify a user's ID to get a score for</param>
+        /// <param name="mode">optional, specify a gamemode to get scores for</param>
+        /// <param name="mods">optional, specify mods to get scores for</param>
+        /// <param name="limit">max amount of results, between 1 and 100</param>
+        Task<List<ApiScore>> GetMapScores(int mapId, int userId, GameMode mode = Standard, Mods? mods = null, int limit = MaxApiScoreResults);
     }
 }

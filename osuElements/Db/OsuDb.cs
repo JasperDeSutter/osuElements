@@ -10,6 +10,19 @@ using osuElements.IO.File;
 
 namespace osuElements.Db
 {
+
+    [Flags]
+    public enum OsuUserPersissions
+    { 
+        None = 0, 
+        Normal = 1, 
+        Moderator = 2, 
+        Supporter = 4, 
+        Friend = 8, 
+        Peppy = 16, 
+        WorldCupStaff = 32
+    }
+
     public class OsuDb
     {
         public OsuDb() {
@@ -19,9 +32,8 @@ namespace osuElements.Db
         public int CollectionCount { get; set; }
         public string UserName { get; set; }
         public List<DbBeatmap> Beatmaps { get; set; }
-        //unsure
-        public int SomeInt { get; set; }
-        public bool SomeBool { get; set; }
+        public OsuUserPersissions UserPermissions { get; set; }
+        public bool AccountUnlocked { get; set; }
         public DateTime DateTime { get; set; }
 
         #region File
@@ -53,11 +65,10 @@ namespace osuElements.Db
             var result = new BinaryFile<OsuDb>(
                 new BinaryFileLine<OsuDb, int>(s => s.FileVersion),
                 new BinaryFileLine<OsuDb, int>(s => s.CollectionCount),
-                new BinaryFileLine<OsuDb, bool>(s => s.SomeBool),
+                new BinaryFileLine<OsuDb, bool>(s => s.AccountUnlocked),
                 new BinaryFileLine<OsuDb, DateTime>(s => s.DateTime),
                 new BinaryFileLine<OsuDb, string>(s => s.UserName),
                 new BinaryCollection<OsuDb, DbBeatmap>(s => s.Beatmaps,
-                    new BinaryFileLine<DbBeatmap, int>(b => b.ByteLength),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Artist),
                     new BinaryFileLine<DbBeatmap, string>(b => b.ArtistUnicode),
                     new BinaryFileLine<DbBeatmap, string>(b => b.Title),
@@ -77,9 +88,7 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyHpDrainRate),
                     new BinaryFileLine<DbBeatmap, float>(b => b.DifficultyOverall),
                     new BinaryFileLine<DbBeatmap, double>(b => b.DifficultySliderMultiplier),
-                    new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.StandardDifficulties) {
-                        KeyType = typeof(int)
-                    },
+                    new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.StandardDifficulties) { KeyType = typeof(int) },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.TaikoDifficulties) { KeyType = typeof(int) },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.CtbDifficulties) { KeyType = typeof(int) },
                     new BinaryFileDictionary<DbBeatmap, Mods, double>(b => b.ManiaDifficulties) { KeyType = typeof(int) },
@@ -113,12 +122,12 @@ namespace osuElements.Db
                     new BinaryFileLine<DbBeatmap, bool>(b => b.IgnoreSkin),
                     new BinaryFileLine<DbBeatmap, bool>(b => b.IgnoreStoryboard),
                     new BinaryFileLine<DbBeatmap, bool>(b => b.IgnoreVideo),
-                    new BinaryFileLine<DbBeatmap, bool>(b => b.Bool2),
-                    new BinaryFileLine<DbBeatmap, int>(b => b.Int),
+                    new BinaryFileLine<DbBeatmap, bool>(b => b.VisualOverride),
+                    new BinaryFileLine<DbBeatmap, int>(b => b.LastModificationTime),
                     new BinaryFileLine<DbBeatmap, byte>(b => b.ManiaScrollSpeed)
                     ),
 
-                new BinaryFileLine<OsuDb, int>(s => s.SomeInt)
+                new BinaryFileLine<OsuDb, OsuUserPersissions>(s => s.UserPermissions) { Type = typeof(int) }
                 );
             return result;
         }
