@@ -4,7 +4,14 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>osuElements.Standard</AssemblyName>
     <RootNamespace>osuElements</RootNamespace>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.8</Version>
+    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <Copyright>osuElements 2021</Copyright>
+    <Description>an open source osu! framework</Description>
+    <Product>osuElements.Standard</Product>
+    <Company>osuElements.Standard</Company>
+    <Authors>osuElements.Standard</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

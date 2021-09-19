@@ -11,7 +11,7 @@ namespace osuElements.Api.Throttling
     {
         private bool _disposedValue;
 
-        public Task WaitAsync() => Task.CompletedTask;
+        public Task WaitAsync() => Task.FromResult(true);
 
         protected virtual void Dispose(bool disposing)
         {
