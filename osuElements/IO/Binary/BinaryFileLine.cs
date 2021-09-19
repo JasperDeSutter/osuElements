@@ -38,7 +38,13 @@ namespace osuElements.IO.Binary
             WriteObject(writer, value);
         }
 
-        protected void WriteObject(BinaryWriter writer, object t) {
+        protected void WriteObject(BinaryWriter writer, object obj) {
+            object t = obj;
+
+            if (obj is Enum && Enum.GetUnderlyingType(obj.GetType()) != Type) {
+                t = Convert.ChangeType(obj, Type);
+            }
+
             if (Type == typeof(string)) {
                 writer.WriteNullableString((string)t);
             }
